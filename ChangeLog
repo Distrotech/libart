@@ -1,3 +1,11 @@
+2001-12-26  Raph Levien  <raph@pixel.artofcode.com>
+
+	* art_svp_intersect.c: More fixes to intersector. When tops
+	coincide, full ordering test is performed (with breaking),
+	rather than just comparing b from line eq. Also, had a test
+	for x >= backwards in art_svp_intersect_add_point. Thanks
+	to Bruce Q. Hammond for test cases.
+
 2001-11-21  Raph Levien  <raph@pixel.artofcode.com>
 
 	* art_svp_intersect.c (art_svp_intersect_break): Changed break

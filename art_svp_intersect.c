@@ -763,7 +763,7 @@ art_svp_intersect_add_point (ArtIntersectCtx *ctx, double x, double y,
 	}
       else if (right_live)
 	{
-	  if (x <= right->x[(right->flags & ART_ACTIVE_FLAGS_BNEG) ^ 1] &&
+	  if (x >= right->x[(right->flags & ART_ACTIVE_FLAGS_BNEG) ^ 1] &&
 	      /* It may be that one of these conjuncts turns out to be always
 		 true. We test both anyway, to be defensive. */
 	      y != right->y0 && y < right->y1)
@@ -800,7 +800,10 @@ art_svp_intersect_add_point (ArtIntersectCtx *ctx, double x, double y,
   result = left;
   if (test != NULL && test != right)
     {
-      x_test = test->x[1];
+      if (y == test->y0)
+	x_test = test->x[0];
+      else /* assert y == test->y1, I think */
+	x_test = test->x[1];
       for (;;)
 	{
 	  if (x_test <= x)
@@ -808,7 +811,7 @@ art_svp_intersect_add_point (ArtIntersectCtx *ctx, double x, double y,
 	  test = test->right;
 	  if (test == right)
 	    break;
-	  new_x = test->x[1];
+	  new_x = x_test;
 	  if (new_x < x_test)
 	    {
 	      art_warn ("art_svp_intersect_add_point: non-ascending x\n");
@@ -872,13 +875,64 @@ art_svp_intersect_test_cross (ArtIntersectCtx *ctx,
 
   if (left_seg->y0 == right_seg->y0 && left_seg->x[0] == right_seg->x[0])
     {
-      if (left_seg->b < right_seg->b)
+      /* Top points of left and right segments coincide. This case
+	 feels like a bit of duplication - we may want to merge it
+	 with the cases below. However, this way, we're sure that this
+	 logic makes only localized changes. */
+
+      if (left_y1 < right_y1)
 	{
-	  art_svp_intersect_swap_active (ctx, left_seg, right_seg);
-	  return ART_TRUE;
+	  /* Test left (x1, y1) against right segment */
+	  double left_x1 = left_seg->x[1];
+
+	  if (left_x1 <
+	      right_seg->x[(right_seg->flags & ART_ACTIVE_FLAGS_BNEG) ^ 1] ||
+	      left_y1 == right_seg->y0)
+	    return ART_FALSE;
+	  d = left_x1 * right_seg->a + left_y1 * right_seg->b + right_seg->c;
+	  if (d < -EPSILON_A)
+	    return ART_FALSE;
+	  else if (d < EPSILON_A)
+	    {
+	      /* I'm unsure about the break flags here. */
+	      double right_x1 = art_svp_intersect_break (ctx, right_seg,
+							 left_x1, left_y1,
+							 ART_BREAK_RIGHT);
+	      if (left_x1 <= right_x1)
+		return ART_FALSE;
+	    }
 	}
-      else
-	return ART_FALSE;
+      else if (left_y1 > right_y1)
+	{
+	  /* Test right (x1, y1) against left segment */
+	  double right_x1 = right_seg->x[1];
+
+	  if (right_x1 > left_seg->x[left_seg->flags & ART_ACTIVE_FLAGS_BNEG] ||
+	      right_y1 == left_seg->y0)
+	    return ART_FALSE;
+	  d = right_x1 * left_seg->a + right_y1 * left_seg->b + left_seg->c;
+	  if (d > EPSILON_A)
+	    return ART_FALSE;
+	  else if (d > -EPSILON_A)
+	    {
+	      /* See above regarding break flags. */
+	      double left_x1 = art_svp_intersect_break (ctx, left_seg,
+							right_x1, right_y1,
+							ART_BREAK_LEFT);
+	      if (left_x1 <= right_x1)
+		return ART_FALSE;
+	    }
+	}
+      else /* left_y1 == right_y1 */
+	{
+	  double left_x1 = left_seg->x[1];
+	  double right_x1 = right_seg->x[1];
+
+	  if (left_x1 <= right_x1)
+	    return ART_FALSE;
+	}
+      art_svp_intersect_swap_active (ctx, left_seg, right_seg);
+      return ART_TRUE;
     }
 
   if (left_y1 < right_y1)
@@ -1001,13 +1055,24 @@ art_svp_intersect_test_cross (ArtIntersectCtx *ctx,
 	  /* Intersection takes place at current scan line; process
 	     immediately rather than queueing intersection point into
 	     priq. */
+	  ArtActiveSeg *winner, *loser;
 
 	  /* Choose "most vertical" segement */
 	  if (left_seg->a > right_seg->a)
-	    x = left_seg->x[0];
+	    {
+	      winner = left_seg;
+	      loser = right_seg;
+	    }
 	  else
-	    x = right_seg->x[0];
-	  /* todo: fudge x */
+	    {
+	      winner = right_seg;
+	      loser = left_seg;
+	    }
+
+	  loser->x[0] = winner->x[0];
+	  loser->horiz_x = loser->x[0];
+	  loser->horiz_delta_wind += loser->delta_wind;
+	  winner->horiz_delta_wind -= loser->delta_wind;
 
 	  art_svp_intersect_swap_active (ctx, left_seg, right_seg);
 	  return ART_TRUE;
