@@ -1,5 +1,9 @@
 2002-06-24  Alexander Larsson  <alexl@redhat.com>
 
+	Release 2.3.9.
+	
+2002-06-24  Alexander Larsson  <alexl@redhat.com>
+
 	* configure.in: Bump to 2.3.9
 
 2002-06-04  Balamurali Viswanathan <balamurali.viswanathan@wipro.com>
