@@ -31,6 +31,8 @@ AC_SUBST(LIBART_LIBDIR)
 AC_SUBST(LIBART_INCLUDEDIR)
 AC_SUBST(LIBART_LIBS)
 
+AC_C_BIGENDIAN
+
 AC_OUTPUT([
 Makefile
 libart-config], [case "$CONFIG_FILES" in *libart-config*) chmod +x libart-config;; esac])

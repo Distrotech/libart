@@ -10,9 +10,12 @@ lib_LTLIBRARIES = libart_lgpl.la
 
 libart_lgpl_la_SOURCES = \
 	art_bpath.c \
+	art_gray_svp.c \
 	art_misc.c \
 	art_rect.c \
 	art_rect_uta.c \
+	art_rgb.c \
+	art_rgb_svp.c \
 	art_svp.c \
 	art_svp_render_aa.c \
 	art_svp_vpath.c \
@@ -28,11 +31,14 @@ libart_lgpl_la_LDFLAGS = -version-info @LIBART_VERSION_INFO@
 libart_lgplincdir = $(includedir)/libart_lgpl
 libart_lgplinc_HEADERS = \
 	art_bpath.h \
+	art_gray_svp.h \
 	art_misc.h \
 	art_pathcode.h \
 	art_point.h \
 	art_rect.h \
 	art_rect_uta.h \
+	art_rgb.h \
+	art_rgb_svp.h \
 	art_svp.h \
 	art_svp_render_aa.h \
 	art_svp_vpath.h \

@@ -1,3 +1,22 @@
+Fri Dec  4 18:00:38 1998  Raph Levien  <raph@gimp.org>
+
+	* art_svp_render_aa.c (art_svp_render_aa): Changed the api
+	slightly, to guarantee that the steps are all within the range
+	from x0 (inclusive) to x1 (exclusive).
+
+	* art_gray_svp.c, art_gray_svp.h: Added. Populated with functions
+	to render into a simple graymap.
+
+	* art_rgb.c, art_rgb.c: Added. Populated with fill_run and
+	run_alpha methods.
+
+	* art_rgb_svp.c, art_rgb_svp.h: Added. Populated with functions to
+	render into an RGB buffer, and to composite over an RGB buffer.
+
+	* Makefile.am: added art_gray_svp, art_rgb, and art_rgb_svp.
+
+	* testart.c: test the color and layered rendering.
+
 Mon Nov 30 01:30:25 1998  Raph Levien  <raph@gimp.org>
 
 	* testart.c: added vector path rendering stuff. Some of it needs

@@ -66,6 +66,45 @@ art_svp_render_step_compare (const void *s1, const void *s2)
 
   return step1->x - step2->x;
 }
+
+/* Render the sorted vector path in the given rectangle, antialiased.
+
+   This interface uses a callback for the actual pixel rendering. The
+   callback is called y1 - y0 times (once for each scan line). The y
+   coordinate is given as an argument for convenience (it could be
+   stored in the callback's private data and incremented on each
+   call).
+
+   The rendered polygon is represented in a semi-runlength format: a
+   start value and a sequence of "steps". Each step has an x
+   coordinate and a value delta. The resulting value at position x is
+   equal to the sum of the start value and all step delta values for
+   which the step x coordinate is less than or equal to x. An
+   efficient algorithm will traverse the steps left to right, keeping
+   a running sum.
+
+   All x coordinates in the steps are guaranteed to be x0 <= x < x1.
+   (This guarantee is a change from the gfonted vpaar renderer, and is
+   designed to simplify the callback).
+
+   The value 0x8000 represents 0% coverage by the polygon, while
+   0xff8000 represents 100% coverage. This format is designed so that
+   >> 16 results in a standard 0x00..0xff value range, with nice
+   rounding.
+
+   Status of this routine:
+
+   Basic correctness: OK
+
+   Numerical stability: pretty good, although probably not
+   bulletproof.
+
+   Speed: Needs more aggressive culling of bounding boxes.
+          Can probably speed up the [x0,x1) clipping of step values.
+	  Can do more of the step calculation in fixed point.
+
+*/
+
 void
 art_svp_render_aa (const ArtSVP *svp,
 		   int x0, int y0, int x1, int y1,
@@ -83,6 +122,7 @@ art_svp_render_aa (const ArtSVP *svp,
   int i, j;
   int y;
   int seg_index;
+
   int x;
   ArtSVPRenderAAStep *steps;
   int n_steps;
@@ -91,7 +131,8 @@ art_svp_render_aa (const ArtSVP *svp,
   double x_top, x_bot;
   double x_min, x_max;
   int ix_min, ix_max;
-  double delta, last, this; /* delta should be int too? */
+  double delta; /* delta should be int too? */
+  int last, this;
   int xdelta;
   double rslope, drslope;
   int start;
@@ -115,7 +156,8 @@ art_svp_render_aa (const ArtSVP *svp,
       /* insert new active segments */
       for (; i < svp->n_segs && svp->segs[i].bbox.y0 < y + 1; i++)
 	{
-	  if (svp->segs[i].bbox.y1 > y)
+	  if (svp->segs[i].bbox.y1 > y &&
+	      svp->segs[i].bbox.x0 < x1)
 	    {
 	      seg = &svp->segs[i];
 	      /* move cursor to topmost vector which overlaps [y,y+1) */
@@ -182,10 +224,13 @@ art_svp_render_aa (const ArtSVP *svp,
 		    steps[n_steps].x = ix_min;
 		    steps[n_steps].delta = xdelta;
 		    n_steps++;
-		    xdelta = delta - xdelta;
-		    steps[n_steps].x = ix_min + 1;
-		    steps[n_steps].delta = xdelta;
-		    n_steps++;
+		    if (ix_min + 1 < x1)
+		      {
+			xdelta = delta - xdelta;
+			steps[n_steps].x = ix_min + 1;
+			steps[n_steps].delta = xdelta;
+			n_steps++;
+		      }
 		  }
 		else
 		  {
@@ -204,31 +249,47 @@ art_svp_render_aa (const ArtSVP *svp,
 		      drslope * 0.5 *
 		      (ix_min + 1 - x_min) * (ix_min + 1 - x_min);
 		    xdelta = last;
-		    steps[n_steps].x = ix_min;
-		    steps[n_steps].delta = last;
-		    n_steps++;
-		    for (x = ix_min + 1; x < ix_max; x++)
+		    if (ix_min >= x0)
 		      {
-			this = (seg->dir ? 16711680.0 : -16711680.0) * rslope * (x + 0.5 - x_min);
+			steps[n_steps].x = ix_min;
+			steps[n_steps].delta = last;
+			n_steps++;
+			x = ix_min + 1;
+		      }
+		    else
+		      {
+			start += last;
+			x = x0;
+		      }
+		    for (; x < x1 && x < ix_max; x++)
+		      {
+			this = (seg->dir ? 16711680.0 : -16711680.0) * rslope *
+			  (x + 0.5 - x_min);
 			xdelta = this - last;
 			last = this;
 			steps[n_steps].x = x;
 			steps[n_steps].delta = xdelta;
 			n_steps++;
 		      }
-		    this =
-		      delta * (1 - 0.5 *
-			       (x_max - ix_max) * (x_max - ix_max) *
-			       rslope);
-		    xdelta = this - last;
-		    last = this;
-		    steps[n_steps].x = ix_max;
-		    steps[n_steps].delta = xdelta;
-		    n_steps++;
-		    xdelta = delta - last;
-		    steps[n_steps].x = ix_max + 1;
-		    steps[n_steps].delta = xdelta;
-		    n_steps++;
+		    if (x < x1)
+		      {
+			this =
+			  delta * (1 - 0.5 *
+				   (x_max - ix_max) * (x_max - ix_max) *
+				   rslope);
+			xdelta = this - last;
+			last = this;
+			steps[n_steps].x = ix_max;
+			steps[n_steps].delta = xdelta;
+			n_steps++;
+			if (x + 1 < x1)
+			  {
+			    xdelta = delta - last;
+			    steps[n_steps].x = ix_max + 1;
+			    steps[n_steps].delta = xdelta;
+			    n_steps++;
+			  }
+		      }
 		  }
 	      }
 	      curs++;
