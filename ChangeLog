@@ -1,3 +1,8 @@
+2000-04-18  Lauris Kaplinski  <lauris@ariman.ee>
+
+	* art_affine.c (art_affine_to_string): Replaced snprinf with
+	art_ftoa to avoid localisation of generated numbers
+
 2000-04-18  ERDI Gergo  <cactus@cactus.rulez.org>
 
 	* art_rgb_pixbuf_affine.h: Included the ArtPixBuf declaration
