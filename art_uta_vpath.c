@@ -41,7 +41,7 @@
 
    Somewhat delicate handling of edge cases is called for.
 */
-static void
+void
 art_uta_add_line (ArtUta *uta, double x0, double y0, double x1, double y1,
 		  int *rbuf, int rbuf_rowstride)
 {
@@ -260,7 +260,7 @@ art_uta_add_line (ArtUta *uta, double x0, double y0, double x1, double y1,
 }
 
 ArtUta *
-art_uta_from_vpath (ArtVpath *vec)
+art_uta_from_vpath (const ArtVpath *vec)
 {
   ArtUta *uta;
   ArtIRect bbox;

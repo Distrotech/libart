@@ -27,12 +27,7 @@ extern "C" {
 #endif /* __cplusplus */
 
 ArtUta *
-art_uta_from_vpath (const ArtVpath *vec);
-
-/* This is a private function: */
-void
-art_uta_add_line (ArtUta *uta, double x0, double y0, double x1, double y1,
-		  int *rbuf, int rbuf_rowstride);
+art_uta_from_svp (const ArtSVP *svp);
 
 #ifdef __cplusplus
 }

@@ -17,26 +17,26 @@
  * Boston, MA 02111-1307, USA.
  */
 
-#ifndef __ART_UTA_VPATH_H__
-#define __ART_UTA_VPATH_H__
+/* LGPL Copyright 1998 Raph Levien <raph@acm.org> */
 
-/* Basic data structures and constructors for microtile arrays */
+#include "art_misc.h"
+#include "art_vpath.h"
+#include "art_uta.h"
+#include "art_uta_vpath.h"
+#include "art_svp.h"
+#include "art_uta_svp.h"
 
-#ifdef __cplusplus
-extern "C" {
-#endif /* __cplusplus */
 
+/* I will of course want to replace this with a more direct implementation.
+   But this gets the api in place. */
 ArtUta *
-art_uta_from_vpath (const ArtVpath *vec);
+art_uta_from_svp (const ArtSVP *svp)
+{
+  ArtVpath *vpath;
+  ArtUta *uta;
 
-/* This is a private function: */
-void
-art_uta_add_line (ArtUta *uta, double x0, double y0, double x1, double y1,
-		  int *rbuf, int rbuf_rowstride);
-
-#ifdef __cplusplus
+  vpath = art_vpath_from_svp (svp);
+  uta = art_uta_from_vpath (vpath);
+  art_free (vpath);
+  return uta;
 }
-#endif /* __cplusplus */
-
-#endif /* __ART_UTA_VPATH_H__ */
-

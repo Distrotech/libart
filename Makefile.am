@@ -34,6 +34,7 @@ libart_lgpl_la_SOURCES = \
 	art_uta_ops.c \
 	art_uta_rect.c \
 	art_uta_vpath.c \
+	art_uta_svp.c \
 	art_vpath.c \
 	art_vpath_bpath.c \
 	art_vpath_svp.c
@@ -65,6 +66,7 @@ libart_lgplinc_HEADERS = \
 	art_uta_ops.h \
 	art_uta_rect.h \
 	art_uta_vpath.h \
+	art_uta_svp.h \
 	art_vpath.h \
 	art_vpath_bpath.h \
 	art_vpath_svp.h

@@ -164,6 +164,11 @@ art_affine_to_string (char str[128], const double src[6])
 	      str[0] = '\0';
 	      return;
 	    }
+	  else
+	    {
+	      sprintf (str, "%g %g scale", src[0], src[3]);
+	      return;
+	    }
 	}
       else
 	{
