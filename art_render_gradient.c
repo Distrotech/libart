@@ -329,7 +329,7 @@ art_render_gradient_linear_render_8 (ArtRenderCallback *self,
   assert (ix > 0);
   assert (ix < n_stops);
   assert ((stops[ix-1].offset <= offset_fraction) ||
-	  ((stops[ix].offset == 1.0) && (offset_fraction == 0.0)));
+	  ((stops[ix].offset >= 1.0) && (offset_fraction <= 0.0)));
   assert (offset_fraction <= stops[ix].offset);
   assert ((offset_fraction != stops[ix-1].offset) ||
 	  (d_offset >= 0.0));
@@ -420,7 +420,7 @@ art_render_gradient_linear_render_8 (ArtRenderCallback *self,
 	    }
 	  while (!((stops[ix-1].offset <= offset_fraction &&
 		   offset_fraction < stops[ix].offset) ||
-		   (ix == 1 && offset_fraction == 1.0))); 
+		   (ix == 1 && offset_fraction >= 1.0))); 
 	}
       else
 	{
@@ -432,7 +432,7 @@ art_render_gradient_linear_render_8 (ArtRenderCallback *self,
 	    }
 	  while (!((stops[ix-1].offset < offset_fraction &&
 		    offset_fraction <= stops[ix].offset) ||
-		   (ix == n_stops - 1 && offset_fraction == 0.0)));
+		   (ix == n_stops - 1 && offset_fraction <= 0.0)));
 	}
       
       bufp += 4*len;
