@@ -1,3 +1,11 @@
+Sun Jun 13 21:07:20 1999  Raph Levien  <raph@gimp.org>
+
+	* art_svp_wind.c (art_svp_rewind_uncrossed): Made the winding
+	rule logic even more correct :). I somehow missed the fact that
+	a clockwise path should be given a winding number of zero;
+	last night's commit tried to make it -1 (which worked for the
+	test cases I was using).
+
 Sun Jun 13 01:23:14 1999  Raph Levien  <raph@gimp.org>
 
 	* art_svp_wind.c (art_svp_rewind_uncrossed): Change to winding
