@@ -15,6 +15,7 @@ config.log
 config.status
 config.sub
 configure
+install-sh
 libtool
 ltconfig
 ltmain.sh
