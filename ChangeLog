@@ -1,3 +1,11 @@
+2001-09-20  Darin Adler  <darin@bentspoon.com>
+
+	* configure.in: Set LIBART_INCLUDEDIR to match Makefile.am.
+	Also put the -lm in here too.
+	* libart-config.in: Use LIBART_INCLUDEDIR instead of includedir
+	and use LIBART_LIBDIR and LIBART_LIBS instead of hard-coding the
+	list of libraries.
+
 2001-09-13  Havoc Pennington  <hp@redhat.com>
 
 	* Makefile.am (libart_lgplincdir): move to includedir/gnome-1.0

@@ -48,8 +48,8 @@ fi
 changequote([,])dnl
 
 LIBART_LIBDIR='-L${libdir}'
-LIBART_INCLUDEDIR='-I${includedir}'
-LIBART_LIBS='-lart_lgpl'
+LIBART_INCLUDEDIR='-I${includedir}/gnome-1.0'
+LIBART_LIBS='-lart_lgpl -lm'
 
 AC_SUBST(LIBART_LIBDIR)
 AC_SUBST(LIBART_INCLUDEDIR)
