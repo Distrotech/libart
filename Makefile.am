@@ -87,6 +87,7 @@ libart_lgpl_2_la_SOURCES = \
 	libart-features.c
 
 libart_lgpl_2_la_LDFLAGS = -version-info @LIBART_VERSION_INFO@ $(no_undefined)
+libart_lgpl_2_la_LIBADD = -lm
 
 libart_lgplincdir = $(includedir)/libart-2.0/libart_lgpl
 libart_lgplinc_HEADERS = \
