@@ -51,7 +51,7 @@ art_rgb_svp_callback (void *callback_data, int y,
   ArtRgbSVPData *data = callback_data;
   art_u8 *linebuf;
   int run_x0, run_x1;
-  int running_sum = start;
+  art_u32 running_sum = start;
   art_u32 rgb;
   int x0, x1;
   int k;
@@ -65,7 +65,7 @@ art_rgb_svp_callback (void *callback_data, int y,
       run_x1 = steps[0].x;
       if (run_x1 > x0)
 	{
-	  rgb = data->rgbtab[running_sum >> 16];
+	  rgb = data->rgbtab[(running_sum >> 16) & 0xff];
 	  art_rgb_fill_run (linebuf,
 			    rgb >> 16, (rgb >> 8) & 0xff, rgb & 0xff,
 			    run_x1 - x0);
@@ -79,7 +79,7 @@ art_rgb_svp_callback (void *callback_data, int y,
 	  run_x1 = steps[k + 1].x;
 	  if (run_x1 > run_x0)
 	    {
-	      rgb = data->rgbtab[running_sum >> 16];
+	      rgb = data->rgbtab[(running_sum >> 16) & 0xff];
 	      art_rgb_fill_run (linebuf + (run_x0 - x0) * 3,
 				rgb >> 16, (rgb >> 8) & 0xff, rgb & 0xff,
 				run_x1 - run_x0);
@@ -88,7 +88,7 @@ art_rgb_svp_callback (void *callback_data, int y,
       running_sum += steps[k].delta;
       if (x1 > run_x1)
 	{
-	  rgb = data->rgbtab[running_sum >> 16];
+	  rgb = data->rgbtab[(running_sum >> 16) & 0xff];
 	  art_rgb_fill_run (linebuf + (run_x1 - x0) * 3,
 			    rgb >> 16, (rgb >> 8) & 0xff, rgb & 0xff,
 			    x1 - run_x1);
@@ -96,7 +96,7 @@ art_rgb_svp_callback (void *callback_data, int y,
     }
   else
     {
-      rgb = data->rgbtab[running_sum >> 16];
+      rgb = data->rgbtab[(running_sum >> 16) & 0xff];
       art_rgb_fill_run (linebuf,
 			rgb >> 16, (rgb >> 8) & 0xff, rgb & 0xff,
 			x1 - x0);
@@ -194,7 +194,7 @@ art_rgb_svp_alpha_callback (void *callback_data, int y,
   ArtRgbSVPAlphaData *data = callback_data;
   art_u8 *linebuf;
   int run_x0, run_x1;
-  int running_sum = start;
+  art_u32 running_sum = start;
   int x0, x1;
   int k;
   art_u8 r, g, b;
@@ -215,7 +215,7 @@ art_rgb_svp_alpha_callback (void *callback_data, int y,
       run_x1 = steps[0].x;
       if (run_x1 > x0)
 	{
-	  alpha = running_sum >> 16;
+	  alpha = (running_sum >> 16) & 0xff;
 	  if (alpha)
 	    art_rgb_run_alpha (linebuf,
 			       r, g, b, alphatab[alpha],
@@ -230,7 +230,7 @@ art_rgb_svp_alpha_callback (void *callback_data, int y,
 	  run_x1 = steps[k + 1].x;
 	  if (run_x1 > run_x0)
 	    {
-	      alpha = running_sum >> 16;
+	      alpha = (running_sum >> 16) & 0xff;
 	      if (alpha)
 		art_rgb_run_alpha (linebuf + (run_x0 - x0) * 3,
 				   r, g, b, alphatab[alpha],
@@ -240,7 +240,7 @@ art_rgb_svp_alpha_callback (void *callback_data, int y,
       running_sum += steps[k].delta;
       if (x1 > run_x1)
 	{
-	  alpha = running_sum >> 16;
+	  alpha = (running_sum >> 16) & 0xff;
 	  if (alpha)
 	    art_rgb_run_alpha (linebuf + (run_x1 - x0) * 3,
 			       r, g, b, alphatab[alpha],
@@ -249,7 +249,7 @@ art_rgb_svp_alpha_callback (void *callback_data, int y,
     }
   else
     {
-      alpha = running_sum >> 16;
+      alpha = (running_sum >> 16) & 0xff;
       if (alpha)
 	art_rgb_run_alpha (linebuf,
 			   r, g, b, alphatab[alpha],
@@ -267,7 +267,7 @@ art_rgb_svp_alpha_opaque_callback (void *callback_data, int y,
   ArtRgbSVPAlphaData *data = callback_data;
   art_u8 *linebuf;
   int run_x0, run_x1;
-  int running_sum = start;
+  art_u32 running_sum = start;
   int x0, x1;
   int k;
   art_u8 r, g, b;
@@ -291,7 +291,7 @@ art_rgb_svp_alpha_opaque_callback (void *callback_data, int y,
 	  alpha = running_sum >> 16;
 	  if (alpha)
 	    {
-	      if (alpha == 255)
+	      if (alpha >= 255)
 		art_rgb_fill_run (linebuf,
 				  r, g, b,
 				  run_x1 - x0);
@@ -313,7 +313,7 @@ art_rgb_svp_alpha_opaque_callback (void *callback_data, int y,
 	      alpha = running_sum >> 16;
 	      if (alpha)
 		{
-		  if (alpha == 255)
+		  if (alpha >= 255)
 		    art_rgb_fill_run (linebuf + (run_x0 - x0) * 3,
 				      r, g, b,
 				      run_x1 - run_x0);
@@ -346,7 +346,7 @@ art_rgb_svp_alpha_opaque_callback (void *callback_data, int y,
       alpha = running_sum >> 16;
       if (alpha)
 	{
-	  if (alpha == 255)
+	  if (alpha >= 255)
 	    art_rgb_fill_run (linebuf,
 			      r, g, b,
 			      x1 - x0);

@@ -1,3 +1,10 @@
+Wed Jun 23 11:16:42 1999  Raph Levien  <raph@gimp.org>
+
+	* art_rgb_svp.c: Made these routines so they won't segfault even
+	if alpha is out of range. Of course, that begs the question of
+	fixing the render routines so they won't _make_ alpha go out of
+	range, but all in good time.
+
 Fri Jun 18 17:32:34 1999  Raph Levien  <raph@acm.org>
 
 	* art_vpath_bpath.c (art_bez_path_to_vec): Switched to a new
