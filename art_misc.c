@@ -19,7 +19,10 @@
 
 /* Various utility functions RLL finds useful. */
 
+#include "config.h"
+#ifdef HAVE_UINSTD_H
 #include <unistd.h>
+#endif
 #include <stdio.h>
 #include <stdarg.h>
 #include "art_misc.h"
