@@ -238,11 +238,11 @@ art_svp_render_aa (const ArtSVP *svp,
 		else
 		  {
 		    /* case 2, antialias a run */
-		    if (n_steps + x_max + 1 - x_min > n_steps_max)
+		    if (n_steps + ix_max + 2 - ix_min > n_steps_max)
 		      {
 			do
 			  n_steps_max <<= 1;
-			while (n_steps + x_max + 1 - x_min > n_steps_max);
+			while (n_steps + ix_max + 2 - ix_min > n_steps_max);
 			steps = art_renew (steps, ArtSVPRenderAAStep,
 					   n_steps_max);
 		      }
