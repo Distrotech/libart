@@ -10,12 +10,18 @@ EXTRA_DIST = 			\
 lib_LTLIBRARIES = libart_lgpl.la
 
 libart_lgpl_la_SOURCES = \
+	art_affine.c \
 	art_bpath.c \
 	art_gray_svp.c \
 	art_misc.c \
 	art_rect.c \
 	art_rect_uta.c \
 	art_rgb.c \
+	art_rgb_affine.c \
+	art_rgb_affine_private.c \
+	art_rgb_affine_private.h \
+	art_rgb_bitmap_affine.c \
+	art_rgb_rgba_affine.c \
 	art_rgb_svp.c \
 	art_svp.c \
 	art_svp_ops.c \
@@ -36,7 +42,9 @@ libart_lgpl_la_LDFLAGS = -version-info @LIBART_VERSION_INFO@
 
 libart_lgplincdir = $(includedir)/libart_lgpl
 libart_lgplinc_HEADERS = \
+	art_affine.h \
 	art_bpath.h \
+	art_filterlevel.h \
 	art_gray_svp.h \
 	art_misc.h \
 	art_pathcode.h \
@@ -44,6 +52,9 @@ libart_lgplinc_HEADERS = \
 	art_rect.h \
 	art_rect_uta.h \
 	art_rgb.h \
+	art_rgb_affine.h \
+	art_rgb_bitmap_affine.h \
+	art_rgb_rgba_affine.h \
 	art_rgb_svp.h \
 	art_svp.h \
 	art_svp_ops.h \

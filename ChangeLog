@@ -1,3 +1,34 @@
+Sun Dec 13 00:52:39 1998  Raph Levien  <raph@gimp.org>
+
+	* art_affine.h:
+	* art_affine.c: Added. Everything you ever wanted to do with an
+	affine transform. Especially check the functions that generate
+	concise PostScript strings for affine transforms.	
+
+	* art_filterlevel.h: A simple enum for selecting filtering
+	style.
+
+	* art_rgb_affine.h:
+	* art_rgb_affine.c (art_rgb_affine): Added. This function
+	composites an (opaque) rgb image over an rgb pixel buffer. At
+	present, it's slow and only nearest neighbor filtering is enabled.
+
+	* art_rgb_rgba_affine.h:
+	* art_rgb_rgba_affine.c: Analogous, but for compositing rgba
+	images.
+
+	* art_rgb_bitmap_affine.h:
+	* art_rgb_bitmap_affine.c: Analogous, but for compositing bitmap
+	images.
+
+	* art_rgb_affine_private.c (art_rgb_affine_run): Added. This is
+	a common function used by all the rgb_affine modules to move
+	testing for source image bbox out of the inner loop.
+
+	* Makefile.am: added the new files
+
+	* testart.c: exercise the image compositors
+
 Wed Dec  9 23:36:35 1998  Raph Levien  <raph@gimp.org>
 
 	* art_vpath.c (art_vpath_perturb): Made it deal correctly
@@ -23,7 +54,7 @@ Wed Dec  9 23:36:35 1998  Raph Levien  <raph@gimp.org>
 
 	* Makefile.am: added the new files
 
-	* testuta.c: exercise the stroke outline and vector path
+	* testart.c: exercise the stroke outline and vector path
 	operations.
 
 1998-12-08  Herbert Valerio Riedel  <hvr@hvrlab.ml.org>

@@ -28,6 +28,73 @@
 #include "art_rgb_svp.h"
 #include "art_svp_vpath_stroke.h"
 #include "art_svp_ops.h"
+#include "art_affine.h"
+#include "art_rgb_affine.h"
+#include "art_rgb_bitmap_affine.h"
+#include "art_rgb_rgba_affine.h"
+
+void
+test_affine (void) {
+  double src[6];
+  double dst[6];
+  double src2[6];
+  char str[128];
+  int i;
+  ArtPoint ps, pd, ptmp;
+
+  for (i = 0; i < 6; i++)
+    {
+      src[i] = (rand () * 2.0 / RAND_MAX) - 1.0;
+      src2[i] = (rand () * 2.0 / RAND_MAX) - 1.0;
+    }
+#if 0
+  src[0] = 0.9999999;
+  src[1] = -0.000001;
+  src[2] = 0.000001;
+  src[3] = 0.9999999;
+  src[4] = 0;
+  src[5] = 0;
+#if 1
+  src[0] = 0.98480775;
+  src[1] = -0.17364818;
+  src[2] = 0.17364818;
+  src[3] = 0.98480775;
+#endif
+
+  src2[0] = 0.98480775;
+  src2[1] = -0.17364818;
+  src2[2] = 0.17364818;
+  src2[3] = 0.98480775;
+#endif
+
+
+  ps.x = rand() * 100.0 / RAND_MAX;
+  ps.y = rand() * 100.0 / RAND_MAX;
+
+  art_affine_point (&pd, &ps, src);
+  art_affine_invert (dst, src);
+  art_affine_point (&ptmp, &pd, dst);
+  art_affine_to_string (str, src);
+  printf ("src = %s\n", str);
+  art_affine_to_string (str, dst);
+  printf ("dst = %s\n", str);
+  printf ("point (%g, %g) -> (%g, %g) -> (%g, %g)\n",
+	  ps.x, ps.y, pd.x, pd.y, ptmp.x, ptmp.y);
+
+  art_affine_point (&ptmp, &ps, src);
+  art_affine_point (&pd, &ptmp, src2);
+  art_affine_to_string (str, src2);
+  printf ("src2 = %s\n", str);
+  printf ("point (%g, %g) -> (%g, %g) -> (%g, %g)\n",
+	  ps.x, ps.y, ptmp.x, ptmp.y, pd.x, pd.y);
+  art_affine_multiply (dst, src, src2);
+  art_affine_to_string (str, dst);
+  printf ("dst = %s\n", str);
+  art_affine_point (&pd, &ps, dst);
+  printf ("point (%g, %g) -> (%g, %g)\n",
+	  ps.x, ps.y, pd.x, pd.y);
+
+}
 
 ArtVpath *
 randstar (int n)
@@ -58,7 +125,7 @@ randstar (int n)
   return vec;
 }
 
-#define TILE_SIZE 32
+#define TILE_SIZE 512
 #define NUM_ITERS 1
 #define COLOR
 
@@ -97,7 +164,19 @@ main (int argc, char **argv)
   art_u8 buf[512 * 512 * BYTES_PP];
   int i, j;
   int iter;
+  art_u8 colorimg[256][256][3];
+  art_u8 rgbaimg[256][256][4];
+  art_u8 bitimg[16][2];
+  int x, y;
+  double affine[6];
+  double affine2[6];
+  double affine3[6];
 
+#ifdef TEST_AFFINE
+  test_affine ();
+  exit (0);
+#endif
+  
   vpath = randstar (50);
   svp = art_svp_from_vpath (vpath);
 
@@ -113,6 +192,45 @@ main (int argc, char **argv)
   /*
   print_svp (svp2);
   */
+
+  for (y = 0; y < 256; y++)
+    for (x = 0; x < 256; x++)
+      {
+	colorimg[y][x][0] = (x + y) >> 1;
+	colorimg[y][x][1] = (x + (255 - y)) >> 1;
+	colorimg[y][x][2] = ((255 - x) + y) >> 1;
+
+	rgbaimg[y][x][0] = (x + y) >> 1;
+	rgbaimg[y][x][1] = (x + (255 - y)) >> 1;
+	rgbaimg[y][x][2] = ((255 - x) + y) >> 1;
+	rgbaimg[y][x][3] = y;
+      }
+
+  for (y = 0; y < 16; y++)
+    for (x = 0; x < 2; x++)
+      bitimg[y][x] = (x << 4) | y;
+
+  affine[0] = 0.5;
+  affine[1] = .2;
+  affine[2] = -.2;
+  affine[3] = 0.5;
+  affine[4] = 64;
+  affine[5] = 64;
+  
+  affine2[0] = 1;
+  affine2[1] = -.2;
+  affine2[2] = .2;
+  affine2[3] = 1;
+  affine2[4] = 128;
+  affine2[5] = 128;
+
+  affine3[0] = 5;
+  affine3[1] = -.2;
+  affine3[2] = .2;
+  affine3[3] = 5;
+  affine3[4] = 384;
+  affine3[5] = 32;
+  
 
 #ifdef COLOR
   printf ("P6\n512 512\n255\n");
@@ -133,6 +251,24 @@ main (int argc, char **argv)
 	  art_rgb_svp_alpha (svp3, i, j, i + TILE_SIZE, j + TILE_SIZE,
 			     0x00ff0080,
 			     buf + (j * 512 + i) * BYTES_PP, 512 * BYTES_PP);
+	  art_rgb_affine (buf + (j * 512 + i) * BYTES_PP,
+			  i, j, i + TILE_SIZE, j + TILE_SIZE, 512 * BYTES_PP,
+			  (art_u8 *)colorimg, 256, 256, 256 * 3,
+			  affine,
+			  ART_FILTER_NEAREST);
+	  art_rgb_rgba_affine (buf + (j * 512 + i) * BYTES_PP,
+			       i, j, i + TILE_SIZE, j + TILE_SIZE,
+			       512 * BYTES_PP,
+			       (art_u8 *)rgbaimg, 256, 256, 256 * 4,
+			       affine2,
+			       ART_FILTER_NEAREST);
+	  art_rgb_bitmap_affine (buf + (j * 512 + i) * BYTES_PP,
+				 i, j, i + TILE_SIZE, j + TILE_SIZE,
+				 512 * BYTES_PP,
+				 (art_u8 *)bitimg, 16, 16, 2,
+				 0xffff00ff,
+				 affine3,
+				 ART_FILTER_NEAREST);
 	}
 #else
 	art_gray_svp_aa (svp, i, j, i + TILE_SIZE, j + TILE_SIZE,
