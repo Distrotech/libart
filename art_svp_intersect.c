@@ -1412,6 +1412,8 @@ art_svp_intersect_add_seg (ArtIntersectCtx *ctx, const ArtSVPSeg *in_seg)
   seg->stack = art_new (ArtPoint, seg->n_stack_max);
 
   seg->horiz_delta_wind = 0;
+  
+  seg->wind_left = 0;
 
   pri_pt->user_data = seg;
   art_svp_intersect_setup_seg (seg, pri_pt);
