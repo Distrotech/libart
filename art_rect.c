@@ -77,6 +77,45 @@ gboolean irect_point_inside (ArtIRect *rect, GzwPoint *point) {
 }
 #endif
 
+/* Make a copy of the rectangle. */
+void
+art_drect_copy (ArtDRect *dest, const ArtDRect *src) {
+  dest->x0 = src->x0;
+  dest->y0 = src->y0;
+  dest->x1 = src->x1;
+  dest->y1 = src->y1;
+}
+
+/* Find the smallest rectangle that includes both source rectangles. */
+void
+art_drect_union (ArtDRect *dest, const ArtDRect *src1, const ArtDRect *src2) {
+  if (art_drect_empty (src1)) {
+    art_drect_copy (dest, src2);
+  } else if (art_drect_empty (src2)) {
+    art_drect_copy (dest, src1);
+  } else {
+    dest->x0 = MIN (src1->x0, src2->x0);
+    dest->y0 = MIN (src1->y0, src2->y0);
+    dest->x1 = MAX (src1->x1, src2->x1);
+    dest->y1 = MAX (src1->y1, src2->y1);
+  }
+}
+
+/* Return the intersection of the two rectangles */
+void
+art_drect_intersect (ArtDRect *dest, const ArtDRect *src1, const ArtDRect *src2) {
+  dest->x0 = MAX (src1->x0, src2->x0);
+  dest->y0 = MAX (src1->y0, src2->y0);
+  dest->x1 = MIN (src1->x1, src2->x1);
+  dest->y1 = MIN (src1->y1, src2->y1);
+}
+
+/* Return true if the rectangle is empty. */
+int
+art_drect_empty (const ArtDRect *src) {
+  return (src->x1 <= src->x0 || src->y1 <= src->y0);
+}
+
 void
 art_bbox_affine_transform (ArtDRect *dst, const ArtDRect *src, const double matrix[6])
 {

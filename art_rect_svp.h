@@ -17,19 +17,25 @@
  * Boston, MA 02111-1307, USA.
  */
 
-#ifndef __ART_RECT_UTA_H__
-#define __ART_RECT_UTA_H__
+#ifndef __ART_RECT_SVP_H__
+#define __ART_RECT_SVP_H__
+
+/* Find the bounding box of a sorted vector path. */
 
 #ifdef __cplusplus
 extern "C" {
 #endif /* __cplusplus */
 
-ArtIRect *
-art_rect_list_from_uta (ArtUta *uta, int max_width, int max_height,
-			int *p_nrects);
+void
+art_drect_svp (ArtDRect *bbox, const ArtSVP *svp);
+
+/* Compute the bounding box of the svp and union it in to the
+   existing bounding box. */
+void
+art_drect_svp_union (ArtDRect *bbox, const ArtSVP *svp);
 
 #ifdef __cplusplus
 }
 #endif /* __cplusplus */
 
-#endif /* __ART_RECT_UTA_H__ */
+#endif /* __ART_RECT_SVP_H__ */

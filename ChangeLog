@@ -1,3 +1,13 @@
+Sun Dec 27 21:45:03 1998  Raph Levien  <raph@gimp.org>
+
+	* art_rect.h: 
+	* art_rect.c: Added DRect versions of the basic ops (double
+	rather than int).
+
+	* art_rect_svp.h:
+	* art_rect_svp.c: Added. This computes the bounding box of
+	an svp.
+
 Wed Dec 16 14:18:46 1998  Raph Levien  <raph@gimp.org>
 
 	* art_alphagamma.h:
