@@ -3,8 +3,9 @@ noinst_PROGRAMS = testart testuta
 bin_SCRIPTS = \
 	libart-config
 
-EXTRA_DIST = \
-	libart.m4
+EXTRA_DIST = 			\
+	libart.m4		\
+	libartConf.sh.in
 
 lib_LTLIBRARIES = libart_lgpl.la
 
@@ -82,8 +83,6 @@ m4data_DATA = libart.m4
 
 confexecdir=$(libdir)
 confexec_DATA = libartConf.sh
-
-EXTRA_DIST = libartConf.sh.in
 
 ## We create libartConf.sh here and not from configure because we want
 ## to get the paths expanded correctly.  Macros like srcdir are given
