@@ -25,6 +25,7 @@
 
 
 #include <stdio.h> /* for printf of debugging info */
+#include <string.h> /* for memcpy */
 #include "art_misc.h"
 
 #include "art_rect.h"
