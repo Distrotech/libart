@@ -330,7 +330,7 @@ art_rgb_svp_alpha_opaque_callback (void *callback_data, int y,
 	  alpha = running_sum >> 16;
 	  if (alpha)
 	    {
-	      if (alpha == 255)
+	      if (alpha >= 255)
 		art_rgb_fill_run (linebuf + (run_x1 - x0) * 3,
 				  r, g, b,
 				  x1 - run_x1);
