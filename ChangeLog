@@ -1,5 +1,10 @@
 2001-10-09  Raph Levien  <raph@pixel.artofcode.com>
 
+	* art_svp_intersect.c (art_svp_intersect_test_cross): Breaks
+	bottom part of line segments in "too close" cases.
+
+2001-10-09  Raph Levien  <raph@pixel.artofcode.com>
+
 	* art_svp_intersect.c (art_svp_writer_rewind_add_point): Fixed
 	bbox computation.
 	(art_svp_intersector): Handle degenerate case where input

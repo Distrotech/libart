@@ -748,7 +748,9 @@ art_svp_intersect_test_cross (ArtIntersectCtx *ctx,
 	return ART_FALSE;
       else if (d < EPSILON_A)
 	{
-	  art_warn ("art_svp_intersect_test_cross: need to break\n");
+	  double right_x1 = art_svp_intersect_break (ctx, right_seg, left_y1);
+	  if (left_x1 <= right_x1)
+	    return ART_FALSE;
 	}
     }
   else if (left_y1 > right_y1)
@@ -764,7 +766,9 @@ art_svp_intersect_test_cross (ArtIntersectCtx *ctx,
 	return ART_FALSE;
       else if (d > -EPSILON_A)
 	{
-	  art_warn ("art_svp_intersect_test_cross: need to break\n");
+	  double left_x1 = art_svp_intersect_break (ctx, left_seg, right_y1);
+	  if (left_x1 <= right_x1)
+	    return ART_FALSE;
 	}
     }
   else /* left_y1 == right_y1 */
