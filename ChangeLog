@@ -1,3 +1,12 @@
+2001-10-11  Raph Levien  <raph@pixel.artofcode.com>
+
+	* art_svp_render_aa.c (art_svp_render_aa_iter_step): Got rid
+	of qsort of steps, and now keep the step list in sorted order.
+	Further, we combine duplicate steps with the same x value,
+	which bounds the size of the step list to x1 - x0, so we
+	don't need to dynamically resize it. Thanks greatly to
+	Bruce Q. Hammond for the original version of this patch.
+
 2001-10-09  Raph Levien  <raph@pixel.artofcode.com>
 
 	* art_svp_intersect.c (art_svp_intersect_test_cross): Breaks
