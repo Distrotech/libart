@@ -25,7 +25,11 @@
 
 #include "art_vpath.h"
 #include "art_svp.h"
+#ifdef ART_USE_NEW_INTERSECTOR
+#include "art_svp_intersect.h"
+#else
 #include "art_svp_wind.h"
+#endif
 #include "art_svp_vpath.h"
 #include "art_svp_vpath_stroke.h"
 
@@ -665,6 +669,32 @@ art_svp_vpath_stroke (ArtVpath *vpath,
 		      double miter_limit,
 		      double flatness)
 {
+#ifdef ART_USE_NEW_INTERSECTOR
+  ArtVpath *vpath_stroke;
+  ArtSVP *svp, *svp2;
+  ArtSvpWriter *swr;
+
+  vpath_stroke = art_svp_vpath_stroke_raw (vpath, join, cap,
+					   line_width, miter_limit, flatness);
+#ifdef VERBOSE
+  print_ps_vpath (vpath_stroke);
+#endif
+  svp = art_svp_from_vpath (vpath_stroke);
+#ifdef VERBOSE
+  print_ps_svp (svp);
+#endif
+  art_free (vpath_stroke);
+
+  swr = art_svp_writer_rewind_new (ART_WIND_RULE_NONZERO);
+  art_svp_intersector (svp, swr);
+
+  svp2 = art_svp_writer_rewind_reap (swr);
+#ifdef VERBOSE
+  print_ps_svp (svp2);
+#endif
+  art_svp_free (svp);
+  return svp2;
+#else
   ArtVpath *vpath_stroke, *vpath2;
   ArtSVP *svp, *svp2, *svp3;
 
@@ -695,4 +725,5 @@ art_svp_vpath_stroke (ArtVpath *vpath,
   art_svp_free (svp2);
 
   return svp3;
+#endif
 }

@@ -26,7 +26,12 @@
 #include "art_svp.h"
 #include "art_vpath.h"
 #include "art_svp_vpath.h"
+#include "art_svp.h"
+#ifdef ART_USE_NEW_INTERSECTOR
+#include "art_svp_intersect.h"
+#else
 #include "art_svp_wind.h"
+#endif
 #include "art_svp_ops.h"
 #include "art_vpath_svp.h"
 
@@ -141,6 +146,7 @@ print_ps_svp (ArtSVP *vpath)
 }
 #endif
 
+#ifndef ART_USE_NEW_INTERSECTOR
 static ArtSVP *
 art_svp_merge_perturbed (const ArtSVP *svp1, const ArtSVP *svp2)
 {
@@ -172,6 +178,7 @@ art_svp_merge_perturbed (const ArtSVP *svp1, const ArtSVP *svp2)
 
   return svp_new;
 }
+#endif
 
 /* Compute the union of two vector paths.
 
@@ -208,6 +215,18 @@ art_svp_merge_perturbed (const ArtSVP *svp1, const ArtSVP *svp2)
 ArtSVP *
 art_svp_union (const ArtSVP *svp1, const ArtSVP *svp2)
 {
+#ifdef ART_USE_NEW_INTERSECTOR 
+  ArtSVP *svp3, *svp_new;
+  ArtSvpWriter *swr;
+
+  svp3 = art_svp_merge (svp1, svp2);
+  swr = art_svp_writer_rewind_new (ART_WIND_RULE_POSITIVE);
+  art_svp_intersector (svp3, swr);
+  svp_new = art_svp_writer_rewind_reap (swr);
+  art_svp_free (svp3);
+
+  return svp_new;
+#else
   ArtSVP *svp3, *svp4, *svp_new;
 
   svp3 = art_svp_merge_perturbed (svp1, svp2);
@@ -221,6 +240,7 @@ art_svp_union (const ArtSVP *svp1, const ArtSVP *svp2)
 #endif
   art_svp_free (svp4);
   return svp_new;
+#endif
 }
 
 /* Compute the intersection of two vector paths.
@@ -260,6 +280,18 @@ art_svp_union (const ArtSVP *svp1, const ArtSVP *svp2)
 ArtSVP *
 art_svp_intersect (const ArtSVP *svp1, const ArtSVP *svp2)
 {
+#ifdef ART_USE_NEW_INTERSECTOR 
+  ArtSVP *svp3, *svp_new;
+  ArtSvpWriter *swr;
+
+  svp3 = art_svp_merge_perturbed (svp1, svp2);
+  swr = art_svp_writer_rewind_new (ART_WIND_RULE_INTERSECT);
+  art_svp_intersector (svp3, swr);
+  svp_new = art_svp_writer_rewind_reap (swr);
+  art_svp_free (svp3);
+
+  return svp_new;
+#else
   ArtSVP *svp3, *svp4, *svp_new;
 
   svp3 = art_svp_merge_perturbed (svp1, svp2);
@@ -269,6 +301,7 @@ art_svp_intersect (const ArtSVP *svp1, const ArtSVP *svp2)
   svp_new = art_svp_rewind_uncrossed (svp4, ART_WIND_RULE_INTERSECT);
   art_svp_free (svp4);
   return svp_new;
+#endif
 }
 
 /* Compute the symmetric difference of two vector paths.
@@ -311,6 +344,18 @@ art_svp_intersect (const ArtSVP *svp1, const ArtSVP *svp2)
 ArtSVP *
 art_svp_diff (const ArtSVP *svp1, const ArtSVP *svp2)
 {
+#ifdef ART_USE_NEW_INTERSECTOR 
+  ArtSVP *svp3, *svp_new;
+  ArtSvpWriter *swr;
+
+  svp3 = art_svp_merge_perturbed (svp1, svp2);
+  swr = art_svp_writer_rewind_new (ART_WIND_RULE_ODDEVEN);
+  art_svp_intersector (svp3, swr);
+  svp_new = art_svp_writer_rewind_reap (swr);
+  art_svp_free (svp3);
+
+  return svp_new;
+#else
   ArtSVP *svp3, *svp4, *svp_new;
 
   svp3 = art_svp_merge_perturbed (svp1, svp2);
@@ -320,6 +365,7 @@ art_svp_diff (const ArtSVP *svp1, const ArtSVP *svp2)
   svp_new = art_svp_rewind_uncrossed (svp4, ART_WIND_RULE_ODDEVEN);
   art_svp_free (svp4);
   return svp_new;
+#endif
 }
 
 /* todo: implement minus */

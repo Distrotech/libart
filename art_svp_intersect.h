@@ -1,5 +1,5 @@
 /* Libart_LGPL - library of basic graphic primitives
- * Copyright (C) 1998 Raph Levien
+ * Copyright (C) 2001 Raph Levien
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -17,11 +17,10 @@
  * Boston, MA 02111-1307, USA.
  */
 
-#ifndef __ART_SVP_WIND_H__
-#define __ART_SVP_WIND_H__
+#ifndef __ART_SVP_INTERSECT_H__
+#define __ART_SVP_INTERSECT_H__
 
-/* Primitive intersection and winding number operations on sorted
-   vector paths. */
+/* The funky new SVP intersector. */
 
 #ifdef __cplusplus
 extern "C" {
@@ -37,15 +36,29 @@ typedef enum {
 } ArtWindRule;
 #endif
 
-ArtSVP *
-art_svp_uncross (ArtSVP *vp);
+typedef struct _ArtSvpWriter ArtSvpWriter;
+
+struct _ArtSvpWriter {
+  int (*add_segment) (ArtSvpWriter *self, int wind_left, int delta_wind,
+		      double x, double y);
+  void (*add_point) (ArtSvpWriter *self, int seg_id, double x, double y);
+  void (*close_segment) (ArtSvpWriter *self, int seg_id);
+};
+
+ArtSvpWriter *
+art_svp_writer_rewind_new (ArtWindRule rule);
 
 ArtSVP *
-art_svp_rewind_uncrossed (ArtSVP *vp, ArtWindRule rule);
+art_svp_writer_rewind_reap (ArtSvpWriter *self);
 
+int
+art_svp_seg_compare (const void *s1, const void *s2);
 
 #ifdef __cplusplus
 }
 #endif /* __cplusplus */
 
-#endif /* __ART_SVP_WIND_H__ */
+void
+art_svp_intersector (const ArtSVP *in, ArtSvpWriter *out);
+
+#endif /* __ART_SVP_INTERSECT_H__ */

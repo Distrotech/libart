@@ -38,6 +38,7 @@ libart_lgpl_2_la_SOURCES = \
 	art_rgba.c \
 	art_rgb_svp.c \
 	art_svp.c \
+	art_svp_intersect.c \
 	art_svp_ops.c \
 	art_svp_point.c \
 	art_svp_render_aa.c \
@@ -84,6 +85,7 @@ libart_lgplinc_HEADERS = \
 	art_rgb_svp.h \
 	art_rgba.h \
 	art_svp.h \
+	art_svp_intersect.h \
 	art_svp_ops.h \
 	art_svp_point.h \
 	art_svp_render_aa.h \

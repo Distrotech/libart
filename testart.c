@@ -38,6 +38,7 @@
 #include "art_render.h"
 #include "art_render_gradient.h"
 #include "art_render_svp.h"
+#include "art_svp_intersect.h"
 
 #ifdef DEAD_CODE
 static void
@@ -214,6 +215,7 @@ make_testpat (void)
   svp = art_svp_from_vpath (vpath);
 
   vpath2 = randstar (50);
+#if 1
   vpath3 = art_vpath_dash (vpath2, &dash);
   art_free (vpath2);
   svp2 = art_svp_vpath_stroke (vpath3,
@@ -222,8 +224,16 @@ make_testpat (void)
 			       15,
 			       4,
 			       0.5);
+#else
+  svp2 = art_svp_from_vpath (vpath2);
+#endif
 
+#if 1
   svp3 = art_svp_intersect (svp, svp2);
+#else
+  svp3 = svp2;
+#endif
+
   /*
   print_svp (svp2);
   */
@@ -495,6 +505,68 @@ test_gradient (void)
 }
 
 static void
+output_svp_ppm (const ArtSVP *svp)
+{
+  art_u8 buf[512 * 512 * 3];
+  art_rgb_svp_aa (svp, 0, 0, 512, 512, 0xfff0c0, 0x000080,
+		  buf, 512 * 3, NULL);
+  printf ("P6\n512 512\n255\n");
+  fwrite (buf, 1, 512 * 512 * 3, stdout);
+}
+
+static void
+test_intersect (void)
+{
+  ArtVpath vpath[] = {
+
+#if 1
+    /* two triangles */
+    { ART_MOVETO, 100, 100 },
+    { ART_LINETO, 300, 400 },
+    { ART_LINETO, 400, 200 },
+    { ART_LINETO, 100, 100 },
+    { ART_MOVETO, 110, 110 },
+    { ART_LINETO, 310, 410 },
+    { ART_LINETO, 410, 210 },
+    { ART_LINETO, 110, 110 },
+#endif
+
+#if 0
+    /* a bowtie */
+    { ART_MOVETO, 100, 100 },
+    { ART_LINETO, 400, 400 },
+    { ART_LINETO, 400, 100 },
+    { ART_LINETO, 100, 400 },
+    { ART_LINETO, 100, 100 },
+#endif
+
+    { ART_END, 0, 0}
+  };
+  ArtSVP *svp, *svp2;
+  ArtSvpWriter *swr;
+
+  svp = art_svp_from_vpath (vpath);
+
+#define RUN_INTERSECT
+#ifdef RUN_INTERSECT
+  swr = art_svp_writer_rewind_new (ART_WIND_RULE_ODDEVEN);
+  art_svp_intersector (svp, swr);
+
+  svp2 = art_svp_writer_rewind_reap (swr);
+#endif
+
+#if 1
+  output_svp_ppm (svp2);
+#endif
+
+  art_svp_free (svp);
+
+#ifdef RUN_INTERSECT
+  art_svp_free (svp2);
+#endif
+}
+
+static void
 usage (void)
 {
   fprintf (stderr, "usage: testart <test>\n"
@@ -520,8 +592,9 @@ main (int argc, char **argv)
     test_dist ();
   else if (!strcmp (argv[1], "dash"))
     test_dash ();
+  else if (!strcmp (argv[1], "intersect"))
+    test_intersect ();
   else
     usage ();
   return 0;
 }
-

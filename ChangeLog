@@ -1,3 +1,20 @@
+2001-10-01  Raph Levien  <raph@acm.org>
+
+	* art_svp_intersect.c:
+	* art_svp_intersect.h:
+	* Makefile.am:
+	* art_misc.h:
+	* art_svp_wind.h: First commit of new intersector code. It is
+	  turned off by default, but can be enabled by #defining
+	  ART_USE_NEW_INTERSECTOR in art_misc.h.
+
+	* art_svp_ops.c: Make svp ops use new intersector if enabled.
+
+	* art_svp_vpath_stroke.c: Make vpath stroking use new intersector
+	if enabled.
+	
+	* testart.c: New test case for intersector.
+
 Wed Sep 26 03:48:13 2001  George Lebl <jirka@5z.com>
 
 	* Release 2.3.6
