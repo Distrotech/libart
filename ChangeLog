@@ -1,3 +1,8 @@
+Sun Nov 22 23:21:09 1998  Raph Levien  <raph@gimp.org>
+
+	* Makefile.am (libart_lgplincdir): Fixed stupid bug in naming of
+	the variable.
+
 Sun Nov 22 21:41:13 1998  Raph Levien  <raph@gimp.org>
 
 	* art_uta_vpath.c: moved art_uta_union into art_uta_ops.
