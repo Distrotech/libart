@@ -1,3 +1,8 @@
+Fri Sep 24 17:53:21 1999  Raph Levien  <raph@acm.org>
+
+	* art_svp_render_aa.c (art_svp_render_insert_active): Avoid
+	reading undefined memory (thanks to Morten Welinder).
+
 1999-09-19  Raph Levien  <raph@gimp.org>
 
 	* art_pixbuf.c (art_pixbuf_duplicate): Added a duplicate function
