@@ -819,11 +819,17 @@ art_svp_intersect_swap_active (ArtIntersectCtx *ctx,
   right_seg->right = left_seg;
 }
 
+typedef enum {
+  ART_BREAK_LEFT = 1,
+  ART_BREAK_RIGHT = 2
+} ArtBreakFlags;
+
 /**
  * art_svp_intersect_test_cross: Test crossing of a pair of active segments.
  * @ctx: Intersector context.
  * @left_seg: Left segment of the pair.
  * @right_seg: Right segment of the pair.
+ * @break_flags: Flags indicating whether to break neighbors.
  *
  * Tests crossing of @left_seg and @right_seg. If there is a crossing,
  * inserts the intersection point into both segments.
@@ -833,7 +839,8 @@ art_svp_intersect_swap_active (ArtIntersectCtx *ctx,
  **/
 static art_boolean
 art_svp_intersect_test_cross (ArtIntersectCtx *ctx,
-			      ArtActiveSeg *left_seg, ArtActiveSeg *right_seg)
+			      ArtActiveSeg *left_seg, ArtActiveSeg *right_seg,
+			      ArtBreakFlags break_flags)
 {
   double left_x0, left_y0, left_x1;
   double left_y1 = left_seg->y1;
@@ -970,7 +977,7 @@ art_svp_intersect_test_cross (ArtIntersectCtx *ctx,
 		    x, y, (unsigned long)left_seg, (unsigned long)right_seg);
 #endif
 	  art_svp_intersect_push_pt (ctx, right_seg, x, y);
-	  if (right_seg->right != NULL)
+	  if ((break_flags & ART_BREAK_RIGHT) && right_seg->right != NULL)
 	    art_svp_intersect_add_point (ctx, x, y, right_seg->right);
 	}
       else
@@ -997,7 +1004,7 @@ art_svp_intersect_test_cross (ArtIntersectCtx *ctx,
 	      x, y, (unsigned long)left_seg, (unsigned long)right_seg);
 #endif
       art_svp_intersect_push_pt (ctx, left_seg, x, y);
-      if (left_seg->left != NULL)
+      if ((break_flags & ART_BREAK_LEFT) && left_seg->left != NULL)
 	art_svp_intersect_add_point (ctx, x, y, left_seg->left);
     }
   else
@@ -1009,9 +1016,9 @@ art_svp_intersect_test_cross (ArtIntersectCtx *ctx,
       /* Insert the intersection point into both segments. */
       art_svp_intersect_push_pt (ctx, left_seg, x, y);
       art_svp_intersect_push_pt (ctx, right_seg, x, y);
-      if (left_seg->left != NULL)
+      if ((break_flags & ART_BREAK_LEFT) && left_seg->left != NULL)
 	art_svp_intersect_add_point (ctx, x, y, left_seg->left);
-      if (right_seg->right != NULL)
+      if ((break_flags & ART_BREAK_RIGHT) && right_seg->right != NULL)
 	art_svp_intersect_add_point (ctx, x, y, right_seg->right);
     }
   return ART_FALSE;
@@ -1069,7 +1076,8 @@ art_svp_intersect_insert_cross (ArtIntersectCtx *ctx,
     {
       if (left != NULL && left->left != NULL)
 	{
-	  if (art_svp_intersect_test_cross (ctx, left->left, left))
+	  if (art_svp_intersect_test_cross (ctx, left->left, left,
+					    ART_BREAK_LEFT))
 	    {
 	      if (left == right || right == NULL)
 		right = left->right;
@@ -1081,7 +1089,8 @@ art_svp_intersect_insert_cross (ArtIntersectCtx *ctx,
 	}
       else if (right != NULL && right->right != NULL)
 	{
-	  if (art_svp_intersect_test_cross (ctx, right, right->right))
+	  if (art_svp_intersect_test_cross (ctx, right, right->right,
+					    ART_BREAK_RIGHT))
 	    {
 	      if (left == right || left == NULL)
 		left = right->left;
@@ -1136,14 +1145,15 @@ art_svp_intersect_horiz (ArtIntersectCtx *ctx, ArtActiveSeg *seg,
   if (x0 > x1)
     {
       ArtActiveSeg *left;
-      double d;
 
       for (left = seg->left; left != NULL; left = seg->left)
 	{
-	  if (left->x[left->flags & ART_ACTIVE_FLAGS_BNEG] <= x1)
+	  int left_bneg = left->flags & ART_ACTIVE_FLAGS_BNEG;
+
+	  if (left->x[left_bneg] <= x1)
 	    break;
-	  d = x1 * left->a + ctx->y * left->b + left->c;
-	  if (d >= 0)
+	  if (left->x[left_bneg ^ 1] <= x1 &&
+	      x1 * left->a + ctx->y * left->b + left->c >= 0)
 	    break;
 	  if (left->y0 != ctx->y && left->y1 != ctx->y)
 	    {
@@ -1159,14 +1169,15 @@ art_svp_intersect_horiz (ArtIntersectCtx *ctx, ArtActiveSeg *seg,
   else
     {
       ArtActiveSeg *right;
-      double d;
 
       for (right = seg->right; right != NULL; right = seg->right)
 	{
-	  if (right->x[(right->flags & ART_ACTIVE_FLAGS_BNEG) ^ 1] >= x1)
+	  int right_bneg = right->flags & ART_ACTIVE_FLAGS_BNEG;
+
+	  if (right->x[right_bneg ^ 1] >= x1)
 	    break;
-	  d = x1 * right->a + ctx->y * right->b + right->c;
-	  if (d <= 0)
+	  if (right->x[right_bneg] >= x1 &&
+	      x1 * right->a + ctx->y * right->b + right->c <= 0)
 	    break;
 	  if (right->y0 != ctx->y && right->y1 != ctx->y)
 	    {
@@ -1249,7 +1260,8 @@ art_svp_intersect_advance_cursor (ArtIntersectCtx *ctx, ArtActiveSeg *seg,
       art_svp_intersect_add_horiz (ctx, seg);
       art_svp_intersect_active_delete (ctx, seg);
       if (left != NULL && right != NULL)
-	art_svp_intersect_test_cross (ctx, left, right);
+	art_svp_intersect_test_cross (ctx, left, right,
+				      ART_BREAK_LEFT | ART_BREAK_RIGHT);
       art_free (pri_pt);
     }
   else

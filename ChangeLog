@@ -1,5 +1,22 @@
 2001-10-15  Raph Levien  <raph@pixel.artofcode.com>
 
+	* art_svp_intersect.c (art_svp_intersect_horiz): Minor
+	logic fix so that horiz segments successfully cross
+	zero length segments in the active list.
+
+	(art_svp_intersect_test_cross): Flags indicating whether to
+	do add_point (potentially breaking neighbors) to left and
+	to right.
+
+	(art_svp_intersect_insert_cross): Provide ART_BREAK_LEFT and
+	ART_BREAK_RIGHT flags to art_svp_intersect_test_cross,
+	depending on direction of search.
+
+	(art_svp_intersect_advance_cursor): Provide flags (allow
+	both left and right breaking) to test_cross.
+	
+2001-10-15  Raph Levien  <raph@pixel.artofcode.com>
+
 	* art_svp_intersect.c (CHEAP_SANITYCHECK): Added an inexpensive
 	sanitycheck to detect multiple insertions of a segment into the
 	horiz list.
