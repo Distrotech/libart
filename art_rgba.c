@@ -21,7 +21,7 @@
  */
 
 #include <config.h>
-#include <libart_lgpl/art_misc.h>
+#include "art_misc.h"
 #include "art_rgba.h"
 
 #define ART_OPTIMIZE_SPACE
