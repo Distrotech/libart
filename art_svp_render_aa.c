@@ -256,7 +256,10 @@ art_svp_render_aa_iter_step (ArtSVPRenderAAIter *iter, int *p_start,
 	      {
 		/* case 1, antialias a single pixel */
 		if (n_steps + 2 > n_steps_max)
-		  art_expand (steps, ArtSVPRenderAAStep, n_steps_max);
+		  {
+		    art_expand (steps, ArtSVPRenderAAStep, n_steps_max);
+		    iter->steps = steps;
+		  }
 		xdelta = (ix_min + 1 - (x_min + x_max) * 0.5) * delta;
 		steps[n_steps].x = ix_min;
 		steps[n_steps].delta = xdelta;
@@ -279,6 +282,7 @@ art_svp_render_aa_iter_step (ArtSVPRenderAAIter *iter, int *p_start,
 		    while (n_steps + ix_max + 2 - ix_min > n_steps_max);
 		    steps = art_renew (steps, ArtSVPRenderAAStep,
 				       n_steps_max);
+		    iter->steps = steps;
 		    iter->n_steps_max = n_steps_max;
 		  }
 		rslope = 1.0 / fabs (seg_dx[seg_index]);
