@@ -1,3 +1,11 @@
+2001-03-24  Martin Baulig  <baulig@suse.de>
+
+	Applied the patch from Alexander Larsson which was sitting
+	in gnome-libs/patches/libart.diff since February.
+	[FIXME: Alex, can you please provide a ChangeLog?])
+
+	* art_rgb_a_affine.[ch]: New files.
+
 2001-01-07  Hans Breuer <Hans@Breuer.Org>
 	* art_misc.c : embryonic change to use libart_lgpl on win32
 	* libart.def : new file, exported functions for win32 dll
