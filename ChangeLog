@@ -1,3 +1,21 @@
+Sun Dec  6 22:15:12 1998  Raph Levien  <raph@gimp.org>
+
+	* art_svp_wind.[ch], art_svp_vpath_stroke.[ch]: Added, but it
+	doesn't work yet. These will do stroke outline and basic
+	vector ops like union, intersect, etc.
+
+	* art_svp_render_aa.c: Added a simple speedup based on bbox
+	culling. I will want to do more speedups, but none of this is
+	necessary for the freeze.
+
+	* art_svp_vpath.c: Fixed some bugs in the art_svp_from_vpath in
+	cases where there is more than one subpath.
+
+	* art_vpath.h:
+	* art_vpath.c (art_vpath_perturb): Added this function.  This will
+	help cheat as long as the basic vector ops have numerical
+	stability problems.
+
 Fri Dec  4 18:00:38 1998  Raph Levien  <raph@gimp.org>
 
 	* art_svp_render_aa.c (art_svp_render_aa): Changed the api

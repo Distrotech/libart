@@ -20,6 +20,7 @@
 /* Basic constructors and operations for vector paths */
 
 #include <math.h>
+#include <stdlib.h>
 
 #include "art_misc.h"
 
@@ -131,3 +132,31 @@ art_vpath_bbox_irect (const ArtVpath *vec, ArtIRect *irect)
   art_drect_to_irect (irect, &drect);
 }
 
+#define EPSILON 1e-6
+
+/* Perturb each of the points by a small random amount. This is helpful
+   for cheating in cases when algorithms haven't attained numerical
+   stability yet. */
+
+ArtVpath *
+art_vpath_perturb (ArtVpath *src)
+{
+  int i;
+  int size;
+  ArtVpath *new;
+
+  for (i = 0; src[i].code != ART_END; i++);
+  size = i;
+
+  new = art_new (ArtVpath, size + 1);
+
+  for (i = 0; i < size; i++)
+    {
+      new[i].code = src[i].code;
+      new[i].x = src[i].x + (EPSILON * rand ()) / RAND_MAX - EPSILON * 0.5;
+      new[i].y = src[i].y + (EPSILON * rand ()) / RAND_MAX - EPSILON * 0.5;
+    }
+  new[i].code = ART_END;
+
+  return new;
+}

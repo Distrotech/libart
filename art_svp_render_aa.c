@@ -99,9 +99,12 @@ art_svp_render_step_compare (const void *s1, const void *s2)
    Numerical stability: pretty good, although probably not
    bulletproof.
 
-   Speed: Needs more aggressive culling of bounding boxes.
-          Can probably speed up the [x0,x1) clipping of step values.
-	  Can do more of the step calculation in fixed point.
+   Speed: Needs more aggressive culling of bounding boxes.  Can
+   probably speed up the [x0,x1) clipping of step values.  Can do more
+   of the step calculation in fixed point.
+
+   Precision: No known problems, although it should be tested
+   thoroughly, especially for symmetry.
 
 */
 

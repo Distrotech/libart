@@ -19,6 +19,8 @@ libart_lgpl_la_SOURCES = \
 	art_svp.c \
 	art_svp_render_aa.c \
 	art_svp_vpath.c \
+	art_svp_wind.c \
+	art_svp_wind.h \
 	art_uta.c \
 	art_uta_ops.c \
 	art_uta_rect.c \

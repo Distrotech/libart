@@ -17,50 +17,46 @@
  * Boston, MA 02111-1307, USA.
  */
 
-#ifndef __ART_VPATH_H__
-#define __ART_VPATH_H__
+#ifndef __ART_SVP_VPATH_H__
+#define __ART_SVP_VPATH_H__
 
-#include <libart_lgpl/art_rect.h>
-#include <libart_lgpl/art_pathcode.h>
-
-/* Basic data structures and constructors for simple vector paths */
+/* Sort vector paths into sorted vector paths. */
 
 #ifdef __cplusplus
 extern "C" {
 #endif /* __cplusplus */
 
-typedef struct _ArtVpath ArtVpath;
+typedef enum {
+  ART_PATH_STROKE_JOIN_MITER,
+  ART_PATH_STROKE_JOIN_ROUND,
+  ART_PATH_STROKE_JOIN_BEVEL
+} ArtPathStrokeJoinType;
 
-/* CURVETO is not allowed! */
-struct _ArtVpath {
-  ArtPathcode code;
-  double x;
-  double y;
-};
+typedef enum {
+  ART_PATH_STROKE_CAP_BUTT,
+  ART_PATH_STROKE_CAP_ROUND,
+  ART_PATH_STROKE_CAP_SQUARE
+} ArtPathStrokeCapType;
 
-/* Some of the functions need to go into their own modules */
+ArtSVP *
+art_svp_vpath_stroke (ArtVpath *vpath,
+		      ArtPathStrokeJoinType join,
+		      ArtPathStrokeCapType cap,
+		      double line_width,
+		      double miter_limit,
+		      double flatness);
 
-void
-art_vpath_add_point (ArtVpath **p_vpath, int *pn_points, int *pn_points_max,
-		     ArtPathcode code, double x, double y);
-
+/* This version may have winding numbers exceeding 1. */
 ArtVpath *
-art_vpath_new_circle (double x, double y, double r);
-
-ArtVpath *
-art_vpath_affine_transform (const ArtVpath *src, const double matrix[6]);
-
-void
-art_vpath_bbox_drect (const ArtVpath *vec, ArtDRect *drect);
-
-void
-art_vpath_bbox_irect (const ArtVpath *vec, ArtIRect *irect);
-
-ArtVpath *
-art_vpath_perturb (ArtVpath *src);
+art_svp_vpath_stroke_raw (ArtVpath *vpath,
+			  ArtPathStrokeJoinType join,
+			  ArtPathStrokeCapType cap,
+			  double line_width,
+			  double miter_limit,
+			  double flatness);
 
 #ifdef __cplusplus
 }
 #endif /* __cplusplus */
 
-#endif /* __ART_VPATH_H__ */
+#endif /* __ART_SVP_VPATH_H__ */

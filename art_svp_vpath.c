@@ -26,6 +26,7 @@
 
 #include "art_vpath.h"
 #include "art_svp.h"
+#include "art_svp_vpath.h"
 
 static int
 art_svp_seg_compare (const void *s1, const void *s2);
@@ -91,9 +92,15 @@ art_svp_from_vpath (ArtVpath *vpath)
 	    if (dir < 0)
 	      reverse_points (points, n_points);
 	    svp->segs[n_segs].points = points;
+	    svp->segs[n_segs].bbox.x0 = x_min;
+	    svp->segs[n_segs].bbox.x1 = x_max;
+	    svp->segs[n_segs].bbox.y0 = points[0].y;
+	    svp->segs[n_segs].bbox.y1 = points[n_points - 1].y;
 	    n_segs++;
+	    points = NULL;
 	  }
-	else if (points == NULL)
+
+	if (points == NULL)
 	  {
 	    n_points_max = 4;
 	    points = art_new (ArtPoint, n_points_max);
