@@ -68,8 +68,8 @@ art_affine_flip (double dst_affine[6], const double src_affine[6], int horz, int
   dst_affine[1] = horz ? - src_affine[1] : src_affine[1];
   dst_affine[2] = vert ? - src_affine[2] : src_affine[2];
   dst_affine[3] = vert ? - src_affine[3] : src_affine[3];
-  dst_affine[4] = src_affine[4];
-  dst_affine[5] = src_affine[5];
+  dst_affine[4] = horz ? - src_affine[4] : src_affine[4];
+  dst_affine[5] = vert ? - src_affine[5] : src_affine[5];
 }
 
 #define EPSILON 1e-6

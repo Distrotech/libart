@@ -1,3 +1,8 @@
+Fri Jul 16 23:42:59 1999  Tim Janik  <timj@gtk.org>
+
+	* art_affine.c (art_affine_flip): flip translation matrixes as well, by
+	inverting matrix[4] if (horz) and inverting matrix[5] if (vert).
+
 Fri Jul 16 23:03:26 1999  Tim Janik  <timj@gtk.org>
 
 	* art_pixbuf.[hc]: deprecated art_pixbuf_free_shallow(), people should
