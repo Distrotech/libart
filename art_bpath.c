@@ -30,7 +30,7 @@
 
    Returns newly allocated transformed path. */
 ArtBpath *
-bpath_affine_transform (const ArtBpath *src, const double matrix[6])
+art_bpath_affine_transform (const ArtBpath *src, const double matrix[6])
 {
   int i;
   int size;
