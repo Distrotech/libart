@@ -5,7 +5,7 @@ libart.hierarchy
 libart.signals
 libart-unused.txt
 libart-decl-list.txt
-libart-overides.txt
+libart-overrides.txt
 libart.args
 *.stamp
 html
