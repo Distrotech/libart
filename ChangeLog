@@ -1,3 +1,13 @@
+2001-07-12  Darin Adler  <darin@bentspoon.com>
+
+	* art_misc.h: Change art_expand macro so it's a single
+	statement, using the do while (0) trick, which gets rid
+	of some warnings.
+	* art_pixbuf.c: Add a missing include.
+	* art_vpath_svp.c: (art_vpath_from_svp): Initialize a
+	variable to avoid a compiler warning.
+	* gen_art_config.c: Add a missing include.
+
 2001-03-24  Martin Baulig  <baulig@suse.de>
 
 	Applied the patch from Alexander Larsson which was sitting

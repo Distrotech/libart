@@ -19,7 +19,7 @@
 
 #include "art_misc.h"
 #include "art_pixbuf.h"
-
+#include <string.h>
 
 /**
  * art_pixbuf_new_rgb_dnotify: Create a new RGB #ArtPixBuf with explicit destroy notification.
