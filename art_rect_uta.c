@@ -24,16 +24,26 @@
 
 /* Functions to decompose a microtile array into a list of rectangles. */
 
-/* Allocate a new list of rectangles, set *p_nrects to the number in
-   the list.
-
-   Each rectangle bounded in size by (max_width, max_height). However,
-   these bounds must be at least the size of one tile.
-
-   This routine provides a precise implementation, i.e. the rectangles
-   cover exactly the same area as the uta. It is thus appropriate in
-   cases where the overhead per rectangle is small compared with the
-   cost of filling in extra pixels. */
+/**
+ * art_rect_list_from_uta: Decompose uta into list of rectangles.
+ * @uta: The source uta.
+ * @max_width: The maximum width of the resulting rectangles.
+ * @max_height: The maximum height of the resulting rectangles.
+ * @p_nrects: Where to store the number of returned rectangles.
+ *
+ * Allocates a new list of rectangles, sets *@p_nrects to the number
+ * in the list. This list should be freed with art_free().
+ *
+ * Each rectangle bounded in size by (@max_width, @max_height).
+ * However, these bounds must be at least the size of one tile.
+ *
+ * This routine provides a precise implementation, i.e. the rectangles
+ * cover exactly the same area as the uta. It is thus appropriate in
+ * cases where the overhead per rectangle is small compared with the
+ * cost of filling in extra pixels.
+ *
+ * Return value: An array containing the resulting rectangles.
+ **/
 ArtIRect *
 art_rect_list_from_uta (ArtUta *uta, int max_width, int max_height,
 			int *p_nrects)

@@ -34,6 +34,7 @@
 #include "art_rgb_rgba_affine.h"
 #include "art_alphagamma.h"
 #include "art_svp_point.h"
+#include "art_vpath_dash.h"
 
 void
 test_affine (void) {
@@ -158,9 +159,25 @@ print_svp (ArtSVP *vp)
 }
 
 void
+print_vpath (ArtVpath *vpath)
+{
+  int i;
+
+  for (i = 0; vpath[i].code != ART_END; i++)
+    printf ("%g %g %s\n",
+	    vpath[i].x, vpath[i].y,
+	    vpath[i].code == ART_MOVETO_OPEN ? "moveto %open" :
+	    vpath[i].code == ART_MOVETO ? "moveto" :
+	    vpath[i].code == ART_LINETO ? "lineto" :
+	    "?");
+
+  printf ("stroke\n");
+}
+
+void
 make_testpat (void)
 {
-  ArtVpath *vpath, *vpath2;
+  ArtVpath *vpath, *vpath2, *vpath3;
   ArtSVP *svp, *svp2;
   ArtSVP *svp3;
   art_u8 buf[512 * 512 * BYTES_PP];
@@ -174,6 +191,12 @@ make_testpat (void)
   double affine2[6];
   double affine3[6];
   ArtAlphaGamma *alphagamma;
+  double dash_data[] = { 20 };
+  ArtVpathDash dash;
+
+  dash.offset = 0;
+  dash.n_dash = 1;
+  dash.dash = dash_data;
 
 #ifdef TEST_AFFINE
   test_affine ();
@@ -184,7 +207,9 @@ make_testpat (void)
   svp = art_svp_from_vpath (vpath);
 
   vpath2 = randstar (50);
-  svp2 = art_svp_vpath_stroke (vpath2,
+  vpath3 = art_vpath_dash (vpath2, &dash);
+  art_free (vpath2);
+  svp2 = art_svp_vpath_stroke (vpath3,
 			       ART_PATH_STROKE_JOIN_MITER,
 			       ART_PATH_STROKE_CAP_BUTT,
 			       15,
@@ -337,11 +362,32 @@ test_dist (void)
 }
 
 void
+test_dash (void)
+{
+  ArtVpath *vpath, *vpath2;
+  double dash_data[] = { 10, 4, 1, 4};
+  ArtVpathDash dash;
+	  
+  dash.offset = 0;
+  dash.n_dash = 3;
+  dash.dash = dash_data;
+  
+  vpath = randstar (50);
+  vpath2 = art_vpath_dash (vpath, &dash);
+  printf ("%%!\n");
+  print_vpath (vpath2);
+  printf ("showpage\n");
+  art_free (vpath);
+  art_free (vpath2);
+}
+
+void
 usage (void)
 {
   fprintf (stderr, "usage: testart <test>\n"
 "  where <test> is one of:\n"
 "  testpat    -- make random star + gradients test pattern\n"
+"  dash       -- dash test (output is valid PostScript)\n"
 "  dist       -- distance test\n");
   exit (1);
 }
@@ -356,6 +402,8 @@ main (int argc, char **argv)
     make_testpat ();
   else if (!strcmp (argv[1], "dist"))
     test_dist ();
+  else if (!strcmp (argv[1], "dash"))
+    test_dash ();
   else
     usage ();
   return 0;

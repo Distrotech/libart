@@ -87,10 +87,26 @@ art_gray_svp_callback (void *callback_data, int y,
   data->buf += data->rowstride;
 }
 
-/* Render the vector path into the bytemap. Each pixel gets a value
-   proportional to the area within the pixel overlapping the (filled)
-   vector path */
-
+/**
+ * art_gray_svp_aa: Render the vector path into the bytemap.
+ * @svp: The SVP to render.
+ * @x0: The view window's left coord.
+ * @y0: The view window's top coord.
+ * @x1: The view window's right coord.
+ * @y1: The view window's bottom coord.
+ * @buf: The buffer where the bytemap is stored.
+ * @rowstride: the rowstride for @buf.
+ *
+ * Each pixel gets a value proportional to the area within the pixel
+ * overlapping the (filled) SVP. Pixel (x, y) is stored at:
+ *
+ *    @buf[(y - * @y0) * @rowstride + (x - @x0)]
+ *
+ * All pixels @x0 <= x < @x1, @y0 <= y < @y1 are generated. A
+ * stored value of zero is no coverage, and a value of 255 is full
+ * coverage. The area within the pixel (x, y) is the region covered
+ * by [x..x+1] and [y..y+1].
+ **/
 void
 art_gray_svp_aa (const ArtSVP *svp,
 		 int x0, int y0, int x1, int y1,

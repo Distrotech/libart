@@ -33,6 +33,12 @@
    the natural basic functions of an affine transformation.
 */
 
+/**
+ * art_affine_point: Do an affine transformation of a point.
+ * @dst: Where the result point is stored.
+ * @src: The original point.
+ @ @affine: The affine transformation.
+ **/
 void
 art_affine_point (ArtPoint *dst, const ArtPoint *src,
 		  const double affine[6])
@@ -45,6 +51,17 @@ art_affine_point (ArtPoint *dst, const ArtPoint *src,
   dst->y = x * affine[1] + y * affine[3] + affine[5];
 }
 
+/**
+ * art_affine_invert: Find the inverse of an affine transformation.
+ * @dst: Where the resulting affine is stored.
+ * @src: The original affine transformation.
+ *
+ * All non-degenerate affine transforms are invertible. If the original
+ * affine is degenerate or nearly so, expect numerical instability and
+ * very likely core dumps on Alpha and other fp-picky architectures.
+ * Otherwise, @dst multiplied with @src, or @src multiplied with @dst
+ * will be (to within roundoff error) the identity affine.
+ **/
 void
 art_affine_invert (double dst[6], const double src[6])
 {
@@ -59,8 +76,18 @@ art_affine_invert (double dst[6], const double src[6])
   dst[5] = -src[4] * dst[1] - src[5] * dst[3];
 }
 
-/* flip the matrix, FALSE, FALSE is a simple copy operation, and
-   TRUE, TRUE equals a rotation by 180 degrees */
+/**
+ * art_affine_flip: Flip an affine transformation horizontally and/or vertically.
+ * @dst_affine: Where the resulting affine is stored.
+ * @src_affine: The original affine transformation.
+ * @horiz: Whether or not to flip horizontally.
+ * @vert: Whether or not to flip horizontally.
+ *
+ * Flips the affine transform. FALSE for both @horiz and @vert implements
+ * a simple copy operation. TRUE for both @horiz and @vert is a
+ * 180 degree rotation. It is ok for @src_affine and @dst_affine to
+ * be equal pointers.
+ **/
 void
 art_affine_flip (double dst_affine[6], const double src_affine[6], int horz, int vert)
 {
@@ -145,12 +172,20 @@ art_ftoa (char str[80], double x)
   return p - str;
 }
 
-/* Convert affine trasformation to concise PostScript string representation.
 
-   The identity transform is mapped to the null string.
- */
 
 #include <stdlib.h>
+/**
+ * art_affine_to_string: Convert affine transformation to concise PostScript string representation.
+ * @str: Where to store the resulting string.
+ * @src: The affine transform.
+ *
+ * Converts an affine transform into a bit of PostScript code that
+ * implements the transform. Special cases of scaling, rotation, and
+ * translation are detected, and the corresponding PostScript
+ * operators used (this greatly aids understanding the output
+ * generated). The identity transform is mapped to the null string.
+ **/
 void
 art_affine_to_string (char str[128], const double src[6])
 {
@@ -188,7 +223,7 @@ art_affine_to_string (char str[128], const double src[6])
 	  /* could be rotate */
 	  if (fabs (src[0] - src[3]) < EPSILON &&
 	      fabs (src[1] + src[2]) < EPSILON &&
-	      (src[0] * src[0] + src[1] * src[1] - 1) < 2 * EPSILON)
+	      fabs (src[0] * src[0] + src[1] * src[1] - 1) < 2 * EPSILON)
 	    {
 	      double theta;
 
@@ -221,12 +256,19 @@ art_affine_to_string (char str[128], const double src[6])
   strcpy (str + ix, "] concat");
 }
 
-/* dst is the composition of doing affine src1 then src2. Note that
-   the PostScript concat operator multiplies on the left, i.e. if
-   "M concat" is equivalent to "CTM = multiply (M, CTM)";
-
-   It is safe to call this function with dst equal to one of the args.
- */
+/**
+ * art_affine_multiply: Multiply two affine transformation matrices.
+ * @dst: Where to store the result.
+ * @src1: The first affine transform to multiply.
+ * @src2: The second affine transform to multiply.
+ *
+ * Multiplies two affine transforms together, i.e. the resulting @dst
+ * is equivalent to doing first @src1 then @src2. Note that the
+ * PostScript concat operator multiplies on the left, i.e.  "M concat"
+ * is equivalent to "CTM = multiply (M, CTM)";
+ *
+ * It is safe to call this function with @dst equal to @src1 or @src2.
+ **/
 void
 art_affine_multiply (double dst[6], const double src1[6], const double src2[6])
 {
@@ -246,7 +288,12 @@ art_affine_multiply (double dst[6], const double src1[6], const double src2[6])
   dst[5] = d5;
 }
 
-/* set up the identity matrix */
+/**
+ * art_affine_identity: Set up the identity matrix.
+ * @dst: Where to store the resulting affine transform.
+ *
+ * Sets up an identity matrix.
+ **/
 void
 art_affine_identity (double dst[6])
 {
@@ -258,7 +305,15 @@ art_affine_identity (double dst[6])
   dst[5] = 0;
 }
 
-/* set up a scaling matrix */
+
+/**
+ * art_affine_scale: Set up a scaling matrix.
+ * @dst: Where to store the resulting affine transform.
+ * @sx: X scale factor.
+ * @sy: Y scale factor.
+ *
+ * Sets up a scaling matrix.
+ **/
 void
 art_affine_scale (double dst[6], double sx, double sy)
 {
@@ -270,7 +325,17 @@ art_affine_scale (double dst[6], double sx, double sy)
   dst[5] = 0;
 }
 
-/* set up a rotation matrix; theta is given in degrees */
+/**
+ * art_affine_rotate: Set up a rotation affine transform.
+ * @dst: Where to store the resulting affine transform.
+ * @theta: Rotation angle in degrees.
+ *
+ * Sets up a rotation matrix. In the standard libart coordinate
+ * system, in which increasing y moves downward, this is a
+ * counterclockwise rotation. In the standard PostScript coordinate
+ * system, which is reversed in the y direction, it is a clockwise
+ * rotation.
+ **/
 void
 art_affine_rotate (double dst[6], double theta)
 {
@@ -286,7 +351,15 @@ art_affine_rotate (double dst[6], double theta)
   dst[5] = 0;
 }
 
-/* set up a shearing matrix; theta is given in degrees */
+/**
+ * art_affine_shear: Set up a shearing matrix.
+ * @dst: Where to store the resulting affine transform.
+ * @theta: Shear angle in degrees.
+ *
+ * Sets up a shearing matrix. In the standard libart coordinate system
+ * and a small value for theta, || becomes \\. Horizontal lines remain
+ * unchanged.
+ **/
 void
 art_affine_shear (double dst[6], double theta)
 {
@@ -301,7 +374,14 @@ art_affine_shear (double dst[6], double theta)
   dst[5] = 0;
 }
 
-/* set up a translation matrix */
+/**
+ * art_affine_translate: Set up a translation matrix.
+ * @dst: Where to store the resulting affine transform.
+ * @tx: X translation amount.
+ * @tx: Y translation amount.
+ *
+ * Sets up a translation matrix.
+ **/
 void
 art_affine_translate (double dst[6], double tx, double ty)
 {
@@ -313,16 +393,33 @@ art_affine_translate (double dst[6], double tx, double ty)
   dst[5] = ty;
 }
 
-/* find the affine's "expansion factor", i.e. the scale amount */
+/**
+ * art_affine_expansion: Find the affine's expansion factor.
+ * @src: The affine transformation.
+ *
+ * Finds the expansion factor, i.e. the square root of the factor
+ * by which the affine transform affects area. In an affine transform
+ * composed of scaling, rotation, shearing, and translation, returns
+ * the amount of scaling.
+ *
+ * Return value: the expansion factor.
+ **/
 double
 art_affine_expansion (const double src[6])
 {
   return sqrt (src[0] * src[3] - src[1] * src[2]);
 }
 
-/* Determine whether the affine transformation is rectilinear,
-   i.e. whether a rectangle aligned to the grid is transformed into
-   another rectangle aligned to the grid. */
+/**
+ * art_affine_rectilinear: Determine whether the affine transformation is rectilinear.
+ * @src: The original affine transformation.
+ *
+ * Determines whether @src is rectilinear, i.e.  grid-aligned
+ * rectangles are transformed to other grid-aligned rectangles.  The
+ * implementation has epsilon-tolerance for roundoff errors.
+ *
+ * Return value: TRUE if @src is rectilinear.
+ **/
 int
 art_affine_rectilinear (const double src[6])
 {
@@ -330,7 +427,16 @@ art_affine_rectilinear (const double src[6])
 	  (fabs (src[0]) < EPSILON && fabs (src[3]) < EPSILON));
 }
 
-/* Determine whether two affine transformations are equal within grid allignment */
+/**
+ * art_affine_equal: Determine whether two affine transformations are equal.
+ * @matrix1: An affine transformation.
+ * @matrix2: Another affine transformation.
+ *
+ * Determines whether @matrix1 and @matrix2 are equal, with
+ * epsilon-tolerance for roundoff errors.
+ *
+ * Return value: TRUE if @matrix1 and @matrix2 are equal.
+ **/
 int
 art_affine_equal (double matrix1[6], double matrix2[6])
 {

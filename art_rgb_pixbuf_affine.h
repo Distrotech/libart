@@ -17,8 +17,8 @@
  * Boston, MA 02111-1307, USA.
  */
 
-#ifndef __ART_RGB_AFFINE_H__
-#define __ART_RGB_AFFINE_H__
+#ifndef __ART_RGB_PIXBUF_AFFINE_H__
+#define __ART_RGB_PIXBUF_AFFINE_H__
 
 /* This module handles compositing of affine-transformed generic
    pixbuf images over rgb pixel buffers. */

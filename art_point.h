@@ -27,6 +27,7 @@ extern "C" {
 typedef struct _ArtPoint ArtPoint;
 
 struct _ArtPoint {
+  /*< public >*/
   double x, y;
 };
 

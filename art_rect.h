@@ -28,10 +28,12 @@ typedef struct _ArtDRect ArtDRect;
 typedef struct _ArtIRect ArtIRect;
 
 struct _ArtDRect {
+  /*< public >*/
   double x0, y0, x1, y1;
 };
 
 struct _ArtIRect {
+  /*< public >*/
   int x0, y0, x1, y1;
 };
 

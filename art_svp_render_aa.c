@@ -40,13 +40,14 @@ art_svp_render_insert_active (int i, int *active_segs, int n_active_segs,
   for (j = 0; j < n_active_segs && seg_x[active_segs[j]] < x; j++);
 
   tmp1 = i;
-  while (j <= n_active_segs)
+  while (j < n_active_segs)
     {
       tmp2 = active_segs[j];
       active_segs[j] = tmp1;
       tmp1 = tmp2;
       j++;
     }
+  active_segs[j] = tmp1;
 }
 
 static void
@@ -66,6 +67,8 @@ art_svp_render_step_compare (const void *s1, const void *s2)
 
   return step1->x - step2->x;
 }
+
+#define EPSILON 1e-6
 
 /* Render the sorted vector path in the given rectangle, antialiased.
 
@@ -141,6 +144,7 @@ art_svp_render_aa (const ArtSVP *svp,
   int start;
   const ArtSVPSeg *seg;
   int curs;
+  double dy;
 
   active_segs = art_new (int, svp->n_segs);
   cursor = art_new (int, svp->n_segs);
@@ -166,8 +170,12 @@ art_svp_render_aa (const ArtSVP *svp,
 	      /* move cursor to topmost vector which overlaps [y,y+1) */
 	      for (curs = 0; seg->points[curs + 1].y < y; curs++);
 	      cursor[i] = curs;
-	      seg_dx[i] = (seg->points[curs + 1].x - seg->points[curs].x) /
-		(seg->points[curs + 1].y - seg->points[curs].y);
+	      dy = seg->points[curs + 1].y - seg->points[curs].y;
+	      if (fabs (dy) >= EPSILON)
+		seg_dx[i] = (seg->points[curs + 1].x - seg->points[curs].x) /
+		  dy;
+	      else
+		seg_dx[i] = 1e12;
 	      seg_x[i] = seg->points[curs].x +
 		(y - seg->points[curs].y) * seg_dx[i];
 	      art_svp_render_insert_active (i, active_segs, n_active_segs++,
@@ -299,9 +307,12 @@ art_svp_render_aa (const ArtSVP *svp,
 	      if (curs != seg->n_points - 1 &&
 		  seg->points[curs].y < y + 1)
 		{
-		  seg_dx[seg_index] = (seg->points[curs + 1].x -
-				       seg->points[curs].x) /
-		    (seg->points[curs + 1].y - seg->points[curs].y);
+		  dy = seg->points[curs + 1].y - seg->points[curs].y;
+		  if (fabs (dy) >= EPSILON)
+		    seg_dx[seg_index] = (seg->points[curs + 1].x -
+					 seg->points[curs].x) / dy;
+		  else
+		    seg_dx[seg_index] = 1e12;
 		  seg_x[seg_index] = seg->points[curs].x +
 		    (y - seg->points[curs].y) * seg_dx[seg_index];
 		}

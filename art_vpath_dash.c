@@ -145,7 +145,7 @@ art_vpath_dash (const ArtVpath *vpath, const ArtVpathDash *dash)
 				 ART_MOVETO_OPEN, vpath[i].x, vpath[i].y);
 	  while (i != end - 1)
 	    {
-	      if (dists[i] - dist > dash->dash[offset] - phase)
+	      if (dists[i - start] - dist > dash->dash[offset] - phase)
 		{
 		  /* dash boundary is next */
 		  double a;

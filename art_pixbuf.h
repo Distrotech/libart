@@ -43,6 +43,7 @@ typedef enum {
    has n_channels samples. It is stored in simple packed format. */
 
 struct _ArtPixBuf {
+  /*< public >*/
   ArtPixFormat format;
   int n_channels;
   int has_alpha;
@@ -86,6 +87,9 @@ art_pixbuf_free (ArtPixBuf *pixbuf);
 /* deprecated function, use the _dnotify variants for allocation instead */
 void
 art_pixbuf_free_shallow (ArtPixBuf *pixbuf);
+
+ArtPixBuf *
+art_pixbuf_duplicate (const ArtPixBuf *pixbuf);
 
 #ifdef __cplusplus
 }
