@@ -1,3 +1,7 @@
+1999-08-20  Federico Mena Quintero  <federico@redhat.com>
+
+	* configure.in: Fixed library's libtool version number.
+
 1999-08-03  Larry Ewing  <lewing@gimp.org>
 
 	* art_vpath_dash.c (art_vpath_dash): fix a bug/typo that was causing
