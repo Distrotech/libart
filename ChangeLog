@@ -1,3 +1,8 @@
+2001-06-14  Miguel de Icaza  <miguel@ximian.com>
+
+	* art_uta_svp.h: Rename __ART_UTA_VPATH_H__ to __ART_UTA_SVP_H__,
+	as this is what the symbol was supposed to be.
+
 2001-05-27  Mathieu Lacage <mathieu@gnu.org>
 
 	Mother's day!!! Back in south france (4 hours of train hacking :).

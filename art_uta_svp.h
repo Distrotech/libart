@@ -17,8 +17,8 @@
  * Boston, MA 02111-1307, USA.
  */
 
-#ifndef __ART_UTA_VPATH_H__
-#define __ART_UTA_VPATH_H__
+#ifndef __ART_UTA_SVP_H__
+#define __ART_UTA_SVP_H__
 
 /* Basic data structures and constructors for microtile arrays */
 
@@ -33,5 +33,5 @@ art_uta_from_svp (const ArtSVP *svp);
 }
 #endif /* __cplusplus */
 
-#endif /* __ART_UTA_VPATH_H__ */
+#endif /* __ART_UTA_SVP_H__ */
 
