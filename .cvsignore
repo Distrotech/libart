@@ -16,6 +16,8 @@ config.log
 config.status
 config.sub
 configure
+conftest
+conftest.c
 gen_art_config
 install-sh
 libart-features.h

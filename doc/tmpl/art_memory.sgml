@@ -2,11 +2,12 @@
 Memory Management
 
 <!-- ##### SECTION Short_Description ##### -->
-
+Memory Management API for libart tools.
 
 <!-- ##### SECTION Long_Description ##### -->
 <para>
-
+These API functions are a set of wrapper functions around the OS-specific
+memory management functions: they keep the user-level code portable.
 </para>
 
 <!-- ##### SECTION See_Also ##### -->

@@ -1,3 +1,18 @@
+2001-05-20  Mathieu Lacage <mathieu@gnu.org>
+
+	* .cvsignore: chuuut.
+	* art_affine.c: (art_affine_invert): fix the documentation comments.
+	* doc/Makefile.am: add image files for affine transforms:
+	  art-affines.png
+	  art-affine-matrix.png
+	  art-affine-libart.png
+	  dia/art-affine-matrix.dia
+	  dia/art-affine-libart.dia
+	  dia/art-affines.dia
+	* doc/tmpl/art_affine.sgml: document.
+	* doc/tmpl/art_gamma.sgml: nothing.
+	* doc/tmpl/art_memory.sgml: nothing.
+
 2001-05-17  Mathieu Lacage  <mathieu@gnu.org>
 
 	* Makefile.am: add gtk-doc test.

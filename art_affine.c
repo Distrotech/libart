@@ -37,7 +37,7 @@
  * art_affine_point: Do an affine transformation of a point.
  * @dst: Where the result point is stored.
  * @src: The original point.
- @ @affine: The affine transformation.
+ * @affine: The affine transformation.
  **/
 void
 art_affine_point (ArtPoint *dst, const ArtPoint *src,
@@ -53,8 +53,8 @@ art_affine_point (ArtPoint *dst, const ArtPoint *src,
 
 /**
  * art_affine_invert: Find the inverse of an affine transformation.
- * @dst: Where the resulting affine is stored.
- * @src: The original affine transformation.
+ * @dst_affine: Where the resulting affine is stored.
+ * @src_affine: The original affine transformation.
  *
  * All non-degenerate affine transforms are invertible. If the original
  * affine is degenerate or nearly so, expect numerical instability and
@@ -63,7 +63,7 @@ art_affine_point (ArtPoint *dst, const ArtPoint *src,
  * will be (to within roundoff error) the identity affine.
  **/
 void
-art_affine_invert (double dst[6], const double src[6])
+art_affine_invert (double dst_affine[6], const double src_affine[6])
 {
   double r_det;
 
@@ -80,7 +80,7 @@ art_affine_invert (double dst[6], const double src[6])
  * art_affine_flip: Flip an affine transformation horizontally and/or vertically.
  * @dst_affine: Where the resulting affine is stored.
  * @src_affine: The original affine transformation.
- * @horiz: Whether or not to flip horizontally.
+ * @horz: Whether or not to flip horizontally.
  * @vert: Whether or not to flip horizontally.
  *
  * Flips the affine transform. FALSE for both @horiz and @vert implements
@@ -386,7 +386,7 @@ art_affine_shear (double dst[6], double theta)
  * art_affine_translate: Set up a translation matrix.
  * @dst: Where to store the resulting affine transform.
  * @tx: X translation amount.
- * @tx: Y translation amount.
+ * @ty: Y translation amount.
  *
  * Sets up a translation matrix.
  **/

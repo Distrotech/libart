@@ -35,6 +35,9 @@ HTML_IMAGES =				\
 	art-overall-arch.png		\
 	art-data-flow.png		\
 	art-drawing-commands.png	\
+	art-affines.png			\
+	art-affine-matrix.png		\
+	art-affine-libart.png		\
 	art-non-display.tar.gz		\
 	art-display.tar.gz
 

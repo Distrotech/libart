@@ -2,12 +2,89 @@
 Affine transformation matrices
 
 <!-- ##### SECTION Short_Description ##### -->
-
+Instantiate and manipulate Affine transforms.
 
 <!-- ##### SECTION Long_Description ##### -->
 <para>
-
+These API functions allow you to instantiate and manipulate
+Affine transforms. An Affine transformation is a geometrical
+transformation which is known to preserve the parallelism of 
+lines but not lengths and angles.
 </para>
+
+<figure>
+<title>Affine transforms</title>
+<graphic fileref="art-affines.png" scale="50"></graphic>
+</figure>
+
+<para>
+Affine transforms are usually represented using Homogeneous 
+coordinates: given a point (x,y) in the traditional plane, its
+canonical Homogenous coordinate is (x,y,1).
+The Affine transforms are represented in Homogeneous coordinates
+because the transformation of point A by any Affine transformation
+can be expressed by the multiplication of a 3x3 Matrix and a 3x1 
+Point vector.
+</para>
+
+<para>
+The above property is not trivial. For example, a translation in
+normal cartesian space results in the addition of a Point vector
+to the Point vector to transform while in Homogeneous space, the
+same translation transformation results in a matrix/vector 
+multiplication. To convince you that I am telling you the truth,
+the diagram below summarizes the different kinds of Affine matrixes
+used and shows the scaling of point (x,y) by multiplication with a
+scaling matrix in homogeneous space.
+</para>
+
+<figure>
+<title>Affine transform Matrixes in Homogenous space</title>
+<graphic fileref="art-affine-matrix.png" scale="50"></graphic>
+</figure>
+
+<para>
+To compose two Affine transforms, all you need to do is to multiply
+their matrices to get the matrix representing the resulting
+Affine transform. Given Affines A and B represented the matrices
+MA and MB, the Affine C = AoB is represented by the matrix MC = MA x MB.
+</para>
+
+<para>
+Hopefully, all the above gory details (which are unfortunatly necessary
+to understand the API) are more or less hidden by the API.
+LibArt thus represents an Affine transform by an array of six doubles:
+</para>
+
+<figure>
+<title>An Affine as seen by LibArt</title>
+<graphic fileref="art-affine-libart.png" scale="50"></graphic>
+</figure>
+
+<para>
+Those arrays of six doubles can be easily generated with the 
+<link linkend="art-affine-shear">art_affine_shear</link>, 
+<link linkend="art-affine-scale">art_affine_scale</link>,
+<link linkend="art-affine-rotate">art_affine_rotate</link>,
+<link linkend="art-affine-translate">art_affine_translate</link> and
+<link linkend="art-affine-identity">art_affine_identity</link> functions which 
+generate the affines corresponding to the given transformations.
+It is possible to composite Affine transformation's matrices with
+<link linkend="art-affine-multiply">art_affine_multiply</link>
+and to invert an Affine transformation:
+<link linkend="art-affine-invert">art_affine_invert</link>.
+Finally, I to apply an Affine transformation to a point, you can use
+<link linkend="art-affine-point">art_affine_point</link>
+</para>
+
+<para>
+Affine transformations are reused a little everywhere in LibArt: it is possible
+to apply them to Vector Paths and pixel buffers. 
+<link linkend="art-vpath-affine-transform">art_vpath_affine_transform</link>,
+<link linkend="art-bpath-affine-transform">art_bpath_affine_transform</link> and
+<link linkend="art-rgb-affine">art_rgb_affine</link> are such examples.
+</para>
+
 
 <!-- ##### SECTION See_Also ##### -->
 <para>
