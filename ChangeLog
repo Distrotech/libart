@@ -1,5 +1,11 @@
 2001-07-12  Darin Adler  <darin@bentspoon.com>
 
+	* art_affine.c: (art_affine_expansion): Fix handling of
+	negative numbers. We ran into this bug a while back when
+	figuring out why librsvg couldn't handle certain svg files.
+
+2001-07-12  Darin Adler  <darin@bentspoon.com>
+
 	* art_misc.h: Change art_expand macro so it's a single
 	statement, using the do while (0) trick, which gets rid
 	of some warnings.
