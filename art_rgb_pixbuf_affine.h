@@ -25,6 +25,7 @@
 
 #include <libart_lgpl/art_filterlevel.h>
 #include <libart_lgpl/art_alphagamma.h>
+#include <libart_lgpl/art_pixbuf.h>
 
 #ifdef __cplusplus
 extern "C" {
