@@ -21,6 +21,8 @@ libart_lgpl_la_SOURCES = \
 	art_rect_uta.h \
 	art_uta.c \
 	art_uta.h \
+	art_uta_ops.c \
+	art_uta_ops.h \
 	art_uta_rect.c \
 	art_uta_rect.h \
 	art_uta_vpath.c \
@@ -39,6 +41,7 @@ libart_lgplinc = \
 	art_rect.h \
 	art_rect_uta.h \
 	art_uta.h \
+	art_uta_ops.h \
 	art_uta_rect.h \
 	art_uta_vpath.h \
 	art_vpath.h

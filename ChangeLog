@@ -1,3 +1,9 @@
+Sun Nov 22 21:41:13 1998  Raph Levien  <raph@gimp.org>
+
+	* art_uta_vpath.c: moved art_uta_union into art_uta_ops.
+
+	* art_uta_ops.[ch]: added, populated with art_uta_union.
+
 Thu Nov 19 00:19:40 1998  Raph Levien  <raph@gimp.org>
 
 	* libartConf.sh.in: added
