@@ -1,3 +1,7 @@
+2002-04-06  Kjartan Maraas  <kmaraas@gnome.org>
+
+	* libartConf.sh.in: Add a newline at the end of the file.
+	
 2002-01-10  Kjartan Maraas  <kmaraas@gnome.org>
 
 	* *.1, Makefile.am: Add man page.
