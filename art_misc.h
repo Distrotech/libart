@@ -42,11 +42,12 @@
    damn handy to have around, and may be worth playing with for
    debugging. */
 #define art_new(type, n) ((type *)art_alloc ((n) * sizeof(type)))
+
 #define art_renew(p, type, n) ((type *)art_realloc (p, (n) * sizeof(type)))
 
 /* This one must be used carefully - in particular, p and max should
    be variables. They can also be pstruct->el lvalues. */
-#define art_expand(p, type, max) p = art_renew (p, type, max <<= 1)
+#define art_expand(p, type, max) if(max) { p = art_renew (p, type, max <<= 1); } else { max = 1; p = art_new(type, 1); }
 
 typedef int art_boolean;
 #define ART_FALSE 0
