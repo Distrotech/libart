@@ -1,4 +1,10 @@
-2000-04-04  Raph Levien  <raph@lizardbreath.artofcode.com>
+2000-04-05  Raph Levien  <raph@gimp.org>
+
+	* art_svp_wind.c: Make "colinear" warnings go to stderr instead
+	of stdout. Of course, when I finish the new intersector, these
+	will go away entirely.
+
+2000-04-04  Raph Levien  <raph@gimp.org>
 
 	* art_uta_vpath.c (art_uta_add_line): Fixed bug that was causing
 	segfaults on alphas. Thanks to msw for localizing it.
