@@ -336,9 +336,9 @@ art_render_gradient_linear_render_8 (ArtRenderCallback *self,
   assert ((stops[ix-1].offset <= offset_fraction + EPSILON) ||
 	  ((stops[ix].offset > (1.0 - EPSILON)) && (offset_fraction < EPSILON /* == 0.0*/)));
   assert (offset_fraction <= stops[ix].offset);
-  assert ((offset_fraction != stops[ix-1].offset) ||
+  assert (fabs (offset_fraction - stops[ix-1].offset) > EPSILON ||
 	  (d_offset >= 0.0));
-  assert ((offset_fraction != stops[ix].offset) ||
+  assert (fabs (offset_fraction - stops[ix].offset) > EPSILON ||
 	  (d_offset <= 0.0));
   
   while (width > 0)
@@ -351,7 +351,7 @@ art_render_gradient_linear_render_8 (ArtRenderCallback *self,
 		     spread,
 		     offset,
 		     offset_fraction,
-		     (d_offset > 0.0),
+		     (d_offset > -EPSILON),
 		     ix,
 		     color1);
 
@@ -398,7 +398,7 @@ art_render_gradient_linear_render_8 (ArtRenderCallback *self,
 			 spread,
 			 offset,
 			 offset_fraction,
-			 (d_offset < 0.0),
+			 (d_offset < EPSILON),
 			 ix,
 			 color2);
 	  
@@ -418,7 +418,7 @@ art_render_gradient_linear_render_8 (ArtRenderCallback *self,
 	      if (ix == n_stops)
 		ix = 1;
 	      /* Note: offset_fraction can actually be one here on x86 machines that
-		 does calculations with extanded precision, but later rounds to 64bit.
+		 does calculations with extended precision, but later rounds to 64bit.
 		 This happens if the 80bit offset_fraction is larger than the
 		 largest 64bit double that is less than one.
 	      */

@@ -1,3 +1,9 @@
+2003-08-26  Morten Welinder  <terra@gnome.org>
+
+	* art_render_gradient.c (art_render_gradient_linear_render_8): Fix
+	vertical gradients.  Fix yet more floating point comparisons using
+	!=.  For the record, Gnumeric is a heavy user.
+
 2003-08-14  Tor Lillqvist  <tml@iki.fi>
 
 	Some nitpicking changes for Win32:
