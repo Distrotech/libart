@@ -293,3 +293,13 @@ art_affine_expansion (const double src[6])
 
   return sqrt (src[0] * src[3] - src[1] * src[2]);
 }
+
+/* Determine whether the affine transformation is rectilinear,
+   i.e. whether a rectangle aligned to the grid is transformed into
+   another rectangle aligned to the grid. */
+int
+art_affine_rectilinear (const double src[6])
+{
+  return ((fabs (src[1]) < EPSILON && fabs (src[2]) < EPSILON) ||
+	  (fabs (src[0]) < EPSILON && fabs (src[3]) < EPSILON));
+}

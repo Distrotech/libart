@@ -60,6 +60,12 @@ art_affine_translate (double dst[6], double tx, double ty);
 double
 art_affine_expansion (const double src[6]);
 
+/* Determine whether the affine transformation is rectilinear,
+   i.e. whether a rectangle aligned to the grid is transformed into
+   another rectangle aligned to the grid. */
+int
+art_affine_rectilinear (const double src[6]);
+
 #ifdef __cplusplus
 }
 #endif /* __cplusplus */

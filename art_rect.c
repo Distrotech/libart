@@ -117,19 +117,23 @@ art_drect_empty (const ArtDRect *src) {
 }
 
 void
-art_bbox_affine_transform (ArtDRect *dst, const ArtDRect *src, const double matrix[6])
+art_drect_affine_transform (ArtDRect *dst, const ArtDRect *src, const double matrix[6])
 {
-  double x0, y0, x1, y1;
+  double x00, y00, x10, y10;
+  double x01, y01, x11, y11;
 
-  /* note: this only works for 90 degree rotations */
-  x0 = src->x0 * matrix[0] + src->y0 * matrix[2] + matrix[4];
-  y0 = src->x0 * matrix[1] + src->y0 * matrix[3] + matrix[5];
-  x1 = src->x1 * matrix[0] + src->y1 * matrix[2] + matrix[4];
-  y1 = src->x1 * matrix[1] + src->y1 * matrix[3] + matrix[5];
-  dst->x0 = MIN (x0, x1);
-  dst->x1 = MAX (x0, x1);
-  dst->y0 = MIN (y0, y1);
-  dst->y1 = MAX (y0, y1);
+  x00 = src->x0 * matrix[0] + src->y0 * matrix[2] + matrix[4];
+  y00 = src->x0 * matrix[1] + src->y0 * matrix[3] + matrix[5];
+  x10 = src->x1 * matrix[0] + src->y0 * matrix[2] + matrix[4];
+  y10 = src->x1 * matrix[1] + src->y0 * matrix[3] + matrix[5];
+  x01 = src->x0 * matrix[0] + src->y1 * matrix[2] + matrix[4];
+  y01 = src->x0 * matrix[1] + src->y1 * matrix[3] + matrix[5];
+  x11 = src->x1 * matrix[0] + src->y1 * matrix[2] + matrix[4];
+  y11 = src->x1 * matrix[1] + src->y1 * matrix[3] + matrix[5];
+  dst->x0 = MIN (MIN (x00, x10), MIN (x01, x11));
+  dst->y0 = MIN (MIN (y00, y10), MIN (y01, y11));
+  dst->x1 = MAX (MAX (x00, x10), MAX (x01, x11));
+  dst->y1 = MAX (MAX (y00, y10), MAX (y01, y11));
 }
 
 void
