@@ -1,3 +1,9 @@
+2000-01-16  Timur Bakeyev  <timur@gnu.org>
+
+	* autoconf.sh: Instead of jumping between srdir and builddir just process
+	all the auto* staff in srcdir. In fact, just saying the same things in 
+	other words.
+
 2000-01-10  Elliot Lee  <sopwith@redhat.com>
 
 	* Makefile.am, *.h: Add rather bad hacks to the header files to allow compilation
