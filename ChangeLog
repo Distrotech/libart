@@ -1,3 +1,12 @@
+Thu May 25 23:30:39 2000  Raph Levien  <raph@acm.org>
+
+	* art_svp_render_aa.h:
+	* art_svp_render_aa.c: Added art_svp_render_aa_iter functions,
+	suitable for iterative rendering of an svp, one scan line at a
+	time.
+
+	* configure.in: Bumped version to 2.2.0.
+
 Tue May 16 15:03:35 2000  Raph Levien  <raph@acm.org>
 
 	* art_rgb_pixbuf_affine.c: Included corresponding .h file.

@@ -27,11 +27,23 @@ extern "C" {
 #endif /* __cplusplus */
 
 typedef struct _ArtSVPRenderAAStep ArtSVPRenderAAStep;
+typedef struct _ArtSVPRenderAAIter ArtSVPRenderAAIter;
 
 struct _ArtSVPRenderAAStep {
   int x;
   int delta; /* stored with 16 fractional bits */
 };
+
+ArtSVPRenderAAIter *
+art_svp_render_aa_iter (const ArtSVP *svp,
+			int x0, int y0, int x1, int y1);
+
+void
+art_svp_render_aa_iter_step (ArtSVPRenderAAIter *iter, int *p_start,
+			     ArtSVPRenderAAStep **p_steps, int *p_n_steps);
+
+void
+art_svp_render_aa_iter_done (ArtSVPRenderAAIter *iter);
 
 void
 art_svp_render_aa (const ArtSVP *svp,
