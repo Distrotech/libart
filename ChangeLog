@@ -1,3 +1,8 @@
+2003-04-10  Alexander Larsson  <alexl@redhat.com>
+
+	* art_svp_wind.c (x_order_2):
+	Handle horizontally aligned segments.
+
 2002-11-25  Alexander Larsson  <alexl@redhat.com>
 
 	* configure.in: Bump to 2.3.11
