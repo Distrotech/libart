@@ -32,6 +32,7 @@ extern "C" {
 typedef struct _ArtBpath ArtBpath;
 
 struct _ArtBpath {
+  /*< public >*/
   ArtPathcode code;
   double x1;
   double y1;

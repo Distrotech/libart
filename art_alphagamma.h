@@ -29,6 +29,7 @@ extern "C" {
 typedef struct _ArtAlphaGamma ArtAlphaGamma;
 
 struct _ArtAlphaGamma {
+  /*< private >*/
   double gamma;
   int invtable_size;
   int table[256];

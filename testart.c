@@ -379,6 +379,7 @@ usage (void)
   fprintf (stderr, "usage: testart <test>\n"
 "  where <test> is one of:\n"
 "  testpat    -- make random star + gradients test pattern\n"
+"  dash       -- dash test (output is valid PostScript)\n"
 "  dist       -- distance test\n");
   exit (1);
 }

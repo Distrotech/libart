@@ -25,10 +25,18 @@
 
 #include "art_bpath.h"
 
-/* Result (x', y') = (matrix[0] * x + matrix[2] * y + matrix[4],
-                      matrix[1] * x + matrix[3] * y + matrix[5])
-
-   Returns newly allocated transformed path. */
+/** art_bpath_affine_transform: Affine transform an &ArtBpath.
+ * @src: The source &ArtBpath.
+ * @matrix: The affine transform.
+ *
+ * Affine transform the bezpath, returning a newly allocated &ArtBpath
+ * (allocated using art_alloc()).
+ *
+ * Result (x', y') = (matrix[0] * x + matrix[2] * y + matrix[4],
+ *                    matrix[1] * x + matrix[3] * y + matrix[5])
+ *
+ * Return value: the transformed &ArtBpath.
+ **/
 ArtBpath *
 art_bpath_affine_transform (const ArtBpath *src, const double matrix[6])
 {

@@ -43,6 +43,7 @@ typedef enum {
    has n_channels samples. It is stored in simple packed format. */
 
 struct _ArtPixBuf {
+  /*< public >*/
   ArtPixFormat format;
   int n_channels;
   int has_alpha;

@@ -1,3 +1,23 @@
+1999-08-24  Raph Levien  <raph@gimp.org>
+
+	art_affine.c, art_alphagamma.c, art_alphagamma.h, art_bpath.c,
+	art_bpath.h, art_gray_svp.c, art_misc.c, art_pixbuf.c,
+	art_pixbuf.h, art_point.h, art_rect.c, art_rect.h: Added api
+	documentation headers.
+
+	* testart.c: Added "dash" test, for testing the vpath_dash
+	functions.
+
+	* art_rgb_pixbuf_affine.h: Fixed the #ifdef for conditional
+	inclusion. Thanks to Kristian Hogsberg Kristensen for spotting
+	the bug.
+
+1999-08-24  Raph Levien  <raph@gimp.org>
+
+	* art_svp_render_aa.c (art_svp_render_aa): Added some tests to
+	avoid NaN for infinite slopes, which were causing problems on
+	Alphas. Closes bug #1966.
+
 1999-08-20  Federico Mena Quintero  <federico@redhat.com>
 
 	* configure.in: Fixed library's libtool version number.
