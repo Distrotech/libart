@@ -1,3 +1,8 @@
+2001-06-14  Miguel de Icaza  <miguel@ximian.com>
+
+	* Makefile.am: add -lm to the link line, so applications get this
+	without specifying it.
+
 2001-08-08  Mathieu Lacage <mathieu@gnu.org>
 
 	Rewrote a bunch of it, fixed a number of XXXs
