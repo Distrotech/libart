@@ -1,3 +1,12 @@
+2000-01-09  Raph Levien  <raph@gimp.org>
+
+	art_rgb_pixbuf_affine.c, art_rgb_rgba_affine.c, art_rgb_svp.c,
+	art_svp.c, art_svp_ops.c, art_svp_point.c, art_svp_render_aa.c,
+	art_svp_vpath.c, art_svp_vpath_stroke.c, art_svp_wind.c,
+	art_uta.c, art_uta_ops.c, art_uta_rect.c, art_uta_svp.c,
+	art_uta_vpath.c, art_vpath.c, art_vpath_bpath.c, art_vpath_dash.c,
+	art_vpath_svp.c: Added API documentation.
+
 Fri Sep 24 17:53:21 1999  Raph Levien  <raph@acm.org>
 
 	* art_svp_render_aa.c (art_svp_render_insert_active): Avoid

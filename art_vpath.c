@@ -1,5 +1,5 @@
 /* Libart_LGPL - library of basic graphic primitives
- * Copyright (C) 1998 Raph Levien
+ * Copyright (C) 1998-2000 Raph Levien
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -27,6 +27,22 @@
 #include "art_rect.h"
 #include "art_vpath.h"
 
+/**
+ * art_vpath_add_point: Add point to vpath.
+ * @p_vpath: Where the pointer to the #ArtVpath structure is stored.
+ * @pn_points: Pointer to the number of points in *@p_vpath.
+ * @pn_points_max: Pointer to the number of points allocated.
+ * @code: The pathcode for the new point.
+ * @x: The X coordinate of the new point.
+ * @y: The Y coordinate of the new point.
+ *
+ * Adds a new point to *@p_vpath, reallocating and updating *@p_vpath
+ * and *@pn_points_max as necessary. *@pn_points is incremented.
+ *
+ * This routine always adds the point after all points already in the
+ * vpath. Thus, it should be called in the order the points are
+ * desired.
+ **/
 void
 art_vpath_add_point (ArtVpath **p_vpath, int *pn_points, int *pn_points_max,
 		     ArtPathcode code, double x, double y)
@@ -44,6 +60,18 @@ art_vpath_add_point (ArtVpath **p_vpath, int *pn_points, int *pn_points_max,
 /* number of steps should really depend on radius. */
 #define CIRCLE_STEPS 128
 
+/**
+ * art_vpath_new_circle: Create a new circle.
+ * @x: X coordinate of center.
+ * @y: Y coordinate of center.
+ * @r: radius.
+ *
+ * Creates a new polygon closely approximating a circle with center
+ * (@x, @y) and radius @r. Currently, the number of points used in the
+ * approximation is fixed, but that will probably change.
+ *
+ * Return value: The newly created #ArtVpath.
+ **/
 ArtVpath *
 art_vpath_new_circle (double x, double y, double r)
 {
@@ -65,10 +93,18 @@ art_vpath_new_circle (double x, double y, double r)
   return vec;
 }
 
-/* Result (x', y') = (matrix[0] * x + matrix[2] * y + matrix[4],
-                      matrix[1] * x + matrix[3] * y + matrix[5])
-
-   Returns newly allocated transformed path. */
+/**
+ * art_vpath_affine_transform: Affine transform a vpath.
+ * @src: Source vpath to transform.
+ * @matrix: Affine transform.
+ *
+ * Computes the affine transform of the vpath, using @matrix as the
+ * transform. @matrix is stored in the same format as PostScript, ie.
+ * x' = @matrix[0] * x + @matrix[2] * y + @matrix[4]
+ * y' = @matrix[1] * x + @matrix[3] * y + @matrix[5]
+ *
+ * Return value: the newly allocated vpath resulting from the transform.
+**/
 ArtVpath *
 art_vpath_affine_transform (const ArtVpath *src, const double matrix[6])
 {
@@ -95,6 +131,13 @@ art_vpath_affine_transform (const ArtVpath *src, const double matrix[6])
   return new;
 }
 
+/**
+ * art_vpath_bbox_drect: Determine bounding box of vpath.
+ * @vec: Source vpath.
+ * @drect: Where to store bounding box.
+ *
+ * Determines bounding box of @vec, and stores it in @drect.
+ **/
 void
 art_vpath_bbox_drect (const ArtVpath *vec, ArtDRect *drect)
 {
@@ -123,6 +166,13 @@ art_vpath_bbox_drect (const ArtVpath *vec, ArtDRect *drect)
   drect->y1 = y1;
 }
 
+/**
+ * art_vpath_bbox_irect: Determine integer bounding box of vpath.
+ * @vec: Source vpath.
+ * idrect: Where to store bounding box.
+ *
+ * Determines integer bounding box of @vec, and stores it in @irect.
+ **/
 void
 art_vpath_bbox_irect (const ArtVpath *vec, ArtIRect *irect)
 {
@@ -134,10 +184,16 @@ art_vpath_bbox_irect (const ArtVpath *vec, ArtIRect *irect)
 
 #define PERTURBATION 2e-3
 
-/* Perturb each of the points by a small random amount. This is helpful
-   for cheating in cases when algorithms haven't attained numerical
-   stability yet. */
-
+/**
+ * art_vpath_perturb: Perturb each point in vpath by small random amount.
+ * @src: Source vpath.
+ *
+ * Perturbs each of the points by a small random amount. This is
+ * helpful for cheating in cases when algorithms haven't attained
+ * numerical stability yet.
+ *
+ * Return value: Newly allocated vpath containing perturbed @src.
+ **/ 
 ArtVpath *
 art_vpath_perturb (ArtVpath *src)
 {
@@ -181,5 +237,3 @@ art_vpath_perturb (ArtVpath *src)
 
   return new;
 }
-
-/* todo: implement minus */

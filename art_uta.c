@@ -21,7 +21,18 @@
 #include "art_misc.h"
 #include "art_uta.h"
 
-/* Arguments are tile numbers */
+/**
+ * art_uta_new: Allocate a new uta.
+ * @x0: Left coordinate of uta.
+ * @y0: Top coordinate of uta.
+ * @x1: Right coordinate of uta.
+ * @y1: Bottom coordinate of uta.
+ *
+ * Allocates a new microtile array. The arguments are in units of
+ * tiles, not pixels.
+ *
+ * Returns: the newly allocated #ArtUta.
+ **/
 ArtUta *
 art_uta_new (int x0, int y0, int x1, int y1)
 {
@@ -39,7 +50,17 @@ art_uta_new (int x0, int y0, int x1, int y1)
   return uta;
   }
 
-/* Arguments are coordinates */
+/**
+ * art_uta_new_coords: Allocate a new uta, based on pixel coordinates.
+ * @x0: Left coordinate of uta.
+ * @y0: Top coordinate of uta.
+ * @x1: Right coordinate of uta.
+ * @y1: Bottom coordinate of uta.
+ *
+ * Allocates a new microtile array. The arguments are in pixels
+ *
+ * Returns: the newly allocated #ArtUta.
+ **/
 ArtUta *
 art_uta_new_coords (int x0, int y0, int x1, int y1)
 {
@@ -48,6 +69,13 @@ art_uta_new_coords (int x0, int y0, int x1, int y1)
 		      1 + (y1 >> ART_UTILE_SHIFT));
 }
 
+/**
+ * art_uta_free: Free a uta.
+ * @uta: The uta to free.
+ *
+ * Frees the microtile array structure, including the actual microtile
+ * data.
+ **/
 void
 art_uta_free (ArtUta *uta)
 {

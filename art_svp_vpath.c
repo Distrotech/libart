@@ -1,5 +1,5 @@
 /* Libart_LGPL - library of basic graphic primitives
- * Copyright (C) 1998 Raph Levien
+ * Copyright (C) 1998-2000 Raph Levien
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -44,7 +44,23 @@ reverse_points (ArtPoint *points, int n_points)
     }
 }
 
-/* convert a vec_path to sorted form */
+/**
+ * art_svp_from_vpath: Convert a vpath to a sorted vector path.
+ * @vpath: #ArtVPath to convert.
+ *
+ * Converts a vector path into sorted vector path form. The svp form is
+ * more efficient for rendering and other vector operations.
+ *
+ * Basically, the implementation is to traverse the vector path,
+ * generating a new segment for each "run" of points in the vector
+ * path with monotonically increasing Y values. All the resulting
+ * values are then sorted.
+ *
+ * Note: I'm not sure that the sorting rule is correct with respect
+ * to numerical stability issues.
+ *
+ * Return value: Resulting sorted vector path.
+ **/
 ArtSVP *
 art_svp_from_vpath (ArtVpath *vpath)
 {

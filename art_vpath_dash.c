@@ -1,5 +1,5 @@
 /* Libart_LGPL - library of basic graphic primitives
- * Copyright (C) 1999 Raph Levien
+ * Copyright (C) 1999-2000 Raph Levien
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -53,17 +53,27 @@ art_vpath_dash_max_subpath (const ArtVpath *vpath)
   return max_subpath;
 }
 
-/* This implementation has two known flaws:
-
-   First, it adds a spurious break at the beginning of the vpath. The
-   only way I see to resolve this flaw is to run the state forward one
-   dash break at the beginning, and fix up by looping back to the
-   first dash break at the end. This is doable but of course adds
-   some complexity.
-
-   Second, it does not suppress output points that are within epsilon
-   of each other.  */
-
+/**
+ * art_vpath_dash: Add dash style to vpath.
+ * @vpath: Original vpath.
+ * @dash: Dash style.
+ *
+ * Creates a new vpath that is the result of applying dash style @dash
+ * to @vpath.
+ *
+ * This implementation has two known flaws:
+ *
+ * First, it adds a spurious break at the beginning of the vpath. The
+ * only way I see to resolve this flaw is to run the state forward one
+ * dash break at the beginning, and fix up by looping back to the
+ * first dash break at the end. This is doable but of course adds some
+ * complexity.
+ *
+ * Second, it does not suppress output points that are within epsilon
+ * of each other.
+ *
+ * Return value: Newly created vpath.
+ **/
 ArtVpath *
 art_vpath_dash (const ArtVpath *vpath, const ArtVpathDash *dash)
 {

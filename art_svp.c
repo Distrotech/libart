@@ -30,6 +30,28 @@
    We also realloc one auxiliary array of ints of size n_segs if
    desired.
 */
+/**
+ * art_svp_add_segment: Add a segment to an #ArtSVP structure.
+ * @p_vp: Pointer to where the #ArtSVP structure is stored.
+ * @pn_segs_max: Pointer to the allocated size of *@p_vp.
+ * @pn_points_max: Pointer to where auxiliary array is stored.
+ * @n_points: Number of points for new segment.
+ * @dir: Direction for new segment; 0 is up, 1 is down.
+ * @points: Points for new segment.
+ * @bbox: Bounding box for new segment.
+ *
+ * Adds a new segment to an ArtSVP structure. This routine reallocates
+ * the structure if necessary, updating *@p_vp and *@pn_segs_max as
+ * necessary.
+ *
+ * The new segment is simply added after all other segments. Thus,
+ * this routine should be called in order consistent with the #ArtSVP
+ * sorting rules.
+ *
+ * If the @bbox argument is given, it is simply stored in the new
+ * segment. Otherwise (if it is NULL), the bounding box is computed
+ * from the @points given.
+ **/
 int
 art_svp_add_segment (ArtSVP **p_vp, int *pn_segs_max,
 		     int **pn_points_max,
@@ -79,6 +101,13 @@ art_svp_add_segment (ArtSVP **p_vp, int *pn_segs_max,
   return seg_num;
 }
 
+
+/**
+ * art_svp_free: Free an #ArtSVP structure.
+ * @svp: #ArtSVP to free.
+ * 
+ * Frees an #ArtSVP structure and all the segments in it.
+ **/
 void
 art_svp_free (ArtSVP *svp)
 {
@@ -92,6 +121,15 @@ art_svp_free (ArtSVP *svp)
 
 #define EPSILON 1e-6
 
+/**
+ * art_svp_seg_compare: Compare two segments of an svp.
+ * @seg1: First segment to compare.
+ * @seg2: Second segment to compare.
+ * 
+ * Compares two segments of an svp. Return 1 if @seg2 is below or to the
+ * right of @seg1, -1 otherwise. The comparison rules are "interesting"
+ * with respect to numerical robustness, rtfs if in doubt.
+ **/
 int
 art_svp_seg_compare (const void *s1, const void *s2)
 {

@@ -1,5 +1,5 @@
 /* Libart_LGPL - library of basic graphic primitives
- * Copyright (C) 1998 Raph Levien
+ * Copyright (C) 1998-2000 Raph Levien
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -70,7 +70,14 @@ art_vpath_svp_compare (const void *s1, const void *s2)
    Precision: Does not degrade precision.
 
 */
-
+/**
+ * art_vpath_from_svp: Convert from svp to vpath form.
+ * @svp: Original #ArtSVP.
+ *
+ * Converts the sorted vector path @svp into standard vpath form.
+ *
+ * Return value: the newly allocated vpath.
+ **/
 ArtVpath *
 art_vpath_from_svp (const ArtSVP *svp)
 {

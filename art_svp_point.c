@@ -26,6 +26,16 @@
 /* Determine whether a point is inside, or near, an svp. */
 
 /* return winding number of point wrt svp */
+/**
+ * art_svp_point_wind: Determine winding number of a point with respect to svp.
+ * @svp: The svp.
+ * @x: The X coordinate of the point.
+ * @y: The Y coordinate of the point.
+ *
+ * Determine the winding number of the point @x, @y with respect to @svp.
+ *
+ * Return value: the winding number.
+ **/
 int
 art_svp_point_wind (ArtSVP *svp, double x, double y)
 {
@@ -68,8 +78,17 @@ art_svp_point_wind (ArtSVP *svp, double x, double y)
   return wind;
 }
 
-/* Return a very large number if the svp is empty, or distance to the
-   edge otherwise. */
+/**
+ * art_svp_point_dist: Determine distance between point and svp.
+ * @svp: The svp.
+ * @x: The X coordinate of the point.
+ * @y: The Y coordinate of the point.
+ *
+ * Determines the distance of the point @x, @y to the closest edge in
+ * @svp. A large number is returned if @svp is empty.
+ *
+ * Return value: the distance.
+ **/
 double
 art_svp_point_dist (ArtSVP *svp, double x, double y)
 {

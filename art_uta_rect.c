@@ -21,7 +21,15 @@
 #include "art_uta.h"
 #include "art_rect.h"
 
-/* please do not feed this function a degenerate rectangle */
+/**
+ * art_uta_from_irect: Generate uta covering a rectangle.
+ * @bbox: The source rectangle.
+ *
+ * Generates a uta exactly covering @bbox. Please do not call this
+ * function with a @bbox with zero height or width.
+ *
+ * Return value: the new uta.
+ **/
 ArtUta *
 art_uta_from_irect (ArtIRect *bbox)
 {

@@ -1,5 +1,5 @@
 /* Libart_LGPL - library of basic graphic primitives
- * Copyright (C) 1998 Raph Levien
+ * Copyright (C) 1998-2000 Raph Levien
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -29,6 +29,28 @@
 #define MAX(a,b) ((a) > (b) ? (a) : (b))
 #endif
 
+/**
+ * art_uta_union: Compute union of two uta's.
+ * @uta1: One uta.
+ * @uta2: The other uta.
+ *
+ * Computes the union of @uta1 and @uta2. The union is approximate,
+ * but coverage is guaranteed over all pixels included in either of
+ * the arguments, ie more pixels may be covered than the "exact"
+ * union.
+ *
+ * Note: this routine is used in the Gnome Canvas to accumulate the
+ * region that needs to be repainted. However, since it copies over
+ * the entire uta (which might be largish) even when the update may be
+ * small, it can be a performance bottleneck. There are two approaches
+ * to this problem, both of which are probably worthwhile. First, the
+ * generated uta's should always be limited to the visible window,
+ * thus guaranteeing that uta's never become large. Second, there
+ * should be a new, destructive union operation that only touches a
+ * small part of the uta when the update is small.
+ *
+ * Return value: The new union uta.
+ **/
 ArtUta *
 art_uta_union (ArtUta *uta1, ArtUta *uta2)
 {

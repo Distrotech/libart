@@ -107,6 +107,35 @@ art_rgb_svp_callback (void *callback_data, int y,
 
 /* Render the vector path into the RGB buffer. */
 
+/**
+ * art_rgb_svp_aa: Render sorted vector path into RGB buffer.
+ * @svp: The source sorted vector path.
+ * @x0: Left coordinate of destination rectangle.
+ * @y0: Top coordinate of destination rectangle.
+ * @x1: Right coordinate of destination rectangle.
+ * @y1: Bottom coordinate of destination rectangle.
+ * @fg_color: Foreground color in 0xRRGGBB format.
+ * @bg_color: Background color in 0xRRGGBB format.
+ * @buf: Destination RGB buffer.
+ * @rowstride: Rowstride of @buf buffer.
+ * @alphagamma: #ArtAlphaGamma for gamma-correcting the rendering.
+ *
+ * Renders the shape specified with @svp into the @buf RGB buffer.
+ * @x1 - @x0 specifies the width, and @y1 - @y0 specifies the height,
+ * of the rectangle rendered. The new pixels are stored starting at
+ * the first byte of @buf. Thus, the @x0 and @y0 parameters specify
+ * an offset within @svp, and may be tweaked as a way of doing
+ * integer-pixel translations without fiddling with @svp itself.
+ *
+ * The @fg_color and @bg_color arguments specify the opaque colors to
+ * be used for rendering. For pixels of entirely 0 winding-number,
+ * @bg_color is used. For pixels of entirely 1 winding number,
+ * @fg_color is used. In between, the color is interpolated based on
+ * the fraction of the pixel with a winding number of 1. If
+ * @alphagamma is NULL, then linear interpolation (in pixel counts) is
+ * the default. Otherwise, the interpolation is as specified by
+ * @alphagamma.
+ **/
 void
 art_rgb_svp_aa (const ArtSVP *svp,
 		int x0, int y0, int x1, int y1,
@@ -360,6 +389,33 @@ art_rgb_svp_alpha_opaque_callback (void *callback_data, int y,
   data->buf += data->rowstride;
 }
 
+/**
+ * art_rgb_svp_alpha: Alpha-composite sorted vector path over RGB buffer.
+ * @svp: The source sorted vector path.
+ * @x0: Left coordinate of destination rectangle.
+ * @y0: Top coordinate of destination rectangle.
+ * @x1: Right coordinate of destination rectangle.
+ * @y1: Bottom coordinate of destination rectangle.
+ * @rgba: Color in 0xRRGGBBAA format.
+ * @buf: Destination RGB buffer.
+ * @rowstride: Rowstride of @buf buffer.
+ * @alphagamma: #ArtAlphaGamma for gamma-correcting the compositing.
+ *
+ * Renders the shape specified with @svp over the @buf RGB buffer.
+ * @x1 - @x0 specifies the width, and @y1 - @y0 specifies the height,
+ * of the rectangle rendered. The new pixels are stored starting at
+ * the first byte of @buf. Thus, the @x0 and @y0 parameters specify
+ * an offset within @svp, and may be tweaked as a way of doing
+ * integer-pixel translations without fiddling with @svp itself.
+ *
+ * The @rgba argument specifies the color for the rendering. Pixels of
+ * entirely 0 winding number are left untouched. Pixels of entirely
+ * 1 winding number have the color @rgba composited over them (ie,
+ * are replaced by the red, green, blue components of @rgba if the alpha
+ * component is 0xff). Pixels of intermediate coverage are interpolated
+ * according to the rule in @alphagamma, or default to linear if
+ * @alphagamma is NULL.
+ **/
 void
 art_rgb_svp_alpha (const ArtSVP *svp,
 		   int x0, int y0, int x1, int y1,

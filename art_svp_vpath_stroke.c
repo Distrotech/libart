@@ -1,5 +1,5 @@
 /* Libart_LGPL - library of basic graphic primitives
- * Copyright (C) 1998-1999 Raph Levien
+ * Copyright (C) 1998-2000 Raph Levien
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -17,7 +17,6 @@
  * Boston, MA 02111-1307, USA.
  */
 
-/* Sort vector paths into sorted vector paths */
 
 #include <stdlib.h>
 #include <math.h>
@@ -378,6 +377,21 @@ render_cap (ArtVpath **p_result, int *pn_result, int *pn_result_max,
     }
 }
 
+/**
+ * art_svp_from_vpath_raw: Stroke a vector path, raw version
+ * @vpath: #ArtVPath to stroke.
+ * @join: Join style.
+ * @cap: Cap style.
+ * @line_width: Width of stroke.
+ * @miter_limit: Miter limit.
+ * @flatness: Flatness.
+ *
+ * Exactly the same as art_svp_vpath_stroke(), except that the resulting
+ * stroke outline may self-intersect and have regions of winding number
+ * greater than 1.
+ *
+ * Return value: Resulting raw stroked outline in svp format.
+ **/
 ArtVpath *
 art_svp_vpath_stroke_raw (ArtVpath *vpath,
 			  ArtPathStrokeJoinType join,
@@ -602,6 +616,47 @@ print_ps_svp (ArtSVP *vpath)
 
    Precision: The perturbation fuzzes the coordinates slightly,
    but not enough to be visible.  */
+/**
+ * art_svp_from_vpath: Stroke a vector path.
+ * @vpath: #ArtVPath to stroke.
+ * @join: Join style.
+ * @cap: Cap style.
+ * @line_width: Width of stroke.
+ * @miter_limit: Miter limit.
+ * @flatness: Flatness.
+ *
+ * Computes an svp representing the stroked outline of @vpath. The
+ * width of the stroked line is @line_width.
+ *
+ * Lines are joined according to the @join rule. Possible values are
+ * ART_PATH_STROKE_JOIN_MITER (for mitered joins),
+ * ART_PATH_STROKE_JOIN_ROUND (for round joins), and
+ * ART_PATH_STROKE_JOIN_BEVEL (for bevelled joins). The mitered join
+ * is converted to a bevelled join if the miter would extend to a
+ * distance of more than @miter_limit * @line_width from the actual
+ * join point.
+ *
+ * If there are open subpaths, the ends of these subpaths are capped
+ * according to the @cap rule. Possible values are
+ * ART_PATH_STROKE_CAP_BUTT (squared cap, extends exactly to end
+ * point), ART_PATH_STROKE_CAP_ROUND (rounded half-circle centered at
+ * the end point), and ART_PATH_STROKE_CAP_SQUARE (squared cap,
+ * extending half @line_width past the end point).
+ *
+ * The @flatness parameter controls the accuracy of the rendering. It
+ * is most important for determining the number of points to use to
+ * approximate circular arcs for round lines and joins. In general, the
+ * resulting vector path will be within @flatness pixels of the "ideal"
+ * path containing actual circular arcs. I reserve the right to use
+ * the @flatness parameter to convert bevelled joins to miters for very
+ * small turn angles, as this would reduce the number of points in the
+ * resulting outline path.
+ *
+ * The resulting path is "clean" with respect to self-intersections, i.e.
+ * the winding number is 0 or 1 at each point.
+ *
+ * Return value: Resulting stroked outline in svp format.
+ **/
 ArtSVP *
 art_svp_vpath_stroke (ArtVpath *vpath,
 		      ArtPathStrokeJoinType join,

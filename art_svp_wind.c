@@ -1,5 +1,5 @@
 /* Libart_LGPL - library of basic graphic primitives
- * Copyright (C) 1998 Raph Levien
+ * Copyright (C) 1998-2000 Raph Levien
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -952,6 +952,18 @@ fix_crossing (int start, int end, int *active_segs, int n_active_segs,
    problem, I'll just keep it this way, because it will probably help
    to make the code clearer, and I believe this code could use all the
    clarity it can get. */
+/**
+ * art_svp_uncross: Resolve self-intersections of an svp.
+ * @vp: The original svp.
+ *
+ * Finds all the intersections within @vp, and constructs a new svp
+ * with new points added at these intersections.
+ *
+ * This routine needs to be redone from scratch with numerical robustness
+ * in mind. I'm working on it.
+ *
+ * Return value: The new svp.
+ **/
 ArtSVP *
 art_svp_uncross (ArtSVP *vp)
 {
@@ -1286,6 +1298,36 @@ art_svp_uncross (ArtSVP *vp)
    Doing random perturbation just makes matters worse.
 
 */
+/**
+ * art_svp_rewind_uncrossed: Rewind an svp satisfying the nocross invariant.
+ * @vp: The original svp.
+ * @rule: The winding rule.
+ *
+ * Creates a new svp with winding number of 0 or 1 everywhere. The @rule
+ * argument specifies a rule for how winding numbers in the original
+ * @vp map to the winding numbers in the result.
+ *
+ * With @rule == ART_WIND_RULE_NONZERO, the resulting svp has a
+ * winding number of 1 where @vp has a nonzero winding number.
+ *
+ * With @rule == ART_WIND_RULE_INTERSECT, the resulting svp has a
+ * winding number of 1 where @vp has a winding number greater than
+ * 1. It is useful for computing intersections.
+ *
+ * With @rule == ART_WIND_RULE_ODDEVEN, the resulting svp has a
+ * winding number of 1 where @vp has an odd winding number. It is
+ * useful for implementing the even-odd winding rule of the
+ * PostScript imaging model.
+ *
+ * With @rule == ART_WIND_RULE_POSITIVE, the resulting svp has a
+ * winding number of 1 where @vp has a positive winding number. It is
+ * usefull for implementing asymmetric difference.
+ *
+ * This routine needs to be redone from scratch with numerical robustness
+ * in mind. I'm working on it.
+ *
+ * Return value: The new svp.
+ **/
 ArtSVP *
 art_svp_rewind_uncrossed (ArtSVP *vp, ArtWindRule rule)
 {

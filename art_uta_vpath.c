@@ -1,5 +1,5 @@
 /* Libart_LGPL - library of basic graphic primitives
- * Copyright (C) 1998 Raph Levien
+ * Copyright (C) 1998-2000 Raph Levien
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -34,13 +34,26 @@
 #define MIN(a, b)  (((a) < (b)) ? (a) : (b))
 #endif /* MIN */
 
-/* Add the line to the uta, and also perform the basic step in rendering
-   the interior of a vpath. Specifically, for each time that a line
-   crosses a horizontal microtile grid line, increment (if y1 > y0,
-   decrement otherwise) the grid point lying to the right of the line.
-
-   Somewhat delicate handling of edge cases is called for.
-*/
+/**
+ * art_uta_add_line: Add a line to the uta.
+ * @uta: The uta to modify.
+ * @x0: X coordinate of line start point.
+ * @y0: Y coordinate of line start point.
+ * @x1: X coordinate of line end point.
+ * @y1: Y coordinate of line end point.
+ * @rbuf: Buffer containing first difference of winding number.
+ * @rbuf_rowstride: Rowstride of @rbuf.
+ *
+ * Add the line (@x0, @y0) - (@x1, @y1) to @uta, and also update the
+ * winding number buffer used for rendering the interior. @rbuf
+ * contains the first partial difference (in the X direction) of the
+ * winding number, measured in grid cells. Thus, each time that a line
+ * crosses a horizontal uta grid line, an entry of @rbuf is
+ * incremented if @y1 > @y0, decremented otherwise.
+ *
+ * Note that edge handling is fairly delicate. Please rtfs for
+ * details.
+ **/
 void
 art_uta_add_line (ArtUta *uta, double x0, double y0, double x1, double y1,
 		  int *rbuf, int rbuf_rowstride)
@@ -259,6 +272,15 @@ art_uta_add_line (ArtUta *uta, double x0, double y0, double x1, double y1,
     }
 }
 
+/**
+ * art_uta_from_vpath: Generate uta covering a vpath.
+ * @vec: The source vpath.
+ *
+ * Generates a uta covering @vec. The resulting uta is of course
+ * approximate, ie it may cover more pixels than covered by @vec.
+ *
+ * Return value: the new uta.
+ **/
 ArtUta *
 art_uta_from_vpath (const ArtVpath *vec)
 {

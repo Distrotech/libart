@@ -1,5 +1,5 @@
 /* Libart_LGPL - library of basic graphic primitives
- * Copyright (C) 1998 Raph Levien
+ * Copyright (C) 1998-2000 Raph Levien
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -111,6 +111,43 @@ art_svp_render_step_compare (const void *s1, const void *s2)
 
 */
 
+/**
+ * art_svp_render_aa: Render SVP antialiased.
+ * @svp: The #ArtSVP to render.
+ * @x0: Left coordinate of destination rectangle.
+ * @y0: Top coordinate of destination rectangle.
+ * @x1: Right coordinate of destination rectangle.
+ * @y1: Bottom coordinate of destination rectangle.
+ * @callback: The callback which actually paints the pixels.
+ * @callback_data: Private data for @callback.
+ *
+ * Renders the sorted vector path in the given rectangle, antialiased.
+ *
+ * This interface uses a callback for the actual pixel rendering. The
+ * callback is called @y1 - @y0 times (once for each scan line). The y
+ * coordinate is given as an argument for convenience (it could be
+ * stored in the callback's private data and incremented on each
+ * call).
+ *
+ * The rendered polygon is represented in a semi-runlength format: a
+ * start value and a sequence of "steps". Each step has an x
+ * coordinate and a value delta. The resulting value at position x is
+ * equal to the sum of the start value and all step delta values for
+ * which the step x coordinate is less than or equal to x. An
+ * efficient algorithm will traverse the steps left to right, keeping
+ * a running sum.
+ *
+ * All x coordinates in the steps are guaranteed to be @x0 <= x < @x1.
+ * (This guarantee is a change from the gfonted vpaar renderer from
+ * which this routine is derived, and is designed to simplify the
+ * callback).
+ *
+ * The value 0x8000 represents 0% coverage by the polygon, while
+ * 0xff8000 represents 100% coverage. This format is designed so that
+ * >> 16 results in a standard 0x00..0xff value range, with nice
+ * rounding.
+ * 
+ **/
 void
 art_svp_render_aa (const ArtSVP *svp,
 		   int x0, int y0, int x1, int y1,

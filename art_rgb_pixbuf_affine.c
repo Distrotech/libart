@@ -32,7 +32,33 @@
 
 /* Composite the source image over the destination image, applying the
    affine transform. */
-
+/**
+ * art_rgb_pixbuf_affine: Affine transform source RGB pixbuf and composite.
+ * @dst: Destination image RGB buffer.
+ * @x0: Left coordinate of destination rectangle.
+ * @y0: Top coordinate of destination rectangle.
+ * @x1: Right coordinate of destination rectangle.
+ * @y1: Bottom coordinate of destination rectangle.
+ * @dst_rowstride: Rowstride of @dst buffer.
+ * @pixbuf: source image pixbuf.
+ * @affine: Affine transform.
+ * @level: Filter level.
+ * @alphagamma: #ArtAlphaGamma for gamma-correcting the compositing.
+ *
+ * Affine transform the source image stored in @src, compositing over
+ * the area of destination image @dst specified by the rectangle
+ * (@x0, @y0) - (@x1, @y1). As usual in libart, the left and top edges
+ * of this rectangle are included, and the right and bottom edges are
+ * excluded.
+ *
+ * The @alphagamma parameter specifies that the alpha compositing be
+ * done in a gamma-corrected color space. In the current
+ * implementation, it is ignored.
+ *
+ * The @level parameter specifies the speed/quality tradeoff of the
+ * image interpolation. Currently, only ART_FILTER_NEAREST is
+ * implemented.
+ **/
 void
 art_rgb_pixbuf_affine (art_u8 *dst,
 		       int x0, int y0, int x1, int y1, int dst_rowstride,

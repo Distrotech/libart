@@ -85,13 +85,34 @@ art_bezier_to_vec (double x0, double y0,
 #define RENDER_LEVEL 4
 #define RENDER_SIZE (1 << (RENDER_LEVEL))
 
-/* Render a bezier segment into the vector path. Include [xy]3 but not
-   [xy]0. Use flatness to guide the amount of subdivision - flatness
-   is defined in the Adobe PostScript reference manual as the maximum
-   deviation between the any point on the vpath approximation and the
-   corresponding point on the "true" curve, and we follow this
-   definition here. A value of 0.25 should ensure high quality for aa
-   rendering. */
+/**
+ * art_vpath_render_bez: Render a bezier segment into the vpath. 
+ * @p_vpath: Where the pointer to the #ArtVpath structure is stored.
+ * @pn_points: Pointer to the number of points in *@p_vpath.
+ * @pn_points_max: Pointer to the number of points allocated.
+ * @x0: X coordinate of starting bezier point.
+ * @y0: Y coordinate of starting bezier point.
+ * @x1: X coordinate of first bezier control point.
+ * @y1: Y coordinate of first bezier control point.
+ * @x2: X coordinate of second bezier control point.
+ * @y2: Y coordinate of second bezier control point.
+ * @x3: X coordinate of ending bezier point.
+ * @y3: Y coordinate of ending bezier point.
+ * @flatness: Flatness control.
+ *
+ * Renders a bezier segment into the vector path, reallocating and
+ * updating *@p_vpath and *@pn_vpath_max as necessary. *@pn_vpath is
+ * incremented by the number of vector points added.
+ *
+ * This step includes (@x0, @y0) but not (@x3, @y3).
+ *
+ * The @flatness argument guides the amount of subdivision. The Adobe
+ * PostScript reference manual defines flatness as the maximum
+ * deviation between the any point on the vpath approximation and the
+ * corresponding point on the "true" curve, and we follow this
+ * definition here. A value of 0.25 should ensure high quality for aa
+ * rendering.
+**/
 static void
 art_vpath_render_bez (ArtVpath **p_vpath, int *pn, int *pn_max,
 		      double x0, double y0,
@@ -208,13 +229,18 @@ art_vpath_render_bez (ArtVpath **p_vpath, int *pn, int *pn_max,
 			x_m, y_m, xb1, yb1, xb2, yb2, x3, y3, flatness);
 }
 
-/* Creates a new vector path, given a bezier path. The flatness
-   argument is present in the api but is not used. A value of 0.25
-   should usually be appropriate for antialiased display (1 for "lego"
-   displays) - at least if the resulting vpath is not going to be
-   scaled. */
-
-/* We could scan first and allocate to fit, but we don't. */
+/**
+ * art_bez_path_to_vec: Create vpath from bezier path.
+ * @bez: Bezier path.
+ * @flatness: Flatness control.
+ *
+ * Creates a vector path closely approximating the bezier path defined by
+ * @bez. The @flatness argument controls the amount of subdivision. In
+ * general, the resulting vpath deviates by at most @flatness pixels
+ * from the "ideal" path described by @bez.
+ *
+ * Return value: Newly allocated vpath.
+ **/
 ArtVpath *
 art_bez_path_to_vec (const ArtBpath *bez, double flatness)
 {
@@ -222,8 +248,6 @@ art_bez_path_to_vec (const ArtBpath *bez, double flatness)
   int vec_n, vec_n_max;
   int bez_index;
   double x, y;
-  ArtPoint seg[RENDER_SIZE];
-  int i;
 
   vec_n = 0;
   vec_n_max = RENDER_SIZE;

@@ -1,5 +1,5 @@
 /* Libart_LGPL - library of basic graphic primitives
- * Copyright (C) 1998 Raph Levien
+ * Copyright (C) 1998-2000 Raph Levien
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -27,9 +27,18 @@
 #include "art_uta_svp.h"
 #include "art_vpath_svp.h"
 
-
-/* I will of course want to replace this with a more direct implementation.
-   But this gets the api in place. */
+/**
+ * art_uta_from_svp: Generate uta covering an svp.
+ * @svp: The source svp.
+ *
+ * Generates a uta covering @svp. The resulting uta is of course
+ * approximate, ie it may cover more pixels than covered by @svp.
+ *
+ * Note: I will want to replace this with a more direct
+ * implementation. But this gets the api in place.
+ *
+ * Return value: the new uta.
+ **/
 ArtUta *
 art_uta_from_svp (const ArtSVP *svp)
 {
