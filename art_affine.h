@@ -33,6 +33,12 @@ art_affine_point (ArtPoint *dst, const ArtPoint *src,
 void
 art_affine_invert (double dst_affine[6], const double src_affine[6]);
 
+/* flip the matrix, FALSE, FALSE is a simple copy operation, and
+   TRUE, TRUE equals a rotation by 180 degrees */
+void
+art_affine_flip (double dst_affine[6], const double src_affine[6],
+                 int horz, int vert);
+
 void
 art_affine_to_string (char str[128], const double src[6]);
 
@@ -52,9 +58,14 @@ art_affine_scale (double dst[6], double sx, double sy);
 void
 art_affine_rotate (double dst[6], double theta);
 
+/* set up a shearing matrix; theta is given in degrees */
+void
+art_affine_shear (double dst[6], double theta);
+
 /* set up a translation matrix */
 void
 art_affine_translate (double dst[6], double tx, double ty);
+
 
 /* find the affine's "expansion factor", i.e. the scale amount */
 double
@@ -65,6 +76,11 @@ art_affine_expansion (const double src[6]);
    another rectangle aligned to the grid. */
 int
 art_affine_rectilinear (const double src[6]);
+
+/* Determine whether two affine transformations are equal within grid allignment */
+int
+art_affine_equal (double matrix1[6], double matrix2[6]);
+
 
 #ifdef __cplusplus
 }

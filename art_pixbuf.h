@@ -28,6 +28,9 @@
 extern "C" {
 #endif
 
+
+typedef void (*ArtDestroyNotify) (void *func_data, void *data);
+
 typedef struct _ArtPixBuf ArtPixBuf;
 
 typedef enum {
@@ -49,24 +52,38 @@ struct _ArtPixBuf {
   int width;
   int height;
   int rowstride;
-  int flags;
+  void *destroy_data;
+  ArtDestroyNotify destroy;
 };
 
+/* allocate an ArtPixBuf from art_alloc()ed pixels (automated destruction) */
 ArtPixBuf *
 art_pixbuf_new_rgb (art_u8 *pixels, int width, int height, int rowstride);
 
 ArtPixBuf *
 art_pixbuf_new_rgba (art_u8 *pixels, int width, int height, int rowstride);
 
+/* allocate an ArtPixBuf from constant pixels (no destruction) */
 ArtPixBuf *
 art_pixbuf_new_const_rgb (const art_u8 *pixels, int width, int height, int rowstride);
 
 ArtPixBuf *
 art_pixbuf_new_const_rgba (const art_u8 *pixels, int width, int height, int rowstride);
 
+/* allocate an ArtPixBuf and notify creator upon destruction */
+ArtPixBuf *
+art_pixbuf_new_rgb_dnotify (art_u8 *pixels, int width, int height, int rowstride,
+			    void *dfunc_data, ArtDestroyNotify dfunc);
+
+ArtPixBuf *
+art_pixbuf_new_rgba_dnotify (art_u8 *pixels, int width, int height, int rowstride,
+			     void *dfunc_data, ArtDestroyNotify dfunc);
+
+/* free an ArtPixBuf with destroy notification */
 void
 art_pixbuf_free (ArtPixBuf *pixbuf);
 
+/* deprecated function, use the _dnotify variants for allocation instead */
 void
 art_pixbuf_free_shallow (ArtPixBuf *pixbuf);
 

@@ -1,3 +1,24 @@
+Fri Jul 16 23:03:26 1999  Tim Janik  <timj@gtk.org>
+
+	* art_pixbuf.[hc]: deprecated art_pixbuf_free_shallow(), people should
+	always free pixbufs with art_pixbuf_free() and use the _dnotify variants
+	for specific destruction behaviour.
+	added art_pixbuf_new_rgb_dnotify() and art_pixbuf_new_rgba_dnotify()
+	which allow for a destruction notification function. (this involved
+	adding two extra pointers to the ArtPixBuf structure, and removal of
+	the recently introduced int flags field).
+
+Mon Jul 12 01:13:23 1999  Tim Janik  <timj@gtk.org>
+
+	* art_affine.[hc]: added art_affine_equal(), which checks two
+	matrixes for equality within grid alignment.
+
+Fri Jul  9 17:50:19 1999  Tim Janik  <timj@gtk.org>
+
+	* art_affine.[hc]: added art_affine_flip() to flip a matrix horizontally
+	and/or vertically, or just copy it.
+	added art_affine_shear() to setup a shearing matrix.
+
 Tue Jul  6 19:03:39 1999  Tim Janik  <timj@gtk.org>
 
 	* art_pixbuf.h: added an int flags; member to the end of the

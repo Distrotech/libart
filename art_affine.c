@@ -59,6 +59,18 @@ art_affine_invert (double dst[6], const double src[6])
   dst[5] = -src[4] * dst[1] - src[5] * dst[3];
 }
 
+/* flip the matrix, FALSE, FALSE is a simple copy operation, and
+   TRUE, TRUE equals a rotation by 180 degrees */
+void
+art_affine_flip (double dst_affine[6], const double src_affine[6], int horz, int vert)
+{
+  dst_affine[0] = horz ? - src_affine[0] : src_affine[0];
+  dst_affine[1] = horz ? - src_affine[1] : src_affine[1];
+  dst_affine[2] = vert ? - src_affine[2] : src_affine[2];
+  dst_affine[3] = vert ? - src_affine[3] : src_affine[3];
+  dst_affine[4] = src_affine[4];
+  dst_affine[5] = src_affine[5];
+}
 
 #define EPSILON 1e-6
 
@@ -274,6 +286,21 @@ art_affine_rotate (double dst[6], double theta)
   dst[5] = 0;
 }
 
+/* set up a shearing matrix; theta is given in degrees */
+void
+art_affine_shear (double dst[6], double theta)
+{
+  double t;
+
+  t = tan (theta * M_PI / 180.0);
+  dst[0] = 1;
+  dst[1] = 0;
+  dst[2] = t;
+  dst[3] = 1;
+  dst[4] = 0;
+  dst[5] = 0;
+}
+
 /* set up a translation matrix */
 void
 art_affine_translate (double dst[6], double tx, double ty)
@@ -290,8 +317,6 @@ art_affine_translate (double dst[6], double tx, double ty)
 double
 art_affine_expansion (const double src[6])
 {
-  double r_det;
-
   return sqrt (src[0] * src[3] - src[1] * src[2]);
 }
 
@@ -303,4 +328,16 @@ art_affine_rectilinear (const double src[6])
 {
   return ((fabs (src[1]) < EPSILON && fabs (src[2]) < EPSILON) ||
 	  (fabs (src[0]) < EPSILON && fabs (src[3]) < EPSILON));
+}
+
+/* Determine whether two affine transformations are equal within grid allignment */
+int
+art_affine_equal (double matrix1[6], double matrix2[6])
+{
+  return (fabs (matrix1[0] - matrix2[0]) < EPSILON &&
+	  fabs (matrix1[1] - matrix2[1]) < EPSILON &&
+	  fabs (matrix1[2] - matrix2[2]) < EPSILON &&
+	  fabs (matrix1[3] - matrix2[3]) < EPSILON &&
+	  fabs (matrix1[4] - matrix2[4]) < EPSILON &&
+	  fabs (matrix1[5] - matrix2[5]) < EPSILON);
 }
