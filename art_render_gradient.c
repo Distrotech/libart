@@ -32,6 +32,32 @@
 #include <string.h>
 #include <assert.h>
 
+/* Hack to find out how to define alloca on different platforms.
+ * Modified version of glib/galloca.h.
+ */
+
+#ifdef  __GNUC__
+/* GCC does the right thing */
+# undef alloca
+# define alloca(size)   __builtin_alloca (size)
+#elif defined (HAVE_ALLOCA_H)
+/* a native and working alloca.h is there */ 
+# include <alloca.h>
+#else /* !__GNUC__ && !HAVE_ALLOCA_H */
+# ifdef _MSC_VER
+#  include <malloc.h>
+#  define alloca _alloca
+# else /* !_MSC_VER */
+#  ifdef _AIX
+ #pragma alloca
+#  else /* !_AIX */
+#   ifndef alloca /* predefined by HP cc +Olibcalls */
+char *alloca ();
+#   endif /* !alloca */
+#  endif /* !_AIX */
+# endif /* !_MSC_VER */
+#endif /* !__GNUC__ && !HAVE_ALLOCA_H */
+
 #undef DEBUG_SPEW
 
 typedef struct _ArtImageSourceGradLin ArtImageSourceGradLin;

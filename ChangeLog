@@ -1,3 +1,9 @@
+2002-02-06  Laszlo Peter  <laca@ireland.sun.com>
+
+	* configure.in: add AC_FUNC_ALLOCA
+
+	* art_render_gradient.c: copy alloca hacks from glib/galloca.h
+
 2002-02-02  Alexander Larsson  <alla@lysator.liu.se>
 
 	* art_render.c:
