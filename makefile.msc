@@ -1,5 +1,4 @@
-PACKAGE = libart
-PKG_CFLAGS = -I.. -DLIBART_COMPILATION
+PKG_CFLAGS = -I.. -DLIBART_COMPILATION -DDLL_EXPORT
 
 OBJECTS = \
 	art_affine.obj \
@@ -11,8 +10,13 @@ OBJECTS = \
 	art_rect.obj \
 	art_rect_svp.obj \
 	art_rect_uta.obj \
+	art_render.obj \
+	art_render_gradient.obj \
+	art_render_mask.obj \
+	art_render_svp.obj \
 	art_rgb.obj \
 	art_rgba.obj \
+	art_rgb_a_affine.obj \
 	art_rgb_affine.obj \
 	art_rgb_affine_private.obj \
 	art_rgb_bitmap_affine.obj \
@@ -20,6 +24,7 @@ OBJECTS = \
 	art_rgb_rgba_affine.obj \
 	art_rgb_svp.obj \
 	art_svp.obj \
+	art_svp_intersect.obj \
 	art_svp_ops.obj \
 	art_svp_point.obj \
 	art_svp_render_aa.obj \
@@ -35,6 +40,7 @@ OBJECTS = \
 	art_vpath_bpath.obj \
 	art_vpath_dash.obj \
 	art_vpath_svp.obj \
+	libart-features.obj
 
 testOBJECTS = \
 	testart.obj \
@@ -65,10 +71,10 @@ CFLAGS = -I. -DHAVE_CONFIG_H
 all : \
 	config.h \
 	art_config.h \
-	$(PACKAGE).dll
+	libart_lgpl_2-2.dll
 
-$(PACKAGE).dll : $(OBJECTS) $(PACKAGE).def
-	$(CC) $(CFLAGS) -LD -Fe$(PACKAGE).dll $(OBJECTS) user32.lib advapi32.lib wsock32.lib $(LDFLAGS) /def:$(PACKAGE).def
+libart_lgpl_2-2.dll : $(OBJECTS) libart.def
+	$(CC) $(CFLAGS) -LD -Felibart_lgpl_2-2.dll $(OBJECTS) user32.lib advapi32.lib wsock32.lib $(LDFLAGS) /def:libart.def /implib:art_lgpl_2.lib
 
 config.h: config.h.win32
 	copy config.h.win32 config.h

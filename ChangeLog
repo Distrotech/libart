@@ -1,3 +1,30 @@
+2003-08-14  Tor Lillqvist  <tml@iki.fi>
+
+	Some nitpicking changes for Win32:
+
+	* libart-features.h.in: Declare the variables from the library as
+	dlimport/dllexport on Win32.
+
+	* Makefile.am: Don't use -lm on Win32. Use the libart.def file.
+
+	* makefile.msc: Update to generate same name DLL and import
+	library as auto* and libtool. Add missing objects. (But dunno if
+	it is useful to maintain this file. It isn't distributed in the
+	source tarballs (should it be?). And, if it were distributed, and
+	the intention was to support random people really building libart
+	with MSVC, one should distribute also prebuilt config.h(.win32)
+	and libart-features.h(.win32) files.)
+
+	* libart-zip.in (DEVZIP): Fix typo.
+	(DLLDIR): libtool 1.5 installs DLLs in $(prefix)/bin, so look
+	there, too.
+
+	* libart.def: Add missing entry points.
+
+	* testuta.c: To check that the export/import of the version
+	variables work, print out them in a comment. Undefine
+	LIBART_COMPILATION before including libart-features.h.
+
 2003-08-08  Alexander Larsson  <alexl@redhat.com>
 
 	* configure.in: 2.3.14
