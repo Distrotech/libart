@@ -1,3 +1,7 @@
+2001-09-24  Darin Adler  <darin@bentspoon.com>
+
+	* libart-config.in: Oops. Typo in my last change.
+
 2001-09-20  Darin Adler  <darin@bentspoon.com>
 
 	* configure.in: Set LIBART_INCLUDEDIR to match Makefile.am.
