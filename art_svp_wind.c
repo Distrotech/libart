@@ -91,7 +91,7 @@ intersect_lines (ArtPoint z0, ArtPoint z1, ArtPoint z2, ArtPoint z3,
 
 #define EPSILON 1e-6
 
-double
+static double
 trap_epsilon (double v)
 {
   const double epsilon = EPSILON;
@@ -341,6 +341,7 @@ x_order_2 (ArtPoint z0, ArtPoint z1, ArtPoint z2, ArtPoint z3)
   return 0;
 }
 
+#ifdef DEAD_CODE
 /* Traverse the vector path, keeping it in x-sorted order.
 
    This routine doesn't actually do anything - it's just here for
@@ -454,6 +455,7 @@ traverse (ArtSVP *vp)
   art_free (cursor);
   art_free (active_segs);
 }
+#endif
 
 /* I believe that the loop will always break with i=1.
 

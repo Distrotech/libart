@@ -35,8 +35,12 @@
 #include "art_alphagamma.h"
 #include "art_svp_point.h"
 #include "art_vpath_dash.h"
+#include "art_render.h"
+#include "art_render_gradient.h"
+#include "art_render_svp.h"
 
-void
+#ifdef DEAD_CODE
+static void
 test_affine (void) {
   double src[6];
   double dst[6];
@@ -98,8 +102,9 @@ test_affine (void) {
 	  ps.x, ps.y, pd.x, pd.y);
 
 }
+#endif
 
-ArtVpath *
+static ArtVpath *
 randstar (int n)
 {
   ArtVpath *vec;
@@ -138,7 +143,8 @@ randstar (int n)
 #define BYTES_PP 1
 #endif
 
-void
+#ifdef DEAD_CODE
+static void
 print_svp (ArtSVP *vp)
 {
   int i, j;
@@ -157,8 +163,9 @@ print_svp (ArtSVP *vp)
                 vp->segs[i].points[j].y);
     }
 }
+#endif
 
-void
+static void
 print_vpath (ArtVpath *vpath)
 {
   int i;
@@ -174,7 +181,7 @@ print_vpath (ArtVpath *vpath)
   printf ("stroke\n");
 }
 
-void
+static void
 make_testpat (void)
 {
   ArtVpath *vpath, *vpath2, *vpath3;
@@ -311,7 +318,7 @@ make_testpat (void)
   fwrite (buf, 1, 512 * 512 * BYTES_PP, stdout);
 }
 
-void
+static void
 test_dist (void)
 {
   ArtVpath *vpath;
@@ -361,7 +368,7 @@ test_dist (void)
 
 }
 
-void
+static void
 test_dash (void)
 {
   ArtVpath *vpath, *vpath2;
@@ -381,12 +388,119 @@ test_dash (void)
   art_free (vpath2);
 }
 
-void
+static void
+test_render_gradient (art_u8 *buf)
+{
+  ArtGradientLinear gradient;
+  ArtGradientStop stops[3] = {
+    { 0.0, { 0x7fff, 0x0000, 0x0000, 0x7fff }},
+    { 0.5, { 0x0000, 0x0000, 0x0000, 0x1000 }},
+    { 1.0, { 0x0000, 0x7fff, 0x0000, 0x7fff }}
+  };
+  ArtVpath *vpath;
+  ArtSVP *svp;
+  ArtRender *render;
+
+  gradient.a = 0.003;
+  gradient.b = -0.0015;
+  gradient.c = 0.1;
+  gradient.spread = ART_GRADIENT_PAD;
+  gradient.n_stops = sizeof(stops) / sizeof(stops[0]);
+  gradient.stops = stops;
+
+  vpath = randstar (50);
+  svp = art_svp_from_vpath (vpath);
+
+  render = art_render_new (0, 0, 512, 512, buf, 512 * 3, 3, 8, ART_ALPHA_NONE,
+			   NULL);
+  art_render_svp (render, svp);
+  art_render_gradient_linear (render, &gradient, ART_FILTER_NEAREST);
+  art_render_invoke (render);
+
+}
+
+static void
+test_render_rad_gradient (art_u8 *buf)
+{
+  ArtGradientRadial gradient;
+  ArtGradientStop stops[3] = {
+    { 0.0, { 0xffff, 0x0000, 0x0000, 0xffff }},
+    { 0.5, { 0xe000, 0xe000, 0x0000, 0xe000 }},
+    { 1.0, { 0x0000, 0x0000, 0x0000, 0x0000 }}
+  };
+  ArtVpath *vpath;
+  ArtSVP *svp;
+  ArtRender *render;
+
+  gradient.affine[0] = 3.0 / 512;
+  gradient.affine[1] = 0;
+  gradient.affine[2] = 0;
+  gradient.affine[3] = 3.0 / 512;
+  gradient.affine[4] = -1.5;
+  gradient.affine[5] = -1.5;
+  gradient.fx = 0.9;
+  gradient.fy = 0.1;
+  
+  gradient.n_stops = sizeof(stops) / sizeof(stops[0]);
+  gradient.stops = stops;
+
+  vpath = randstar (50);
+  svp = art_svp_from_vpath (vpath);
+
+  render = art_render_new (0, 0, 512, 512, buf, 512 * 3, 3, 8, ART_ALPHA_NONE,
+			   NULL);
+  art_render_svp (render, svp);
+  art_render_gradient_radial (render, &gradient, ART_FILTER_NEAREST);
+  art_render_invoke (render);
+
+}
+
+static void
+test_gradient (void)
+{
+  ArtVpath *vpath;
+  ArtSVP *svp;
+  art_u8 buf[512 * 512 * 3];
+  ArtRender *render;
+  ArtPixMaxDepth color[3] = {0x0000, 0x0000, 0x8000 };
+  int i;
+  const int n_iter = 1;
+
+  vpath = randstar (50);
+  svp = art_svp_from_vpath (vpath);
+
+  for (i = 0; i < n_iter; i++)
+    {
+#define USE_RENDER
+#ifdef USE_RENDER
+      render = art_render_new (0, 0, 512, 512, buf, 512 * 3, 3, 8, ART_ALPHA_NONE,
+			       NULL);
+      art_render_clear_rgb (render, 0xfff0c0);
+      art_render_svp (render, svp);
+      art_render_image_solid (render, color);
+      art_render_invoke (render);
+#else
+      art_rgb_svp_aa (svp, 0, 0, 512, 512, 0xfff0c0, 0x000080,
+		      buf, 512 * 3, NULL);
+#endif
+    }
+
+#if 1
+  test_render_gradient (buf);
+#endif
+  test_render_rad_gradient (buf);
+
+  printf ("P6\n512 512\n255\n");
+  fwrite (buf, 1, 512 * 512 * 3, stdout);
+}
+
+static void
 usage (void)
 {
   fprintf (stderr, "usage: testart <test>\n"
 "  where <test> is one of:\n"
 "  testpat    -- make random star + gradients test pattern\n"
+"  gradient   -- test pattern for rendered gradients\n"
 "  dash       -- dash test (output is valid PostScript)\n"
 "  dist       -- distance test\n");
   exit (1);
@@ -400,6 +514,8 @@ main (int argc, char **argv)
 
   if (!strcmp (argv[1], "testpat"))
     make_testpat ();
+  else if (!strcmp (argv[1], "gradient"))
+    test_gradient ();
   else if (!strcmp (argv[1], "dist"))
     test_dist ();
   else if (!strcmp (argv[1], "dash"))

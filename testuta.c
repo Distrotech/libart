@@ -34,7 +34,7 @@
 #define XOFF 50
 #define YOFF 700
 
-void
+static void
 print_uta_ps (ArtUta *uta)
 {
   int x, y;
@@ -65,7 +65,7 @@ print_uta_ps (ArtUta *uta)
       }
 }
 
-void
+static void
 print_rbuf_ps (int *rbuf, int width, int height)
 {
   int x, y;
@@ -115,7 +115,7 @@ print_ps_vpath (ArtVpath *vpath)
   printf ("stroke\n");
 }
 
-ArtVpath *
+static ArtVpath *
 randstar (int n)
 {
   ArtVpath *vec;

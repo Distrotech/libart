@@ -2,7 +2,7 @@ AC_INIT(art_misc.h)
 AM_CONFIG_HEADER(config.h)
 
 LIBART_MAJOR_VERSION=2
-LIBART_MINOR_VERSION=2
+LIBART_MINOR_VERSION=3
 LIBART_MICRO_VERSION=0
 LIBART_VERSION=$LIBART_MAJOR_VERSION.$LIBART_MINOR_VERSION.$LIBART_MICRO_VERSION
 LIBART_VERSION_INFO=`expr $LIBART_MAJOR_VERSION + $LIBART_MINOR_VERSION`:$LIBART_MICRO_VERSION:$LIBART_MINOR_VERSION
@@ -31,6 +31,11 @@ if test "x$GCC" = "xyes"; then
   case " $CFLAGS " in
   *[\ \	]-Wall[\ \	]*) ;;
   *) CFLAGS="$CFLAGS -Wall" ;;
+  esac
+
+  case " $CFLAGS " in
+  *[\ \	]-Wmissing-prototypes[\ \	]*) ;;
+  *) CFLAGS="$CFLAGS -Wmissing-prototypes" ;;
   esac
 
   if test "x$enable_ansi" = "xyes"; then

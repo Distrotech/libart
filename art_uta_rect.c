@@ -20,6 +20,7 @@
 #include "art_misc.h"
 #include "art_uta.h"
 #include "art_rect.h"
+#include "art_uta_rect.h"
 
 /**
  * art_uta_from_irect: Generate uta covering a rectangle.

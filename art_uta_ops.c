@@ -20,6 +20,7 @@
 #include <string.h>
 #include "art_misc.h"
 #include "art_uta.h"
+#include "art_uta_ops.h"
 
 #ifndef MIN
 #define MIN(a,b) ((a) < (b) ? (a) : (b))

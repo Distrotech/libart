@@ -1,3 +1,43 @@
+Mon May 29 13:48:49 2000  Raph Levien  <raph@acm.org>
+
+	This is a fairly major commit, as it adds both the new, modular
+	rendering architecture and gradients. Quite a bit of the code
+	feels like "reference code" now, in that it is (hopefully)
+	correct, but not necessarily very fast. In addition, there remain
+	a few things not done, including the use of SVP's as non-driver
+	mask sources. AlphaGamma and filter level also remain
+	unimplemented. No compositing modes other than ART_NORMAL are
+	implemented. All in good time!
+	
+	* configure.in: added -Wmissing-prototypes flag. Bumped version
+	number to 2.3.0.
+
+	* art_render.h:
+	* art_render.c: Added new rendering architecture.
+
+	* art_render_svp.h:
+	* art_render_svp.c: Added renderers to use SVP's as mask
+	sources in new rendering architecture.
+
+	* art_render_gradient.h:
+	* art_render_gradient.c: Added linear and radial gradients
+	as image sources in new rendering architecture.
+
+	* art_svp_wind.c: Added static to trap_epsilon(), #ifdef'd out
+	traverse().
+
+	* art_uta_ops.c: Added #include "art_uta_ops.h".
+
+	* art_uta_rect.c: Added #include "art_uta_rect.h".
+
+	* art_uta_svp.h: fixed __ART_UTA_SVP_H__ name.
+
+	* art_misc.h: Added ART_GNUC_NORETURN attribute, added that
+	to the prototype for art_die(). Added "static" to function
+	declarations to avoid warnings when compiled with
+
+	* testart.c: Added gradient test.
+
 Thu May 25 23:30:39 2000  Raph Levien  <raph@acm.org>
 
 	* art_svp_render_aa.h:

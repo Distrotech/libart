@@ -25,6 +25,12 @@ libart_lgpl_la_SOURCES = \
 	art_rect.c \
 	art_rect_svp.c \
 	art_rect_uta.c \
+	art_render.c \
+	art_render.h \
+	art_render_gradient.c \
+	art_render_gradient.h \
+	art_render_svp.c \
+	art_render_svp.h \
 	art_rgb.c \
 	art_rgb_affine.c \
 	art_rgb_affine_private.c \

@@ -1,5 +1,8 @@
-/* Libart_LGPL - library of basic graphic primitives
- * Copyright (C) 1998 Raph Levien
+/*
+ * art_render_gradient.h: SVP mask source for modular rendering.
+ *
+ * Libart_LGPL - library of basic graphic primitives
+ * Copyright (C) 2000 Raph Levien
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -15,23 +18,22 @@
  * License along with this library; if not, write to the
  * Free Software Foundation, Inc., 59 Temple Place - Suite 330,
  * Boston, MA 02111-1307, USA.
+ *
+ * Authors: Raph Levien <raph@acm.org>
  */
 
-#ifndef __ART_UTA_SVP_H__
-#define __ART_UTA_SVP_H__
-
-/* Basic data structures and constructors for microtile arrays */
+#ifndef __ART_RENDER_SVP_H__
+#define __ART_RENDER_SVP_H__
 
 #ifdef __cplusplus
 extern "C" {
 #endif /* __cplusplus */
 
-ArtUta *
-art_uta_from_svp (const ArtSVP *svp);
+void
+art_render_svp (ArtRender *render, const ArtSVP *svp);
 
 #ifdef __cplusplus
 }
 #endif /* __cplusplus */
 
-#endif /* __ART_UTA_SVP_H__ */
-
+#endif /* __ART_RENDER_SVP_H__ */
