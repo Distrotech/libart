@@ -192,7 +192,11 @@ make_testpat (void)
   double affine3[6];
   ArtAlphaGamma *alphagamma;
   double dash_data[] = { 20 };
-  ArtVpathDash dash = { 0, 1, dash_data };
+  ArtVpathDash dash;
+
+  dash.offset = 0;
+  dash.n_dash = 1;
+  dash.dash = dash_data;
 
 #ifdef TEST_AFFINE
   test_affine ();
@@ -362,8 +366,12 @@ test_dash (void)
 {
   ArtVpath *vpath, *vpath2;
   double dash_data[] = { 10, 4, 1, 4};
-  ArtVpathDash dash = { 0, 4, dash_data };
-
+  ArtVpathDash dash;
+	  
+  dash.offset = 0;
+  dash.n_dash = 3;
+  dash.dash = dash_data;
+  
   vpath = randstar (50);
   vpath2 = art_vpath_dash (vpath, &dash);
   printf ("%%!\n");
