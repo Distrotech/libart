@@ -1,3 +1,19 @@
+2001-05-27  Mathieu Lacage <mathieu@gnu.org>
+
+	Mother's day!!! Back in south france (4 hours of train hacking :).
+
+	* doc/tmpl/art_memory.sgml: document.
+	* doc/tmpl/art_core_construction.sgml: document.
+	* doc/dia/art-2d-space.dia: add for above doc.
+	* doc/art-2d-space.png: add for above doc.
+	* doc/tmpl/art_construction_extended.sgml: document.
+	* doc/dia/art-dash-style.dia: add for above doc.
+	* doc/art-dash-style.png: add for above doc.
+	* doc/tmpl/art_construction_trans.sgml: document.
+	* doc/Makefile.am: add image files in there.
+	* doc/libart-sections.txt: remove some functions we
+	  do not want to document.
+
 Fri May 25 12:45:56 2001  Owen Taylor  <otaylor@redhat.com>
 
 	* doc/Makefile.am (DOC_MODULE): Fix to the point of actually building.

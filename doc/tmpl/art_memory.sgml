@@ -2,12 +2,14 @@
 Memory Management
 
 <!-- ##### SECTION Short_Description ##### -->
-Memory Management API for libart tools.
+Memory Management API for libart users.
 
 <!-- ##### SECTION Long_Description ##### -->
 <para>
 These API functions are a set of wrapper functions around the OS-specific
-memory management functions: they keep the user-level code portable.
+memory management functions: they are used to keep the user-level code portable.
+Their definitions are straighforward so we will not get into any details.
+XXX: check for g_new behaviour when memory allocation problem.
 </para>
 
 <!-- ##### SECTION See_Also ##### -->
@@ -17,51 +19,49 @@ memory management functions: they keep the user-level code portable.
 
 <!-- ##### MACRO art_alloc ##### -->
 <para>
-
-</para>
+Same semantics as those of the standard C <function>malloc</function> function.
+</Para>
 
 
 
 <!-- ##### MACRO art_free ##### -->
 <para>
-
+Same semantics as those of the standard C <function>free</function> function.
 </para>
 
 
 
 <!-- ##### MACRO art_realloc ##### -->
 <para>
-
+Same semantics as those of the standard C <function>realloc</function> function.
 </para>
 
 
 
 <!-- ##### MACRO art_new ##### -->
 <para>
-
+This macro is not equivalent to the glib <function>g_new</function> function. As
+<function>g_new</function>, it takes two parameters: the type of the object to
+instantiate as first parameter and the number of such objects to instantiate as
+second parameter. It will return a dynamically allocated array of memory you can
+use to store objects in. In case of failure of the memory allocation, it will
+return NULL (this is very diffrent from <function>g_new</function> which does not
+return in case of failure. <function>g_new</function> allways suceeds).
 </para>
 
-@type: 
-@n: 
+@type: the type of the object to instantiate.
+@n: number of objects to instantiate.
 
 
 <!-- ##### MACRO art_renew ##### -->
 <para>
-
+This macro allows you to reallocate a dynamically allocated array of objects.
+As with <function>realloc</function> and <function>malloc</function>, if @p is NULL, 
+this is equivalent to art_new.
 </para>
 
-@p: 
-@type: 
-@n: 
-
-
-<!-- ##### MACRO art_expand ##### -->
-<para>
-
-</para>
-
-@p: 
-@type: 
-@max: 
+@p: the object array to renew.
+@type: the type of the objects.
+@n: the new number of objects you want in the array.
 
 

@@ -2,11 +2,17 @@
 Extended Construction APIs
 
 <!-- ##### SECTION Short_Description ##### -->
-
+Extended Construction API
 
 <!-- ##### SECTION Long_Description ##### -->
 <para>
-
+The simple construction APIs we have described just before
+allow you to build your own simple vector paths but it is often useful
+to be able to create circles, ellipses, straight lines with a non-zero width
+and such... To do so, we have the folowing functions available.
+Sample code for these API functions (namely, <function>art_svp_vpath_stroke</function>
+and <function>art_vpath_dash</function>) can be found <ulink url="./art-display.tar.gz">there</ulink>
+in the function <function>make_path</function>.
 </para>
 
 <!-- ##### SECTION See_Also ##### -->
@@ -16,12 +22,40 @@ Extended Construction APIs
 
 <!-- ##### STRUCT ArtVpathDash ##### -->
 <para>
-
+This structure describes the dashing style to be
+applied with <function>art_vpath_dash</function> 
+to a vpath.
+This structure is easy to understand if you take time to look at the folowing figure:
+	<figure>
+	  <title>Dashes</title>
+	  <graphic fileref="art-dash-style.png" scale="50"></graphic>
+	</figure>
 </para>
 
-@offset: 
-@n_dash: 
-@dash: 
+<para>
+The folowing code examplifies how to use this structure: it creates the <function>dash_style</function>
+corresponding to the example represented in the above figure.
+<programlisting>
+static ArtSVP *
+  ArtVpathDash dash_style;
+
+  dash_style.offset = 10;
+  dash_style.n_dash = 3;
+  dash_style.dash = art_new (double, 3);
+  dash_style.dash[0] = 10;
+  dash_style.dash[1] = 10;
+  dash_style.dash[2] = 20;
+</programlisting>
+</para>
+
+@offset: specifies the phase of the pattern. That is, how many pixels into the dash-list 
+the pattern should actually begin.
+@n_dash: number of elements in @dash.
+@dash: the initial and alternating elements (second, fourth, and so on) of the
+dash_list are the even dashes, and the others are the odd
+dashes.  Each element specifies a dash length. All of the elements must be nonzero.
+Specifying an odd-length list is equivalent to
+specifying the same list concatenated with itself to produce an even-length list
 
 <!-- ##### FUNCTION art_vpath_dash ##### -->
 <para>
@@ -52,20 +86,6 @@ Extended Construction APIs
 @ART_PATH_STROKE_CAP_SQUARE: 
 
 <!-- ##### FUNCTION art_svp_vpath_stroke ##### -->
-<para>
-
-</para>
-
-@vpath: 
-@join: 
-@cap: 
-@line_width: 
-@miter_limit: 
-@flatness: 
-@Returns: 
-
-
-<!-- ##### FUNCTION art_svp_vpath_stroke_raw ##### -->
 <para>
 
 </para>

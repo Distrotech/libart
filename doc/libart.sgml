@@ -10,6 +10,7 @@
 <!entity art-render SYSTEM "sgml/art_render.sgml">
 <!entity art-pixbuf SYSTEM "sgml/art_pixbuf.sgml">
 <!entity art-buffer-affine SYSTEM "sgml/art_buffer_affine.sgml">
+<!entity art-uta SYSTEM "sgml/art_uta.sgml">
 ]>
 
 
@@ -452,6 +453,19 @@ expose_cb (GtkWidget *widget, GdkEventExpose *evt, gpointer data)
     <sect1 id="basic-foo">
       <title>Construction APIs</title>
 
+      <para>
+	As we have already seen it previously in our sample
+	application and in the introduction, rendering vector graphics
+	in pixel buffers is first a matter of constructing the correct 
+	data structures representing these vectors.
+      </para>
+
+      <para>
+	Libart provides a number of API functions to create and manipulate
+	the <link linkend="ArtVpath">ArtVpath</link> and <link linkend="ArtBpath">ArtBpath</link>
+	data structures which are detailed in the folowing three sections.
+      </para>
+
       &art-construction-core;
       &art-construction-extended;
       &art-construction-trans;
@@ -483,7 +497,9 @@ expose_cb (GtkWidget *widget, GdkEventExpose *evt, gpointer data)
 
     <sect1 id="advanced-uta">
       <title>MicroTile Arrays</title>
-      <para></para>
+
+      &art-uta;
+
     </sect1>
 
   </chapter>

@@ -2,12 +2,38 @@
 SVPs
 
 <!-- ##### SECTION Short_Description ##### -->
-
+Manipulating SVPs
 
 <!-- ##### SECTION Long_Description ##### -->
 <para>
-
+SVPs cannot be created in many different ways: 
+<link linkend="art-svp-from-vpath">art_svp_from_vpath</link>
+and <link linkend="art-vpath-from-svp">art_vpath_from_svp</link>
+can be used to generate SVPs from a Vpath and to generate
+VPaths from SVPs.
 </para>
+
+<para>
+Once SVPs have been created, it is possible to manipulate them
+and apply a number of interesting operations on them. Most notably, 
+it is possible to do the union of two SVPs with 
+<link linkend="art-svp-union">art_svp_union</link> (Given two SVPs, 
+the union of these two SVPs is an SVP representing the area obtained by 
+the concatenation of the underlying areas of the two original SVPs).
+<link linkend="art-svp-intersect">art_svp_intersect</link> calculates the
+intersection of two SVPs: the resulting SVPs contain points which were 
+in the two original SVPs.
+Finally, <link linkend="art-svp-diff">art_svp_diff</link> calculates the 
+difference of two SVPs: the resulting SVPs contains all the points which 
+were in only one of the original SVP.
+These operations are sumamrized below:
+	<figure>
+	  <title>Operations on SVPs</title>
+	  <graphic fileref="art-svp-ops.png" scale="50"></graphic>
+	</figure>
+</para>
+
+<para>
 
 <!-- ##### SECTION See_Also ##### -->
 <para>

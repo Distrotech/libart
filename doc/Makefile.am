@@ -38,6 +38,8 @@ HTML_IMAGES =				\
 	art-affines.png			\
 	art-affine-matrix.png		\
 	art-affine-libart.png		\
+	art-2d-space.png		\
+	art-dash-style.png		\
 	art-non-display.tar.gz		\
 	art-display.tar.gz
 
@@ -49,7 +51,13 @@ content_files =
 extra_files =				\
 	dia/art-overall-arch.dia	\
 	dia/art-data-flow.dia		\
-	dia/art-drawing-commands.dia
+	dia/art-drawing-commands.dia	\
+	dia/art-2d-space.dia		\
+	dia/art-affines.dia		\
+	dia/art-affine-matrix.dia	\
+	dia/art-affine-libart.dia	\
+	dia/art-dash-style.dia
+
 
 # CFLAGS and LDFLAGS for compiling scan program. Only needed
 # if $(DOC_MODULE).types is non-empty.

@@ -6,7 +6,6 @@ art_free
 art_realloc
 art_new
 art_renew
-art_expand
 </SECTION>
 
 <SECTION>
@@ -44,7 +43,6 @@ ArtPathcode
 ArtVpath
 ArtBpath
 art_vpath_add_point
-art_bezier_to_vec
 art_bez_path_to_vec
 </SECTION>
 
@@ -58,7 +56,6 @@ art_vpath_dash
 ArtPathStrokeJoinType
 ArtPathStrokeCapType
 art_svp_vpath_stroke
-art_svp_vpath_stroke_raw
 art_vpath_new_circle
 </SECTION>
 
@@ -153,8 +150,8 @@ art_rect_list_from_uta
 
 
 <SECTION>
-<TITLE></TITLE>
-<FILE></FILE>
+<TITLE>Micro Tile Array</TITLE>
+<FILE>art_uta</FILE>
 ArtUtaBbox
 ArtUta
 art_uta_from_vpath

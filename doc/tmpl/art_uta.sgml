@@ -1,0 +1,116 @@
+<!-- ##### SECTION Title ##### -->
+Micro Tile Array
+
+<!-- ##### SECTION Short_Description ##### -->
+
+
+<!-- ##### SECTION Long_Description ##### -->
+<para>
+
+</para>
+
+<!-- ##### SECTION See_Also ##### -->
+<para>
+
+</para>
+
+<!-- ##### TYPEDEF ArtUtaBbox ##### -->
+<para>
+
+</para>
+
+
+<!-- ##### STRUCT ArtUta ##### -->
+<para>
+
+</para>
+
+@x0: 
+@y0: 
+@width: 
+@height: 
+@utiles: 
+
+<!-- ##### FUNCTION art_uta_from_vpath ##### -->
+<para>
+
+</para>
+
+@vec: 
+@Returns: 
+
+
+<!-- ##### FUNCTION art_uta_from_svp ##### -->
+<para>
+
+</para>
+
+@svp: 
+@Returns: 
+
+
+<!-- ##### FUNCTION art_uta_from_irect ##### -->
+<para>
+
+</para>
+
+@bbox: 
+@Returns: 
+
+
+<!-- ##### FUNCTION art_uta_add_line ##### -->
+<para>
+
+</para>
+
+@uta: 
+@x0: 
+@y0: 
+@x1: 
+@y1: 
+@rbuf: 
+@rbuf_rowstride: 
+
+
+<!-- ##### FUNCTION art_uta_union ##### -->
+<para>
+
+</para>
+
+@uta1: 
+@uta2: 
+@Returns: 
+
+
+<!-- ##### FUNCTION art_uta_new ##### -->
+<para>
+
+</para>
+
+@x0: 
+@y0: 
+@x1: 
+@y1: 
+@Returns: 
+
+
+<!-- ##### FUNCTION art_uta_new_coords ##### -->
+<para>
+
+</para>
+
+@x0: 
+@y0: 
+@x1: 
+@y1: 
+@Returns: 
+
+
+<!-- ##### FUNCTION art_uta_free ##### -->
+<para>
+
+</para>
+
+@uta: 
+
+

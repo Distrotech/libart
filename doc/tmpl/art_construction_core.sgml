@@ -2,11 +2,13 @@
 Core Construction APIs
 
 <!-- ##### SECTION Short_Description ##### -->
-
+Core construction API.
 
 <!-- ##### SECTION Long_Description ##### -->
 <para>
-
+This section details the API for the construction of 
+user-visible data structure, namely: <link linkend="ArtVpath">ArtVpath</link>
+and <link linkend="ArtBpath">ArtBpath</link>.
 </para>
 
 <!-- ##### SECTION See_Also ##### -->
@@ -16,44 +18,69 @@ Core Construction APIs
 
 <!-- ##### STRUCT ArtPoint ##### -->
 <para>
+This structure is used here and there in the API: there is no general rule
+about its use. It simply represents a point with its x and y coordinates 
+in the libart 2D space.
+</para>
+<para>
+The libart 2D space is not a direct cartesian 2D space: it is an indirect cartesian
+space (that is, its direction is the invert of the standard trigonometric direction).
+The 2D space used by libart is inspired by the X coordinate space:
+	<figure>
+	  <title>LibArt's 2D space</title>
+	  <graphic fileref="art-2d-space.png" scale="50"></graphic>
+	</figure>
 
 </para>
 
-@x: 
-@y: 
+@x: the x coordinate of the point.
+@y: the y cordinate of the point.
 
 <!-- ##### ENUM ArtPathcode ##### -->
 <para>
-
+This enum contains the list of the possible drawing commands understood
+by <link linkend="ArtVpath">ArtVpath</link> and <link linkend="ArtBpath">ArtBpath</link>.
+These commands are described <link linkend="sample-non-display">there</link>.
+They can be summarized by the folowing figure:
+	<figure>
+	  <title>Drawing commands</title>
+	  <graphic fileref="art-drawing-commands.png" scale="50"></graphic>
+	</figure>
 </para>
 
-@ART_MOVETO: 
-@ART_MOVETO_OPEN: 
-@ART_CURVETO: 
-@ART_LINETO: 
-@ART_END: 
+@ART_MOVETO: move to a given point, without drawing pixels.
+@ART_MOVETO_OPEN: move to a given point, without drawing pixels. Do not close the vector path at the end.
+@ART_CURVETO: move to a given point along a given bezier path while drawing pixels.
+@ART_LINETO: move to a given point along a staright line while drawing pixels.
+@ART_END: the end of the vector path.
 
 <!-- ##### STRUCT ArtVpath ##### -->
 <para>
-
+A vector path is an array of <function>ArtVpath</function> (short for vector path) data structures. 
+Each of those describes a
+given vector along the vector path. <function>ArtVpath</function>s can contain <function>ART_MOVETO</function>,
+<function>ART_MOVETO_OPEN</function>, <function>ART_LINETO</function> and <function>ART_END</function>
+commands. Of course, the @x and @y members of this data structure have no meaning @code is 
+<function>ART_END</function>.
 </para>
 
-@code: 
-@x: 
-@y: 
+@code: the drawing command to execute for this vector.
+@x: the x coordinate of the associated control point.
+@y: the y coordinate of the associated control point.
 
 <!-- ##### STRUCT ArtBpath ##### -->
 <para>
-
+A vector path can also be an array of <function>ArtBpath</function> (short for bézier path) data structures. 
+Bézier paths can hold all the possible drawing commands present in an @ArtPathCode. XXX: is this true ?
 </para>
 
-@code: 
-@x1: 
-@y1: 
-@x2: 
-@y2: 
-@x3: 
-@y3: 
+@code: the drawing command to execute for this vector.
+@x1: the x coordinate of the first control point of the bézier path.
+@y1: the y coordinate of the first control point of the bézier path.
+@x2: the x coordinate of the second control point of the bézier path.
+@y2: the xy coordinate of the second control point of the bézier path.
+@x3: the x coordinate of the end point of the bézier path.
+@y3: the y coordinate of the end point of the bézier path.
 
 <!-- ##### FUNCTION art_vpath_add_point ##### -->
 <para>
@@ -66,24 +93,6 @@ Core Construction APIs
 @code: 
 @x: 
 @y: 
-
-
-<!-- ##### FUNCTION art_bezier_to_vec ##### -->
-<para>
-
-</para>
-
-@x0: 
-@y0: 
-@x1: 
-@y1: 
-@x2: 
-@y2: 
-@x3: 
-@y3: 
-@p: 
-@level: 
-@Returns: 
 
 
 <!-- ##### FUNCTION art_bez_path_to_vec ##### -->

@@ -2,16 +2,21 @@
 Transformation operations
 
 <!-- ##### SECTION Short_Description ##### -->
-
+Transformations which can be applied to bpaths or vpaths.
 
 <!-- ##### SECTION Long_Description ##### -->
 <para>
-
+Once vpaths and bpaths are constructed, it is possible to apply a number of 
+transformations to these vector paths: <link linkend="art-vpath-perturb">art_vpath_perturb</link>
+should not be really used by applications (but you might have to use it so...) but
+<link linkend="art-vpath-affine-transform">art_vpath_affine_transform</link> and
+<link linkend="art-bpath-affine-transform">art_bpath_affine_transform</link> are both
+widely used to apply <link linkend="libart-Affine-transformation-matrices">affine transformations</link>.
 </para>
 
 <!-- ##### SECTION See_Also ##### -->
 <para>
-
+The definition of <link linkend="libart-Affine-transformation-matrices">Affine matrices</link>.
 </para>
 
 <!-- ##### FUNCTION art_vpath_perturb ##### -->
