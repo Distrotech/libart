@@ -24,7 +24,8 @@
 #include <stdarg.h>
 #include "art_misc.h"
 
-/** art_die: Print the error message to stderr and exit with a return code of 1.
+/**
+ * art_die: Print the error message to stderr and exit with a return code of 1.
  * @fmt: The printf-style format for the error message.
  *
  * Used for dealing with severe errors.
@@ -40,7 +41,8 @@ art_die (const char *fmt, ...)
   exit (1);
 }
 
-/** art_die: Print the error message to stderr.
+/**
+ * art_die: Print the error message to stderr.
  * @fmt: The printf-style format for the error message.
  *
  * Used for generating warnings.

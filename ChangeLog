@@ -1,6 +1,13 @@
+1999-09-01  Raph Levien  <raph@gimp.org>
+
+	* art_affine.c, art_alphagamma.c, art_bpath.c, art_gray_svp.c,
+	art_misc.c, art_pixbuf.c, art_rect.c, art_rect_svp.c,
+	art_rect_uta.c, art_rgb.c, art_rgb_affine.c,
+	art_rgb_bitmap_affine.c: Updates to api doc headers.
+
 1999-08-24  Raph Levien  <raph@gimp.org>
 
-	art_affine.c, art_alphagamma.c, art_alphagamma.h, art_bpath.c,
+	* art_affine.c, art_alphagamma.c, art_alphagamma.h, art_bpath.c,
 	art_bpath.h, art_gray_svp.c, art_misc.c, art_pixbuf.c,
 	art_pixbuf.h, art_point.h, art_rect.c, art_rect.h: Added api
 	documentation headers.

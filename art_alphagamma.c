@@ -24,10 +24,11 @@
 
 #include "art_alphagamma.h"
 
-/** art_alphagamma_new: Create a new &ArtAlphaGamma.
+/**
+ * art_alphagamma_new: Create a new #ArtAlphaGamma.
  * @gamma: Gamma value.
  *
- * Create a new &ArtAlphaGamma for a specific value of @gamma. When
+ * Create a new #ArtAlphaGamma for a specific value of @gamma. When
  * correctly implemented (which is generally not the case in libart),
  * alpha compositing with an alphagamma parameter is equivalent to
  * applying the gamma transformation to source images, doing the alpha
@@ -35,7 +36,7 @@
  * gamma transformation, bringing it back to a gamma-adjusted
  * intensity space.
  *
- * Return value: The newly created &ArtAlphaGamma.
+ * Return value: The newly created #ArtAlphaGamma.
  **/
 ArtAlphaGamma *
 art_alphagamma_new (double gamma)
@@ -71,10 +72,11 @@ art_alphagamma_new (double gamma)
   return alphagamma;
 }
 
-/** art_alphagamma_free: Free an &ArtAlphaGamma.
- * @alphagamma: An &ArtAlphaGamma.
+/**
+ * art_alphagamma_free: Free an #ArtAlphaGamma.
+ * @alphagamma: An #ArtAlphaGamma.
  *
- * Frees the &ArtAlphaGamma.
+ * Frees the #ArtAlphaGamma.
  **/
 void
 art_alphagamma_free (ArtAlphaGamma *alphagamma)

@@ -31,7 +31,8 @@
 
 /* rectangle primitives stolen from gzilla */
 
-/** art_irect_copy: Make a copy of an integer rectangle.
+/**
+ * art_irect_copy: Make a copy of an integer rectangle.
  * @dest: Where the copy is stored.
  * @src: The source rectangle.
  *
@@ -45,7 +46,8 @@ art_irect_copy (ArtIRect *dest, const ArtIRect *src) {
   dest->y1 = src->y1;
 }
 
-/** art_irect_union: Find union of two integer rectangles.
+/**
+ * art_irect_union: Find union of two integer rectangles.
  * @dest: Where the result is stored.
  * @src1: A source rectangle.
  * @src2: Another source rectangle.
@@ -66,7 +68,8 @@ art_irect_union (ArtIRect *dest, const ArtIRect *src1, const ArtIRect *src2) {
   }
 }
 
-/** art_irect_intersection: Find intersection of two integer rectangles.
+/**
+ * art_irect_intersection: Find intersection of two integer rectangles.
  * @dest: Where the result is stored.
  * @src1: A source rectangle.
  * @src2: Another source rectangle.
@@ -81,7 +84,8 @@ art_irect_intersect (ArtIRect *dest, const ArtIRect *src1, const ArtIRect *src2)
   dest->y1 = MIN (src1->y1, src2->y1);
 }
 
-/** art_irect_empty: Determine whether integer rectangle is empty.
+/**
+ * art_irect_empty: Determine whether integer rectangle is empty.
  * @src: The source rectangle.
  *
  * Return value: TRUE if @src is an empty rectangle, FALSE otherwise.
@@ -98,7 +102,8 @@ gboolean irect_point_inside (ArtIRect *rect, GzwPoint *point) {
 }
 #endif
 
-/** art_drect_copy: Make a copy of a rectangle.
+/**
+ * art_drect_copy: Make a copy of a rectangle.
  * @dest: Where the copy is stored.
  * @src: The source rectangle.
  *
@@ -112,7 +117,8 @@ art_drect_copy (ArtDRect *dest, const ArtDRect *src) {
   dest->y1 = src->y1;
 }
 
-/** art_drect_union: Find union of two rectangles.
+/**
+ * art_drect_union: Find union of two rectangles.
  * @dest: Where the result is stored.
  * @src1: A source rectangle.
  * @src2: Another source rectangle.
@@ -133,7 +139,8 @@ art_drect_union (ArtDRect *dest, const ArtDRect *src1, const ArtDRect *src2) {
   }
 }
 
-/** art_drect_intersection: Find intersection of two rectangles.
+/**
+ * art_drect_intersection: Find intersection of two rectangles.
  * @dest: Where the result is stored.
  * @src1: A source rectangle.
  * @src2: Another source rectangle.
@@ -148,7 +155,8 @@ art_drect_intersect (ArtDRect *dest, const ArtDRect *src1, const ArtDRect *src2)
   dest->y1 = MIN (src1->y1, src2->y1);
 }
 
-/** art_irect_empty: Determine whether rectangle is empty.
+/**
+ * art_irect_empty: Determine whether rectangle is empty.
  * @src: The source rectangle.
  *
  * Return value: TRUE if @src is an empty rectangle, FALSE otherwise.
@@ -158,7 +166,8 @@ art_drect_empty (const ArtDRect *src) {
   return (src->x1 <= src->x0 || src->y1 <= src->y0);
 }
 
-/** art_drect_affine_transform: Affine transform rectangle.
+/**
+ * art_drect_affine_transform: Affine transform rectangle.
  * @dst: Where to store the result.
  * @src: The source rectangle.
  * @matrix: The affine transformation.
@@ -188,7 +197,8 @@ art_drect_affine_transform (ArtDRect *dst, const ArtDRect *src, const double mat
   dst->y1 = MAX (MAX (y00, y10), MAX (y01, y11));
 }
 
-/** art_drect_to_irect: Convert rectangle to integer rectangle.
+/**
+ * art_drect_to_irect: Convert rectangle to integer rectangle.
  * @dst: Where to store resulting integer rectangle.
  * @src: The source rectangle.
  *

@@ -21,7 +21,8 @@
 #include "art_pixbuf.h"
 
 
-/** art_pixbuf_new_rgb_dnotify: Create a new RGB &ArtPixBuf with explicit destroy notification.
+/**
+ * art_pixbuf_new_rgb_dnotify: Create a new RGB #ArtPixBuf with explicit destroy notification.
  * @pixels: A buffer containing the actual pixel data.
  * @width: The width of the pixbuf.
  * @height: The height of the pixbuf.
@@ -30,16 +31,16 @@
  * @dfunc: The destroy notification function.
  *
  * Creates a generic data structure for holding a buffer of RGB
- * pixels.  It is possible to think of an &ArtPixBuf as a
+ * pixels.  It is possible to think of an #ArtPixBuf as a
  * virtualization over specific pixel buffer formats.
  *
  * @dfunc is called with @dfunc_data and @pixels as arguments when the
- * &ArtPixBuf is destroyed. Using a destroy notification function
+ * #ArtPixBuf is destroyed. Using a destroy notification function
  * allows a wide range of memory management disciplines for the pixel
  * memory. A NULL value for @dfunc is also allowed and means that no
  * special action will be taken on destruction.
  *
- * Return value: The newly created &ArtPixBuf.
+ * Return value: The newly created #ArtPixBuf.
  **/
 ArtPixBuf *
 art_pixbuf_new_rgb_dnotify (art_u8 *pixels, int width, int height, int rowstride,
@@ -64,7 +65,8 @@ art_pixbuf_new_rgb_dnotify (art_u8 *pixels, int width, int height, int rowstride
   return pixbuf;
 }
 
-/** art_pixbuf_new_rgba_dnotify: Create a new RGBA &ArtPixBuf with explicit destroy notification.
+/**
+ * art_pixbuf_new_rgba_dnotify: Create a new RGBA #ArtPixBuf with explicit destroy notification.
  * @pixels: A buffer containing the actual pixel data.
  * @width: The width of the pixbuf.
  * @height: The height of the pixbuf.
@@ -73,16 +75,16 @@ art_pixbuf_new_rgb_dnotify (art_u8 *pixels, int width, int height, int rowstride
  * @dfunc: The destroy notification function.
  *
  * Creates a generic data structure for holding a buffer of RGBA
- * pixels.  It is possible to think of an &ArtPixBuf as a
+ * pixels.  It is possible to think of an #ArtPixBuf as a
  * virtualization over specific pixel buffer formats.
  *
  * @dfunc is called with @dfunc_data and @pixels as arguments when the
- * &ArtPixBuf is destroyed. Using a destroy notification function
+ * #ArtPixBuf is destroyed. Using a destroy notification function
  * allows a wide range of memory management disciplines for the pixel
  * memory. A NULL value for @dfunc is also allowed and means that no
  * special action will be taken on destruction.
  *
- * Return value: The newly created &ArtPixBuf.
+ * Return value: The newly created #ArtPixBuf.
  **/
 ArtPixBuf *
 art_pixbuf_new_rgba_dnotify (art_u8 *pixels, int width, int height, int rowstride,
@@ -107,21 +109,22 @@ art_pixbuf_new_rgba_dnotify (art_u8 *pixels, int width, int height, int rowstrid
   return pixbuf;
 }
 
-/** art_pixbuf_new_const_rgb: Create a new RGB &ArtPixBuf with constant pixel data.
+/**
+ * art_pixbuf_new_const_rgb: Create a new RGB #ArtPixBuf with constant pixel data.
  * @pixels: A buffer containing the actual pixel data.
  * @width: The width of the pixbuf.
  * @height: The height of the pixbuf.
  * @rowstride: The rowstride of the pixbuf.
  *
  * Creates a generic data structure for holding a buffer of RGB
- * pixels.  It is possible to think of an &ArtPixBuf as a
+ * pixels.  It is possible to think of an #ArtPixBuf as a
  * virtualization over specific pixel buffer formats.
  *
- * No action is taken when the &ArtPixBuf is destroyed. Thus, this
+ * No action is taken when the #ArtPixBuf is destroyed. Thus, this
  * function is useful when the pixel data is constant or statically
  * allocated.
  *
- * Return value: The newly created &ArtPixBuf.
+ * Return value: The newly created #ArtPixBuf.
  **/
 ArtPixBuf *
 art_pixbuf_new_const_rgb (const art_u8 *pixels, int width, int height, int rowstride)
@@ -129,21 +132,22 @@ art_pixbuf_new_const_rgb (const art_u8 *pixels, int width, int height, int rowst
   return art_pixbuf_new_rgb_dnotify ((art_u8 *) pixels, width, height, rowstride, NULL, NULL);
 }
 
-/** art_pixbuf_new_const_rgba: Create a new RGBA &ArtPixBuf with constant pixel data.
+/**
+ * art_pixbuf_new_const_rgba: Create a new RGBA #ArtPixBuf with constant pixel data.
  * @pixels: A buffer containing the actual pixel data.
  * @width: The width of the pixbuf.
  * @height: The height of the pixbuf.
  * @rowstride: The rowstride of the pixbuf.
  *
  * Creates a generic data structure for holding a buffer of RGBA
- * pixels.  It is possible to think of an &ArtPixBuf as a
+ * pixels.  It is possible to think of an #ArtPixBuf as a
  * virtualization over specific pixel buffer formats.
  *
- * No action is taken when the &ArtPixBuf is destroyed. Thus, this
+ * No action is taken when the #ArtPixBuf is destroyed. Thus, this
  * function is suitable when the pixel data is constant or statically
  * allocated.
  *
- * Return value: The newly created &ArtPixBuf.
+ * Return value: The newly created #ArtPixBuf.
  **/
 ArtPixBuf *
 art_pixbuf_new_const_rgba (const art_u8 *pixels, int width, int height, int rowstride)
@@ -157,21 +161,22 @@ art_pixel_destroy (void *func_data, void *data)
   art_free (data);
 }
 
-/** art_pixbuf_new_rgb: Create a new RGB &ArtPixBuf.
+/**
+ * art_pixbuf_new_rgb: Create a new RGB #ArtPixBuf.
  * @pixels: A buffer containing the actual pixel data.
  * @width: The width of the pixbuf.
  * @height: The height of the pixbuf.
  * @rowstride: The rowstride of the pixbuf.
  *
  * Creates a generic data structure for holding a buffer of RGB
- * pixels.  It is possible to think of an &ArtPixBuf as a
+ * pixels.  It is possible to think of an #ArtPixBuf as a
  * virtualization over specific pixel buffer formats.
  *
- * The @pixels buffer is freed with art_free() when the &ArtPixBuf is
+ * The @pixels buffer is freed with art_free() when the #ArtPixBuf is
  * destroyed. Thus, this function is suitable when the pixel data is
  * allocated with art_alloc().
  *
- * Return value: The newly created &ArtPixBuf.
+ * Return value: The newly created #ArtPixBuf.
  **/
 ArtPixBuf *
 art_pixbuf_new_rgb (art_u8 *pixels, int width, int height, int rowstride)
@@ -179,21 +184,22 @@ art_pixbuf_new_rgb (art_u8 *pixels, int width, int height, int rowstride)
   return art_pixbuf_new_rgb_dnotify (pixels, width, height, rowstride, NULL, art_pixel_destroy);
 }
 
-/** art_pixbuf_new_rgba: Create a new RGBA &ArtPixBuf.
+/**
+ * art_pixbuf_new_rgba: Create a new RGBA #ArtPixBuf.
  * @pixels: A buffer containing the actual pixel data.
  * @width: The width of the pixbuf.
  * @height: The height of the pixbuf.
  * @rowstride: The rowstride of the pixbuf.
  *
  * Creates a generic data structure for holding a buffer of RGBA
- * pixels.  It is possible to think of an &ArtPixBuf as a
+ * pixels.  It is possible to think of an #ArtPixBuf as a
  * virtualization over specific pixel buffer formats.
  *
- * The @pixels buffer is freed with art_free() when the &ArtPixBuf is
+ * The @pixels buffer is freed with art_free() when the #ArtPixBuf is
  * destroyed. Thus, this function is suitable when the pixel data is
  * allocated with art_alloc().
  *
- * Return value: The newly created &ArtPixBuf.
+ * Return value: The newly created #ArtPixBuf.
  **/
 ArtPixBuf *
 art_pixbuf_new_rgba (art_u8 *pixels, int width, int height, int rowstride)
@@ -201,10 +207,11 @@ art_pixbuf_new_rgba (art_u8 *pixels, int width, int height, int rowstride)
   return art_pixbuf_new_rgba_dnotify (pixels, width, height, rowstride, NULL, art_pixel_destroy);
 }
 
-/** art_pixbuf_free: Destroy an &ArtPixBuf.
- * @pixbuf: The &ArtPixBuf to be destroyed.
+/**
+ * art_pixbuf_free: Destroy an #ArtPixBuf.
+ * @pixbuf: The #ArtPixBuf to be destroyed.
  *
- * Destroys the &ArtPixBuf, calling the destroy notification function
+ * Destroys the #ArtPixBuf, calling the destroy notification function
  * (if non-NULL) so that the memory for the pixel buffer can be
  * properly reclaimed.
  **/
@@ -225,10 +232,11 @@ art_pixbuf_free (ArtPixBuf *pixbuf)
   art_free (pixbuf);
 }
 
-/** art_pixbuf_free_shallow:
- * @pixbuf: The &ArtPixBuf to be destroyed.
+/**
+ * art_pixbuf_free_shallow:
+ * @pixbuf: The #ArtPixBuf to be destroyed.
  *
- * Destroys the &ArtPixBuf without calling the destroy notification function.
+ * Destroys the #ArtPixBuf without calling the destroy notification function.
  *
  * This function is deprecated. Use the _dnotify variants for
  * allocation instead.

@@ -87,7 +87,8 @@ art_gray_svp_callback (void *callback_data, int y,
   data->buf += data->rowstride;
 }
 
-/** art_gray_svp_aa: Render the vector path into the bytemap.
+/**
+ * art_gray_svp_aa: Render the vector path into the bytemap.
  * @svp: The SVP to render.
  * @x0: The view window's left coord.
  * @y0: The view window's top coord.

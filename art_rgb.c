@@ -73,6 +73,20 @@ art_rgb_fill_run (art_u8 *buf, art_u8 r, art_u8 g, art_u8 b, gint n)
 /* This implements the second of the two ideas above. The test results
    are _very_ encouraging - it seems the speed is within 10% of
    memset, which is quite good! */
+/**
+ * art_rgb_fill_run: fill a buffer a solid RGB color.
+ * @buf: Buffer to fill.
+ * @r: Red, range 0..255.
+ * @g: Green, range 0..255.
+ * @b: Blue, range 0..255.
+ * @n: Number of RGB triples to fill.
+ *
+ * Fills a buffer with @n copies of the (@r, @g, @b) triple. Thus,
+ * locations @buf (inclusive) through @buf + 3 * @n (exclusive) are
+ * written.
+ *
+ * The implementation of this routine is very highly optimized.
+ **/
 void
 art_rgb_fill_run (art_u8 *buf, art_u8 r, art_u8 g, art_u8 b, int n)
 {
@@ -131,8 +145,18 @@ art_rgb_fill_run (art_u8 *buf, art_u8 r, art_u8 g, art_u8 b, int n)
 }
 #endif
 
-/* Render a semitransparent run of solid color over an existing RGB
-   buffer. */
+/**
+ * art_rgb_run_alpha: Render semitransparent color over RGB buffer.
+ * @buf: Buffer for rendering.
+ * @r: Red, range 0..255.
+ * @g: Green, range 0..255.
+ * @b: Blue, range 0..255.
+ * @alpha: Alpha, range 0..256.
+ * @n: Number of RGB triples to render.
+ *
+ * Renders a sequential run of solid (@r, @g, @b) color over @buf with
+ * opacity @alpha.
+ **/
 void
 art_rgb_run_alpha (art_u8 *buf, art_u8 r, art_u8 g, art_u8 b, int alpha, int n)
 {

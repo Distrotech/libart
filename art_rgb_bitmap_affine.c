@@ -89,6 +89,33 @@ art_rgb_bitmap_affine_opaque (art_u8 *dst,
    affine transform. Foreground color is given, background color is
    assumed to be fully transparent. */
 
+/**
+ * art_rgb_bitmap_affine: Affine transform source bitmap image and composite.
+ * @dst: Destination image RGB buffer.
+ * @x0: Left coordinate of destination rectangle.
+ * @y0: Top coordinate of destination rectangle.
+ * @x1: Right coordinate of destination rectangle.
+ * @y1: Bottom coordinate of destination rectangle.
+ * @dst_rowstride: Rowstride of @dst buffer.
+ * @src: Source image bitmap buffer.
+ * @src_width: Width of source image.
+ * @src_height: Height of source image.
+ * @src_rowstride: Rowstride of @src buffer.
+ * @rgba: RGBA foreground color, in 0xRRGGBBAA.
+ * @affine: Affine transform.
+ * @level: Filter level.
+ * @alphagamma: #ArtAlphaGamma for gamma-correcting the compositing.
+ *
+ * Affine transform the source image stored in @src, compositing over
+ * the area of destination image @dst specified by the rectangle
+ * (@x0, @y0) - (@x1, @y1).
+ *
+ * The source bitmap stored with MSB as the leftmost pixel. Source 1
+ * bits correspond to the semitransparent color @rgba, while source 0
+ * bits are transparent.
+ *
+ * See art_rgb_affine() for a description of additional parameters.
+ **/
 void
 art_rgb_bitmap_affine (art_u8 *dst,
 		       int x0, int y0, int x1, int y1, int dst_rowstride,

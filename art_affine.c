@@ -51,7 +51,8 @@ art_affine_point (ArtPoint *dst, const ArtPoint *src,
   dst->y = x * affine[1] + y * affine[3] + affine[5];
 }
 
-/** art_affine_invert: Find the inverse of an affine transformation.
+/**
+ * art_affine_invert: Find the inverse of an affine transformation.
  * @dst: Where the resulting affine is stored.
  * @src: The original affine transformation.
  *
@@ -75,7 +76,8 @@ art_affine_invert (double dst[6], const double src[6])
   dst[5] = -src[4] * dst[1] - src[5] * dst[3];
 }
 
-/** art_affine_flip: Flip an affine transformation horizontally and/or vertically.
+/**
+ * art_affine_flip: Flip an affine transformation horizontally and/or vertically.
  * @dst_affine: Where the resulting affine is stored.
  * @src_affine: The original affine transformation.
  * @horiz: Whether or not to flip horizontally.
@@ -254,7 +256,8 @@ art_affine_to_string (char str[128], const double src[6])
   strcpy (str + ix, "] concat");
 }
 
-/** art_affine_multiply: Multiply two affine transformation matrices.
+/**
+ * art_affine_multiply: Multiply two affine transformation matrices.
  * @dst: Where to store the result.
  * @src1: The first affine transform to multiply.
  * @src2: The second affine transform to multiply.
@@ -285,7 +288,8 @@ art_affine_multiply (double dst[6], const double src1[6], const double src2[6])
   dst[5] = d5;
 }
 
-/** art_affine_identity: Set up the identity matrix.
+/**
+ * art_affine_identity: Set up the identity matrix.
  * @dst: Where to store the resulting affine transform.
  *
  * Sets up an identity matrix.
@@ -302,7 +306,8 @@ art_affine_identity (double dst[6])
 }
 
 
-/** art_affine_scale: Set up a scaling matrix.
+/**
+ * art_affine_scale: Set up a scaling matrix.
  * @dst: Where to store the resulting affine transform.
  * @sx: X scale factor.
  * @sy: Y scale factor.
@@ -320,7 +325,8 @@ art_affine_scale (double dst[6], double sx, double sy)
   dst[5] = 0;
 }
 
-/** art_affine_rotate: Set up a rotation affine transform.
+/**
+ * art_affine_rotate: Set up a rotation affine transform.
  * @dst: Where to store the resulting affine transform.
  * @theta: Rotation angle in degrees.
  *
@@ -345,7 +351,8 @@ art_affine_rotate (double dst[6], double theta)
   dst[5] = 0;
 }
 
-/** art_affine_shear: Set up a shearing matrix.
+/**
+ * art_affine_shear: Set up a shearing matrix.
  * @dst: Where to store the resulting affine transform.
  * @theta: Shear angle in degrees.
  *
@@ -367,7 +374,8 @@ art_affine_shear (double dst[6], double theta)
   dst[5] = 0;
 }
 
-/** art_affine_translate: Set up a translation matrix.
+/**
+ * art_affine_translate: Set up a translation matrix.
  * @dst: Where to store the resulting affine transform.
  * @tx: X translation amount.
  * @tx: Y translation amount.
@@ -385,7 +393,8 @@ art_affine_translate (double dst[6], double tx, double ty)
   dst[5] = ty;
 }
 
-/** art_affine_expansion: Find the affine's expansion factor.
+/**
+ * art_affine_expansion: Find the affine's expansion factor.
  * @src: The affine transformation.
  *
  * Finds the expansion factor, i.e. the square root of the factor
@@ -401,7 +410,8 @@ art_affine_expansion (const double src[6])
   return sqrt (src[0] * src[3] - src[1] * src[2]);
 }
 
-/** art_affine_rectilinear: Determine whether the affine transformation is rectilinear.
+/**
+ * art_affine_rectilinear: Determine whether the affine transformation is rectilinear.
  * @src: The original affine transformation.
  *
  * Determines whether @src is rectilinear, i.e.  grid-aligned
@@ -417,7 +427,8 @@ art_affine_rectilinear (const double src[6])
 	  (fabs (src[0]) < EPSILON && fabs (src[3]) < EPSILON));
 }
 
-/** art_affine_equal: Determine whether two affine transformations are equal.
+/**
+ * art_affine_equal: Determine whether two affine transformations are equal.
  * @matrix1: An affine transformation.
  * @matrix2: Another affine transformation.
  *

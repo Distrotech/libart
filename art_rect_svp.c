@@ -22,8 +22,13 @@
 #include "art_rect.h"
 #include "art_rect_svp.h"
 
-/* Find the bounding box of a sorted vector path. */
-
+/**
+ * art_drect_svp: Find the bounding box of a sorted vector path.
+ * @bbox: Where to store the bounding box.
+ * @svp: The SVP.
+ *
+ * Finds the bounding box of the SVP.
+ **/
 void
 art_drect_svp (ArtDRect *bbox, const ArtSVP *svp)
 {
@@ -40,8 +45,14 @@ art_drect_svp (ArtDRect *bbox, const ArtSVP *svp)
     }
 }
 
-/* Compute the bounding box of the svp and union it in to the
-   existing bounding box. */
+/**
+ * art_drect_svp_union: Compute the bounding box of the svp and union it in to the existing bounding box.
+ * @bbox: Initial boundin box and where to store the bounding box.
+ * @svp: The SVP.
+ *
+ * Finds the bounding box of the SVP, computing its union with an
+ * existing bbox.
+ **/
 void
 art_drect_svp_union (ArtDRect *bbox, const ArtSVP *svp)
 {
