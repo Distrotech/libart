@@ -1,3 +1,8 @@
+2003-04-24  Alexander Larsson  <alexl@redhat.com>
+
+	* art_uta_vpath.c (art_uta_from_vpath):
+	Don't silently stomp on memory on bad vpaths.
+
 2003-04-11  Alexander Larsson  <alexl@redhat.com>
 
 	* art_svp_vpath_stroke.c (render_seg):
