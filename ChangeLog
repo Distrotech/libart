@@ -1,3 +1,11 @@
+2002-02-02  Alexander Larsson  <alla@lysator.liu.se>
+
+	* art_render.c:
+	Add special case for art_render_composite_8 for two cases
+	that are very common when rendering SVGs with librsvg.
+	I'm sure these can be optimized further, but i'm feeling
+	very slow today.
+
 2002-02-01  Alex Larsson  <alexl@redhat.com>
 
 	* art_render_gradient.c:
