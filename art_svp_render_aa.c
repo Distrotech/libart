@@ -283,6 +283,8 @@ art_svp_render_aa (const ArtSVP *svp,
 		else
 		  {
 		    /* case 2, antialias a run */
+		    if (ix_min < x0) ix_min = x0;
+		    if (ix_max > x1) ix_max = x1;
 		    if (n_steps + ix_max + 2 - ix_min > n_steps_max)
 		      {
 			do

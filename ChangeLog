@@ -1,3 +1,8 @@
+2002-04-24  Kjartan Maraas  <kmaraas@gnome.org>
+
+	* art_svp_render_aa.c (art_svp_render_aa): Fix a crash. Patch
+	from Christian Marillat.
+	
 2002-04-06  Kjartan Maraas  <kmaraas@gnome.org>
 
 	* libartConf.sh.in: Add a newline at the end of the file.
