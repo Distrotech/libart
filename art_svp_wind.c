@@ -1365,16 +1365,24 @@ art_svp_rewind_uncrossed (ArtSVP *vp, ArtWindRule rule)
 
 	  /* Determine winding number for this segment */
 	  if (i == 0)
-	    left_wind = 0;
-	  else if (vp->segs[active_segs[i - 1]].dir)
-	    left_wind = winding[active_segs[i - 1]];
+	    {
+	      if (vp->segs[seg_idx].dir)
+		wind = 1;
+	      else
+		wind = -1;
+	    }
 	  else
-	    left_wind = winding[active_segs[i - 1]] - 1;
+	    {
+	      if (vp->segs[active_segs[i - 1]].dir)
+		left_wind = winding[active_segs[i - 1]];
+	      else
+		left_wind = winding[active_segs[i - 1]] - 1;
 
-	  if (vp->segs[seg_idx].dir)
-	    wind = left_wind + 1;
-	  else
-	    wind = left_wind;
+	      if (vp->segs[seg_idx].dir)
+		wind = left_wind + 1;
+	      else
+		wind = left_wind;
+	    }
 
 	  winding[seg_idx] = wind;
 

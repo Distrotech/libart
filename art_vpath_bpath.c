@@ -92,7 +92,7 @@ art_bezier_to_vec (double x0, double y0,
 
 /* We could scan first and allocate to fit, but we don't. */
 ArtVpath *
-art_bez_path_to_vec (ArtBpath *bez, double flatness)
+art_bez_path_to_vec (const ArtBpath *bez, double flatness)
 {
   ArtVpath *vec;
   int vec_n, vec_n_max;

@@ -1,3 +1,22 @@
+Sun Jun 13 01:23:14 1999  Raph Levien  <raph@gimp.org>
+
+	* art_svp_wind.c (art_svp_rewind_uncrossed): Change to winding
+	rule logic so that it correctly handles the case where the
+	leftmost segment is negative.
+
+	* Makefile.am (libart_lgplinc_HEADERS): made art_svp_wind.h
+	a public headerfile. This is needed for the bpath canvas item.
+	I'm not sure this is the correct way to do it, but it will do
+	for now.
+
+	* art_vpath_bpath.h: 
+	* art_vpath_bpath.c (art_bez_path_to_vec): Added const to arg.
+
+	* art_vpath_bpath.h: Embarrassing typo.
+
+	* art_bpath.h: Minor tweaks to the #include paths. It is now
+	consistent with the other header files.
+
 Wed Jun  9 20:24:45 1999  Raph Levien  <raph@gimp.org>
 
 	* art_svp_vpath_stroke.c: Added all remaining line join and cap

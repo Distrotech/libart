@@ -33,7 +33,6 @@ libart_lgpl_la_SOURCES = \
 	art_svp_vpath.c \
 	art_svp_vpath_stroke.c \
 	art_svp_wind.c \
-	art_svp_wind.h \
 	art_uta.c \
 	art_uta_ops.c \
 	art_uta_rect.c \
@@ -70,6 +69,7 @@ libart_lgplinc_HEADERS = \
 	art_svp_render_aa.h \
 	art_svp_vpath.h \
 	art_svp_vpath_stroke.h \
+	art_svp_wind.h \
 	art_uta.h \
 	art_uta_ops.h \
 	art_uta_rect.h \
