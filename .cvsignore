@@ -28,6 +28,8 @@ stamp-h
 stamp-h.in
 testart
 testuta
+test_gradient
+libart-config
 libart2-config
 libartConf.sh
 libart-2.0.pc
