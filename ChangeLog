@@ -1,3 +1,14 @@
+Wed Jun  9 20:24:45 1999  Raph Levien  <raph@gimp.org>
+
+	* art_svp_vpath_stroke.c: Added all remaining line join and cap
+	types, including round, which takes flatness into account. Several
+	new internal functions (art_svp_vpath_stroke_arc) and added
+	flatness argument to a few internal functions. I might want to
+	change the BEVEL join type to MITER for very small turn angles
+	(i.e. within a flatness threshold) for efficiency.
+
+	* art_misc.h: Added M_SQRT2 constant.
+
 Wed Jun  2 21:56:30 1999  Raph Levien  <raph@gimp.org>
 
 	* art_svp_vpath_stroke.c (art_svp_vpath_stroke_raw): Made the

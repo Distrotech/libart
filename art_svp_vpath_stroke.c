@@ -1,5 +1,5 @@
 /* Libart_LGPL - library of basic graphic primitives
- * Copyright (C) 1998 Raph Levien
+ * Copyright (C) 1998-1999 Raph Levien
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -35,26 +35,84 @@
 
 #define yes_OPTIMIZE_INNER
 
+/* Render an arc segment starting at (xc + x0, yc + y0) to (xc + x1,
+   yc + y1), centered at (xc, yc), and with given radius. Both x0^2 +
+   y0^2 and x1^2 + y1^2 should be equal to radius^2.
+
+   A positive value of radius means curve to the left, negative means
+   curve to the right.
+*/
+static void
+art_svp_vpath_stroke_arc (ArtVpath **p_vpath, int *pn, int *pn_max,
+			  double xc, double yc,
+			  double x0, double y0,
+			  double x1, double y1,
+			  double radius,
+			  double flatness)
+{
+  double theta;
+  double th_0, th_1;
+  int n_pts;
+  int i;
+  double aradius;
+
+  aradius = fabs (radius);
+  theta = 2 * M_SQRT2 * sqrt (flatness / aradius);
+  th_0 = atan2 (y0, x0);
+  th_1 = atan2 (y1, x1);
+  if (radius > 0)
+    {
+      /* curve to the left */
+      if (th_0 < th_1) th_0 += M_PI * 2;
+      n_pts = ceil ((th_0 - th_1) / theta);
+    }
+  else
+    {
+      /* curve to the right */
+      if (th_1 < th_0) th_1 += M_PI * 2;
+      n_pts = ceil ((th_1 - th_0) / theta);
+    }
+#ifdef VERBOSE
+  printf ("start %f %f; th_0 = %f, th_1 = %f, r = %f, theta = %f\n", x0, y0, th_0, th_1, radius, theta);
+#endif
+  art_vpath_add_point (p_vpath, pn, pn_max,
+		       ART_LINETO, xc + x0, yc + y0);
+  for (i = 1; i < n_pts; i++)
+    {
+      theta = th_0 + (th_1 - th_0) * i / n_pts;
+      art_vpath_add_point (p_vpath, pn, pn_max,
+			   ART_LINETO, xc + cos (theta) * aradius,
+			   yc + sin (theta) * aradius);
+#ifdef VERBOSE
+      printf ("mid %f %f\n", cos (theta) * radius, sin (theta) * radius);
+#endif
+    }
+  art_vpath_add_point (p_vpath, pn, pn_max,
+		       ART_LINETO, xc + x1, yc + y1);
+#ifdef VERBOSE
+  printf ("end %f %f\n", x1, y1);
+#endif
+}
+
 /* Assume that forw and rev are at point i0. Bring them to i1,
    joining with the vector i1 - i2.
 
-   It so happens that all invocations of this function maintain
-   the precondition i1 = i0 + 1, so we could decrease the number
-   of arguments by one. We haven't done that here, though.
+   This used to be true, but isn't now that the stroke_raw code is
+   filtering out (near)zero length vectors: {It so happens that all
+   invocations of this function maintain the precondition i1 = i0 + 1,
+   so we could decrease the number of arguments by one. We haven't
+   done that here, though.}
 
    forw is to the line's right and rev is to its left.
 
-   Also need to implement a "flatness" value for the round joins.
-
    Precondition: no zero-length vectors, otherwise a divide by
-   zero will happen.
-*/
+   zero will happen.  */
 static void
 render_seg (ArtVpath **p_forw, int *pn_forw, int *pn_forw_max,
 	    ArtVpath **p_rev, int *pn_rev, int *pn_rev_max,
 	    ArtVpath *vpath, int i0, int i1, int i2,
 	    ArtPathStrokeJoinType join,
-	    double line_width, double miter_limit)
+	    double line_width, double miter_limit, double flatness)
 {
   double dx0, dy0;
   double dx1, dy1;
@@ -64,6 +122,10 @@ render_seg (ArtVpath **p_forw, int *pn_forw, int *pn_forw_max,
   double dmr2;
   double scale;
   double cross;
+
+#ifdef VERBOSE
+  printf ("join style = %d\n", join);
+#endif
 
   /* The vectors of the lines from i0 to i1 and i1 to i2. */
   dx0 = vpath[i1].x - vpath[i0].x;
@@ -180,6 +242,13 @@ render_seg (ArtVpath **p_forw, int *pn_forw, int *pn_forw_max,
 	  art_vpath_add_point (p_forw, pn_forw, pn_forw_max,
 			   ART_LINETO, vpath[i1].x - dmx, vpath[i1].y - dmy);
 	}
+      else if (join == ART_PATH_STROKE_JOIN_ROUND)
+	art_svp_vpath_stroke_arc (p_forw, pn_forw, pn_forw_max,
+				  vpath[i1].x, vpath[i1].y,
+				  -dlx0, -dly0,
+				  -dlx1, -dly1,
+				  line_width,
+				  flatness);
     }
   else
     {
@@ -233,6 +302,13 @@ render_seg (ArtVpath **p_forw, int *pn_forw, int *pn_forw_max,
 	  art_vpath_add_point (p_rev, pn_rev, pn_rev_max,
 			   ART_LINETO, vpath[i1].x + dmx, vpath[i1].y + dmy);
 	}
+      else if (join == ART_PATH_STROKE_JOIN_ROUND)
+	art_svp_vpath_stroke_arc (p_rev, pn_rev, pn_rev_max,
+				  vpath[i1].x, vpath[i1].y,
+				  dlx0, dly0,
+				  dlx1, dly1,
+				  -line_width,
+				  flatness);
 
     }
 }
@@ -241,11 +317,13 @@ render_seg (ArtVpath **p_forw, int *pn_forw, int *pn_forw_max,
 static void
 render_cap (ArtVpath **p_result, int *pn_result, int *pn_result_max,
 	    ArtVpath *vpath, int i0, int i1,
-	    ArtPathStrokeCapType cap, double line_width)
+	    ArtPathStrokeCapType cap, double line_width, double flatness)
 {
   double dx0, dy0;
   double dlx0, dly0;
   double scale;
+  int n_pts;
+  int i;
 
   dx0 = vpath[i1].x - vpath[i0].x;
   dy0 = vpath[i1].y - vpath[i0].y;
@@ -256,12 +334,48 @@ render_cap (ArtVpath **p_result, int *pn_result, int *pn_result_max,
   dlx0 = dy0 * scale;
   dly0 = -dx0 * scale;
 
-  /* butt */
-  art_vpath_add_point (p_result, pn_result, pn_result_max,
-		   ART_LINETO, vpath[i1].x - dlx0, vpath[i1].y - dly0);
-  art_vpath_add_point (p_result, pn_result, pn_result_max,
-		   ART_LINETO, vpath[i1].x + dlx0, vpath[i1].y + dly0);
-  /* todo: other cap types */
+#ifdef VERBOSE
+  printf ("cap style = %d\n", cap);
+#endif
+
+  switch (cap)
+    {
+    case ART_PATH_STROKE_CAP_BUTT:
+      art_vpath_add_point (p_result, pn_result, pn_result_max,
+			   ART_LINETO, vpath[i1].x - dlx0, vpath[i1].y - dly0);
+      art_vpath_add_point (p_result, pn_result, pn_result_max,
+			   ART_LINETO, vpath[i1].x + dlx0, vpath[i1].y + dly0);
+      break;
+    case ART_PATH_STROKE_CAP_ROUND:
+      n_pts = ceil (M_PI / (2.0 * M_SQRT2 * sqrt (flatness / line_width)));
+      art_vpath_add_point (p_result, pn_result, pn_result_max,
+			   ART_LINETO, vpath[i1].x - dlx0, vpath[i1].y - dly0);
+      for (i = 1; i < n_pts; i++)
+	{
+	  double theta, c_th, s_th;
+
+	  theta = M_PI * i / n_pts;
+	  c_th = cos (theta);
+	  s_th = sin (theta);
+	  art_vpath_add_point (p_result, pn_result, pn_result_max,
+			       ART_LINETO,
+			       vpath[i1].x - dlx0 * c_th - dly0 * s_th,
+			       vpath[i1].y - dly0 * c_th + dlx0 * s_th);
+	}
+      art_vpath_add_point (p_result, pn_result, pn_result_max,
+			   ART_LINETO, vpath[i1].x + dlx0, vpath[i1].y + dly0);
+      break;
+    case ART_PATH_STROKE_CAP_SQUARE:
+      art_vpath_add_point (p_result, pn_result, pn_result_max,
+			   ART_LINETO,
+			   vpath[i1].x - dlx0 - dly0,
+			   vpath[i1].y - dly0 + dlx0);
+      art_vpath_add_point (p_result, pn_result, pn_result_max,
+			   ART_LINETO,
+			   vpath[i1].x + dlx0 - dly0,
+			   vpath[i1].y + dly0 + dlx0);
+      break;
+    }
 }
 
 ArtVpath *
@@ -351,7 +465,7 @@ art_svp_vpath_stroke_raw (ArtVpath *vpath,
 		  render_seg (&forw, &n_forw, &n_forw_max,
 			      &rev, &n_rev, &n_rev_max,
 			      vpath, last, this, second,
-			      join, half_lw, miter_limit);
+			      join, half_lw, miter_limit, flatness);
 
 #ifdef VERBOSE
 		  printf ("%% forw %d, rev %d\n", n_forw, n_rev);
@@ -383,7 +497,7 @@ art_svp_vpath_stroke_raw (ArtVpath *vpath,
 		     forw has at least one point. */
 		  render_cap (&forw, &n_forw, &n_forw_max,
 			      vpath, last, this,
-			      cap, half_lw);
+			      cap, half_lw, flatness);
 		  art_vpath_add_point (&result, &n_result, &n_result_max,
 				   ART_MOVETO, forw[0].x,
 				   forw[0].y);
@@ -397,7 +511,7 @@ art_svp_vpath_stroke_raw (ArtVpath *vpath,
 				     rev[j].y);
 		  render_cap (&result, &n_result, &n_result_max,
 			      vpath, second, begin_idx,
-			      cap, half_lw);
+			      cap, half_lw, flatness);
 		  art_vpath_add_point (&result, &n_result, &n_result_max,
 				   ART_LINETO, forw[0].x,
 				   forw[0].y);
@@ -407,7 +521,7 @@ art_svp_vpath_stroke_raw (ArtVpath *vpath,
 	    render_seg (&forw, &n_forw, &n_forw_max,
 			&rev, &n_rev, &n_rev_max,
 			vpath, last, this, next,
-			join, half_lw, miter_limit);
+			join, half_lw, miter_limit, flatness);
 	}
       end_idx = next;
     }

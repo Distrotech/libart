@@ -48,6 +48,10 @@ typedef int art_boolean;
 #define M_PI 3.14159265358979323846
 #endif  /*  M_PI  */
 
+#ifndef M_SQRT2
+#define M_SQRT2         1.41421356237309504880  /* sqrt(2) */
+#endif  /* M_SQRT2 */
+
 /* These will be true on all platforms I care about. Nonetheless, it
    should be autoconf'ed. */
 typedef unsigned char art_u8;
