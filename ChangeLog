@@ -1,3 +1,11 @@
+2000-09-30  Martin Baulig  <baulig@suse.de>
+
+	* libart-2.0.pc.in: Provide pkg-config script.
+
+	* configure.in: Create libart-2.0.pc from libart-2.0.pc.in.
+	* Makefile.am (pkgconfig_DATA): Install the libart-2.0.pc
+	script in `$(libdir)/pkgconfig'.
+
 2000-08-15  Raph Levien  <raph@acm.org>
 
 	* art_render.c (art_render_image_solid_negotiate): Only

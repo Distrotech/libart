@@ -65,4 +65,5 @@ AC_C_BIGENDIAN
 AC_OUTPUT([
 libart-features.h
 Makefile
-libart-config], [case "$CONFIG_FILES" in *libart-config*) chmod +x libart-config;; esac])
+libart-config
+libart-2.0.pc], [case "$CONFIG_FILES" in *libart-config*) chmod +x libart-config;; esac])

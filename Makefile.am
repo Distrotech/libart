@@ -11,7 +11,8 @@ art_config.h:	gen_art_config
 EXTRA_DIST = 			\
 	libart.m4		\
 	libartConf.sh.in	\
-	libart-config.in
+	libart-config.in	\
+	libart-2.0.pc.in
 
 lib_LTLIBRARIES = libart_lgpl.la
 
@@ -126,6 +127,9 @@ m4data_DATA = libart.m4
 
 confexecdir=$(libdir)
 confexec_DATA = libartConf.sh
+
+pkgconfigdir = $(libdir)/pkgconfig
+pkgconfig_DATA = libart-2.0.pc
 
 ## We create libartConf.sh here and not from configure because we want
 ## to get the paths expanded correctly.  Macros like srcdir are given
