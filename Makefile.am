@@ -1,7 +1,12 @@
-noinst_PROGRAMS = testart testuta
+noinst_PROGRAMS = testart testuta gen_art_config
 
 bin_SCRIPTS = \
 	libart-config
+
+BUILT_SOURCES = art_config.h
+
+art_config.h:	gen_art_config
+	./gen_art_config > art_config.h
 
 EXTRA_DIST = 			\
 	libart.m4		\
@@ -53,6 +58,7 @@ libart_lgplinc_HEADERS = \
 	art_affine.h \
 	art_alphagamma.h \
 	art_bpath.h \
+	art_config.h \
 	art_filterlevel.h \
 	art_gray_svp.h \
 	art_misc.h \

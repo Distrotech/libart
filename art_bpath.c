@@ -44,6 +44,7 @@ art_bpath_affine_transform (const ArtBpath *src, const double matrix[6])
   int i;
   int size;
   ArtBpath *new;
+  ArtPathcode code;
   double x, y;
 
   for (i = 0; src[i].code != ART_END; i++);
@@ -53,21 +54,38 @@ art_bpath_affine_transform (const ArtBpath *src, const double matrix[6])
 
   for (i = 0; i < size; i++)
     {
-      new[i].code = src[i].code;
-      x = src[i].x1;
-      y = src[i].y1;
-      new[i].x1 = matrix[0] * x + matrix[2] * y + matrix[4];
-      new[i].y1 = matrix[1] * x + matrix[3] * y + matrix[5];
-      x = src[i].x2;
-      y = src[i].y2;
-      new[i].x2 = matrix[0] * x + matrix[2] * y + matrix[4];
-      new[i].y2 = matrix[1] * x + matrix[3] * y + matrix[5];
+      code = src[i].code;
+      new[i].code = code;
+      if (code == ART_CURVETO)
+	{
+	  x = src[i].x1;
+	  y = src[i].y1;
+	  new[i].x1 = matrix[0] * x + matrix[2] * y + matrix[4];
+	  new[i].y1 = matrix[1] * x + matrix[3] * y + matrix[5];
+	  x = src[i].x2;
+	  y = src[i].y2;
+	  new[i].x2 = matrix[0] * x + matrix[2] * y + matrix[4];
+	  new[i].y2 = matrix[1] * x + matrix[3] * y + matrix[5];
+	}
+      else
+	{
+	  new[i].x1 = 0;
+	  new[i].y1 = 0;
+	  new[i].x2 = 0;
+	  new[i].y2 = 0;
+	}
       x = src[i].x3;
       y = src[i].y3;
       new[i].x3 = matrix[0] * x + matrix[2] * y + matrix[4];
       new[i].y3 = matrix[1] * x + matrix[3] * y + matrix[5];
     }
   new[i].code = ART_END;
+  new[i].x1 = 0;
+  new[i].y1 = 0;
+  new[i].x2 = 0;
+  new[i].y2 = 0;
+  new[i].x3 = 0;
+  new[i].y3 = 0;
 
   return new;
 }

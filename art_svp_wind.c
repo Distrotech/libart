@@ -396,12 +396,13 @@ traverse (ArtSVP *vp)
 	      break;
 	    }
 	  tmp1 = seg_idx;
-	  for (j = i; j <= n_active_segs; j++)
+	  for (j = i; j < n_active_segs; j++)
 	    {
 	      tmp2 = active_segs[j];
 	      active_segs[j] = tmp1;
 	      tmp1 = tmp2;
 	    }
+	  active_segs[n_active_segs] = tmp1;
 	  n_active_segs++;
 	  seg_idx++;
 	}
@@ -1092,12 +1093,13 @@ art_svp_uncross (ArtSVP *vp)
 	  seg_map[seg_idx] = seg_num;
 
 	  tmp1 = seg_idx;
-	  for (j = i; j <= n_active_segs; j++)
+	  for (j = i; j < n_active_segs; j++)
 	    {
 	      tmp2 = active_segs[j];
 	      active_segs[j] = tmp1;
 	      tmp1 = tmp2;
 	    }
+	  active_segs[n_active_segs] = tmp1;
 	  n_active_segs++;
 
 	  if (i > 0)
@@ -1465,12 +1467,13 @@ art_svp_rewind_uncrossed (ArtSVP *vp, ArtWindRule rule)
 	    }
 
 	  tmp1 = seg_idx;
-	  for (j = i; j <= n_active_segs; j++)
+	  for (j = i; j < n_active_segs; j++)
 	    {
 	      tmp2 = active_segs[j];
 	      active_segs[j] = tmp1;
 	      tmp1 = tmp2;
 	    }
+	  active_segs[n_active_segs] = tmp1;
 	  n_active_segs++;
 	  seg_idx++;
 	}

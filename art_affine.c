@@ -214,7 +214,11 @@ art_affine_to_string (char str[128], const double src[6])
 	    }
 	  else
 	    {
-	      sprintf (str, "%g %g scale", src[0], src[3]);
+	      ix = 0;
+	      ix += art_ftoa (str + ix, src[0]);
+	      str[ix++] = ' ';
+	      ix += art_ftoa (str + ix, src[3]);
+	      strcpy (str + ix, " scale");
 	      return;
 	    }
 	}
@@ -240,7 +244,11 @@ art_affine_to_string (char str[128], const double src[6])
       if (fabs (src[0] - 1) < EPSILON && fabs (src[1]) < EPSILON &&
 	  fabs (src[2]) < EPSILON && fabs (src[3] - 1) < EPSILON)
 	{
-	  sprintf (str, "%g %g translate", src[4], src[5]);
+	  ix = 0;
+	  ix += art_ftoa (str + ix, src[4]);
+	  str[ix++] = ' ';
+	  ix += art_ftoa (str + ix, src[5]);
+	  strcpy (str + ix, " translate");
 	  return;
 	}
     }
