@@ -29,7 +29,7 @@ main (int argc, char **argv)
 	  "#define ART_SIZEOF_INT %d\n"
 	  "#define ART_SIZEOF_LONG %d\n"
 	  "\n",
-	  sizeof(char), sizeof(short), sizeof(int), sizeof(long));
+	  (int)sizeof(char), (int)sizeof(short), (int)sizeof(int), (int)sizeof(long));
 
   if (sizeof(char) == 1)
     printf ("typedef unsigned char art_u8;\n");
