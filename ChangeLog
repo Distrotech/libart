@@ -1,3 +1,8 @@
+Wed May 31 11:10:58 2000  Raph Levien  <raph@acm.org>
+
+	* art_svp_render_aa.c (art_svp_render_aa_iter_step): Updated
+	n_steps_max in iter structure after steps reallocation.
+
 Tue May 30 10:33:13 2000  Raph Levien  <raph@acm.org>
 
 	* art_svp_render_aa.c (art_svp_render_aa_iter_step): Fixed not

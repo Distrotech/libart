@@ -259,6 +259,7 @@ art_svp_render_aa_iter_step (ArtSVPRenderAAIter *iter, int *p_start,
 		  {
 		    art_expand (steps, ArtSVPRenderAAStep, n_steps_max);
 		    iter->steps = steps;
+		    iter->n_steps = n_steps_max;
 		  }
 		xdelta = (ix_min + 1 - (x_min + x_max) * 0.5) * delta;
 		steps[n_steps].x = ix_min;
