@@ -4,6 +4,8 @@ Makefile.in
 libart.hierarchy
 libart.signals
 libart-unused.txt
+libart-decl-list.txt
+libart-overides.txt
 libart.args
 *.stamp
 html
