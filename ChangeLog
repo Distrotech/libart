@@ -1,3 +1,8 @@
+Wed Nov 18 18:15:20 1998  Raph Levien  <raph@gimp.org>
+
+	* configure.in (LIBART_VERSION): set this, so that libart-config
+	--version now works.
+
 Wed Nov 18 16:50:58 1998  Raph Levien  <raph@gimp.org>
 
 	* libart.m4: added (just copied from esound)
