@@ -1,3 +1,14 @@
+Fri Apr 14 16:33:55 2000  Raph Levien  <raph@acm.org>
+
+	* art_svp_wind.c (art_svp_uncross, art_svp_rewind_uncrossed):
+	Fixed uninitialized memory reads when inserting new segment into
+	active_segs.
+
+	* art_bpath.c (art_bpath_affine_transform): Made it avoid
+	potential uninitialized memory reads when not all the coordinates
+	are needed. Thanks to Morten Welinder for spotting both of these
+	problems.
+
 2000-04-05  Raph Levien  <raph@gimp.org>
 
 	* art_svp_wind.c: Make "colinear" warnings go to stderr instead
