@@ -29,6 +29,7 @@ libart_lgpl_la_SOURCES = \
 	art_rgb_svp.c \
 	art_svp.c \
 	art_svp_ops.c \
+	art_svp_point.c \
 	art_svp_render_aa.c \
 	art_svp_vpath.c \
 	art_svp_vpath_stroke.c \
@@ -66,6 +67,7 @@ libart_lgplinc_HEADERS = \
 	art_rgb_svp.h \
 	art_svp.h \
 	art_svp_ops.h \
+	art_svp_point.h \
 	art_svp_render_aa.h \
 	art_svp_vpath.h \
 	art_svp_vpath_stroke.h \

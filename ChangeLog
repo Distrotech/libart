@@ -1,5 +1,15 @@
 1999-06-28  Raph Levien  <raph@gimp.org>
 
+	* art_svp_point.h:
+	* art_svp_point.c: Added methods for insideness and distance
+	testing, very useful for ::point methods in canvas items.
+
+	* testart.c: test code to exercise the art_svp_point functions.
+
+	* Makefile.am: Additional entries for art_svp_point.
+
+1999-06-28  Raph Levien  <raph@gimp.org>
+
 	* art_svp_render_aa.c (art_svp_render_aa): Subtle boundary
 	case in realloc code -- was causing nasty segfaults.
 

@@ -1,5 +1,5 @@
 /* Libart_LGPL - library of basic graphic primitives
- * Copyright (C) 1998 Raph Levien
+ * Copyright (C) 1998, 1999 Raph Levien
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -33,6 +33,7 @@
 #include "art_rgb_bitmap_affine.h"
 #include "art_rgb_rgba_affine.h"
 #include "art_alphagamma.h"
+#include "art_svp_point.h"
 
 void
 test_affine (void) {
@@ -156,8 +157,8 @@ print_svp (ArtSVP *vp)
     }
 }
 
-int
-main (int argc, char **argv)
+void
+make_testpat (void)
 {
   ArtVpath *vpath, *vpath2;
   ArtSVP *svp, *svp2;
@@ -283,6 +284,80 @@ main (int argc, char **argv)
 #endif
 
   fwrite (buf, 1, 512 * 512 * BYTES_PP, stdout);
+}
 
+void
+test_dist (void)
+{
+  ArtVpath *vpath;
+  ArtSVP *svp;
+  art_u8 buf[512 * 512 * BYTES_PP];
+  int x, y;
+  int ix;
+  double dist;
+  int wind;
+
+  vpath = randstar (20);
+#ifdef NO_STROKE
+  svp = art_svp_from_vpath (vpath);
+#else
+  svp = art_svp_vpath_stroke (vpath,
+			       ART_PATH_STROKE_JOIN_MITER,
+			       ART_PATH_STROKE_CAP_BUTT,
+			       15,
+			       4,
+			       0.5);
+#endif
+
+  art_rgb_svp_aa (svp, 0, 0, 512, 512,
+		  0xffe0a0, 0x100040,
+		  buf, 512 * BYTES_PP,
+		  NULL);
+
+  ix = 0;
+  for (y = 0; y < 512; y++)
+    {
+      for (x = 0; x < 512; x++)
+	{
+	  wind = art_svp_point_wind (svp, x, y);
+	  buf[ix] = 204 - wind * 51;
+	  dist = art_svp_point_dist (svp, x, y);
+	  if (((x | y) & 0x3f) == 0)
+	    {
+	      fprintf (stderr, "%d,%d: %f\n", x, y, dist);
+	    }
+	  buf[ix + 1] = 255 - dist;
+	  ix += 3;
+	}
+    }
+
+  printf ("P6\n512 512\n255\n");
+  fwrite (buf, 1, 512 * 512 * BYTES_PP, stdout);
+
+}
+
+void
+usage (void)
+{
+  fprintf (stderr, "usage: testart <test>\n"
+"  where <test> is one of:\n"
+"  testpat    -- make random star + gradients test pattern\n"
+"  dist       -- distance test\n");
+  exit (1);
+}
+
+int
+main (int argc, char **argv)
+{
+  if (argc < 2)
+    usage ();
+
+  if (!strcmp (argv[1], "testpat"))
+    make_testpat ();
+  else if (!strcmp (argv[1], "dist"))
+    test_dist ();
+  else
+    usage ();
   return 0;
 }
+
