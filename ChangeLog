@@ -1,3 +1,8 @@
+1999-08-03  Larry Ewing  <lewing@gimp.org>
+
+	* art_vpath_dash.c (art_vpath_dash): fix a bug/typo that was causing
+	certain paths to loop infinitely.
+
 1999-07-28  Raph Levien  <raph@gimp.org>
 
 	* art_vpath_dash.[ch]: Added a function to add a dash style
