@@ -206,6 +206,9 @@ art_svp_from_vpath (ArtVpath *vpath)
 
   svp->n_segs = n_segs;
 
+  if (n_segs < 0){
+     abort ();
+  }
   qsort (&svp->segs, n_segs, sizeof (ArtSVPSeg), art_svp_seg_compare);
 
   return svp;
