@@ -23,6 +23,10 @@ Mon May 29 13:48:49 2000  Raph Levien  <raph@acm.org>
 	* art_render_gradient.c: Added linear and radial gradients
 	as image sources in new rendering architecture.
 
+	* art_rgba.h:
+	* art_rgba.c: Added functions for manipulating and compositing
+	RGBA pixels.
+
 	* art_svp_wind.c: Added static to trap_epsilon(), #ifdef'd out
 	traverse().
 
