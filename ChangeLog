@@ -1,3 +1,10 @@
+2000-10-19  Ramiro Estrugo  <ramiro@eazel.com>
+
+	* art_svp_wind.c: (x_order), (x_order_2):
+	Protect the colinear x_order_2: colinear spewage with DEBUG_raph
+	defines.  These happen a lot in Nautilus where we are using svg
+	icons and are very annoying.
+	
 Tue May 16 15:03:35 2000  Raph Levien  <raph@acm.org>
 
 	* art_rgb_pixbuf_affine.c: Included corresponding .h file.
