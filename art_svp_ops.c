@@ -21,6 +21,9 @@
 
 /* Vector path set operations, over sorted vpaths. */
 
+#include "config.h"
+#include "art_svp_ops.h"
+
 #include "art_misc.h"
 
 #include "art_svp.h"
@@ -32,7 +35,6 @@
 #else
 #include "art_svp_wind.h"
 #endif
-#include "art_svp_ops.h"
 #include "art_vpath_svp.h"
 
 /* Merge the segments of the two svp's. The resulting svp will share

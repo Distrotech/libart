@@ -26,6 +26,7 @@ libart_lgpl_2_la_SOURCES = \
 	art_rect_uta.c \
 	art_render.c \
 	art_render_gradient.c \
+	art_render_mask.c \
 	art_render_svp.c \
 	art_rgb.c \
 	art_rgb_affine.c \
@@ -75,6 +76,7 @@ libart_lgplinc_HEADERS = \
 	art_rect_uta.h \
 	art_render.h \
 	art_render_gradient.h \
+	art_render_mask.h \
 	art_render_svp.h \
 	art_rgb.h \
 	art_rgb_affine.h \

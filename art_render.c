@@ -20,11 +20,10 @@
  * Boston, MA 02111-1307, USA.
  */
 
-#include "art_misc.h"
-#include "art_alphagamma.h"
-#include "art_rgb.h"
-
+#include "config.h"
 #include "art_render.h"
+
+#include "art_rgb.h"
 
 typedef struct _ArtRenderPriv ArtRenderPriv;
 

@@ -24,9 +24,9 @@
 #define __ART_RENDER_H__
 
 #ifdef LIBART_COMPILATION
-#include "art_misc.h"
+#include "art_alphagamma.h"
 #else
-#include <libart_lgpl/art_misc.h>
+#include <libart_lgpl/art_alphagamma.h>
 #endif
 
 #ifdef __cplusplus

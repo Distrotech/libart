@@ -1,9 +1,3 @@
-/* This file is adapted from art_render_mask.h in Libart version 2.4.0 */
-
-#include <libart_lgpl/libart-features.h>
-
-#if LIBART_MAJOR_VERSION == 2 && LIBART_MINOR_VERSION < 4
-
 /*
  * art_render_mask.h: Alpha mask source for modular rendering.
  *
@@ -31,6 +25,12 @@
 #ifndef __ART_RENDER_MASK_H__
 #define __ART_RENDER_MASK_H__
 
+#ifdef LIBART_COMPILATION
+#include "art_render.h"
+#else
+#include <libart_lgpl/art_render.h>
+#endif
+
 #ifdef __cplusplus
 extern "C" {
 #endif /* __cplusplus */
@@ -45,9 +45,3 @@ art_render_mask (ArtRender *render,
 #endif /* __cplusplus */
 
 #endif /* __ART_RENDER_MASK_H__ */
-
-#else
-
-#include <libart_lgpl/art_render_svp.h>
-
-#endif

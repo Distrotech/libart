@@ -21,6 +21,9 @@
    code.
 */
 
+#include "config.h"
+#include "art_svp_intersect.h"
+
 #include <math.h> /* for sqrt */
 
 /* Sanitychecking verifies the main invariant on every priority queue
@@ -35,8 +38,6 @@
 #define noVERBOSE
 
 #include "art_misc.h"
-#include "art_svp.h"
-#include "art_svp_intersect.h"
 
 /* A priority queue - perhaps move to a separate file if it becomes
    needed somewhere else */

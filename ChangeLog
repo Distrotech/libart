@@ -1,3 +1,75 @@
+2002-01-03  Darin Adler  <darin@bentspoon.com>
+
+	* Makefile.am: Add art_render_mask.[ch].
+
+	* art_bpath.h:
+	* art_rect_svp.h:
+	* art_rect_uta.h:
+	* art_render.h:
+	* art_render_gradient.h:
+	* art_render_mask.h:
+	* art_render_svp.h:
+	* art_rgb_svp.h:
+	* art_svp_intersect.h:
+	* art_svp_ops.h:
+	* art_svp_point.h:
+	* art_svp_render_aa.h:
+	* art_svp_vpath.h:
+	* art_svp_vpath_stroke.h:
+	* art_svp_wind.h:
+	* art_uta.h:
+	* art_uta_rect.h:
+	* art_uta_ops.h:
+	* art_uta_svp.h:
+	* art_uta_vpath.h:
+	* art_vpath_bpath.h:
+	* art_vpath_dash.h:
+	* art_vpath_svp.h:
+	Fix includes so that each header includes what it needs.
+
+	* art_affine.c:
+	* art_alphagamma.c:
+	* art_bpath.c:
+	* art_gray_svp.c:
+	* art_misc.c:
+	* art_pixbuf.c:
+	* art_rect.c:
+	* art_rect_svp.c:
+	* art_rect_uta.c:
+	* art_render.c:
+	* art_render_gradient.c:
+	* art_render_mask.c:
+	* art_render_svp.c:
+	* art_rgb.c:
+	* art_rgb_a_affine.c:
+	* art_rgb_affine.c:
+	* art_rgb_affine_private.c:
+	* art_rgb_bitmap_affine.c:
+	* art_rgb_pixbuf_affine.c:
+	* art_rgb_rgba_affine.c:
+	* art_rgb_svp.c:
+	* art_rgba.c:
+	* art_svp.c:
+	* art_svp_intersect.c:
+	* art_svp_ops.c:
+	* art_svp_point.c:
+	* art_svp_render_aa.c:
+	* art_svp_vpath.c:
+	* art_svp_vpath_stroke.c:
+	* art_svp_wind.c:
+	* art_uta.c:
+	* art_uta_ops.c:
+	* art_uta_rect.c:
+	* art_uta_svp.c:
+	* art_uta_vpath.c:
+	* art_vpath.c:
+	* art_vpath_bpath.c:
+	* art_vpath_dash.c:
+	* art_vpath_svp.c:
+	Fix order of includes so that the corresponding header is
+	included first, to test that each header includes what it
+	needs.
+
 2002-01-02  Darin Adler  <darin@bentspoon.com>
 
 	* art_alphagamma.h:

@@ -22,12 +22,11 @@
  * Authors: Raph Levien <raph@acm.org>
  */
 
-#include <string.h>
-#include <libart_lgpl/art_misc.h>
-#include <libart_lgpl/art_alphagamma.h>
-#include <libart_lgpl/art_render.h>
-
+#include "config.h"
 #include "art_render_mask.h"
+
+#include <string.h>
+
 
 typedef struct _ArtMaskSourceMask ArtMaskSourceMask;
 

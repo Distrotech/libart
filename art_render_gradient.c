@@ -23,14 +23,10 @@
  *          Alexander Larsson <alla@lysator.liu.se>
  */
 
-#include <math.h>
-
-#include "art_misc.h"
-#include "art_alphagamma.h"
-#include "art_filterlevel.h"
-
-#include "art_render.h"
+#include "config.h"
 #include "art_render_gradient.h"
+
+#include <math.h>
 
 typedef struct _ArtImageSourceGradLin ArtImageSourceGradLin;
 typedef struct _ArtImageSourceGradRad ArtImageSourceGradRad;

@@ -17,10 +17,12 @@
  * Boston, MA 02111-1307, USA.
  */
 
+#include "config.h"
+#include "art_rect_svp.h"
+
 #include "art_misc.h"
 #include "art_svp.h"
 #include "art_rect.h"
-#include "art_rect_svp.h"
 
 #ifndef MAX
 #define MAX(a, b)  (((a) > (b)) ? (a) : (b))
