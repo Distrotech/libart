@@ -26,11 +26,8 @@ libart_lgpl_la_SOURCES = \
 	art_rect_svp.c \
 	art_rect_uta.c \
 	art_render.c \
-	art_render.h \
 	art_render_gradient.c \
-	art_render_gradient.h \
 	art_render_svp.c \
-	art_render_svp.h \
 	art_rgb.c \
 	art_rgb_affine.c \
 	art_rgb_affine_private.c \
@@ -38,6 +35,7 @@ libart_lgpl_la_SOURCES = \
 	art_rgb_bitmap_affine.c \
 	art_rgb_pixbuf_affine.c \
 	art_rgb_rgba_affine.c \
+	art_rgba.c \
 	art_rgb_svp.c \
 	art_svp.c \
 	art_svp_ops.c \
@@ -74,12 +72,16 @@ libart_lgplinc_HEADERS = \
 	art_rect.h \
 	art_rect_svp.h \
 	art_rect_uta.h \
+	art_render.h \
+	art_render_gradient.h \
+	art_render_svp.h \
 	art_rgb.h \
 	art_rgb_affine.h \
 	art_rgb_bitmap_affine.h \
 	art_rgb_pixbuf_affine.h \
 	art_rgb_rgba_affine.h \
 	art_rgb_svp.h \
+	art_rgba.h \
 	art_svp.h \
 	art_svp_ops.h \
 	art_svp_point.h \
