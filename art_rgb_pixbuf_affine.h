@@ -20,8 +20,8 @@
 #ifndef __ART_RGB_AFFINE_H__
 #define __ART_RGB_AFFINE_H__
 
-/* This module handles compositing of affine-transformed rgb images
-   over rgb pixel buffers. */
+/* This module handles compositing of affine-transformed generic
+   pixbuf images over rgb pixel buffers. */
 
 #include <libart_lgpl/art_filterlevel.h>
 #include <libart_lgpl/art_alphagamma.h>
@@ -31,12 +31,12 @@ extern "C" {
 #endif
 
 void
-art_rgb_affine (art_u8 *dst, int x0, int y0, int x1, int y1, int dst_rowstride,
-		const art_u8 *src,
-		int src_width, int src_height, int src_rowstride,
-		const double affine[6],
-		ArtFilterLevel level,
-		ArtAlphaGamma *alphagamma);
+art_rgb_pixbuf_affine (art_u8 *dst,
+		       int x0, int y0, int x1, int y1, int dst_rowstride,
+		       const ArtPixBuf *pixbuf,
+		       const double affine[6],
+		       ArtFilterLevel level,
+		       ArtAlphaGamma *alphagamma);
 
 #ifdef __cplusplus
 }

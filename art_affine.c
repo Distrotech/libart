@@ -284,3 +284,12 @@ art_affine_translate (double dst[6], double tx, double ty)
   dst[4] = tx;
   dst[5] = ty;
 }
+
+/* find the affine's "expansion factor", i.e. the scale amount */
+double
+art_affine_expansion (const double src[6])
+{
+  double r_det;
+
+  return sqrt (src[0] * src[3] - src[1] * src[2]);
+}

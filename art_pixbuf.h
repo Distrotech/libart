@@ -17,26 +17,51 @@
  * Boston, MA 02111-1307, USA.
  */
 
-#ifndef __ART_RGB_AFFINE_H__
-#define __ART_RGB_AFFINE_H__
+#ifndef __ART_PIXBUF_H__
+#define __ART_PIXBUF_H__
 
-/* This module handles compositing of affine-transformed rgb images
-   over rgb pixel buffers. */
-
-#include <libart_lgpl/art_filterlevel.h>
-#include <libart_lgpl/art_alphagamma.h>
+/* A generic data structure for holding a buffer of pixels. One way
+   to think about this module is as a virtualization over specific
+   pixel buffer formats. */
 
 #ifdef __cplusplus
 extern "C" {
 #endif
 
+typedef struct _ArtPixBuf ArtPixBuf;
+
+typedef enum {
+  ART_PIX_RGB
+  /* gray, cmyk, lab, ... ? */
+} ArtPixFormat;
+
+
+/* The pixel buffer consists of width * height pixels, each of which
+   has n_channels samples. It is stored in simple packed format. */
+
+struct _ArtPixBuf {
+  ArtPixFormat format;
+  int n_channels;
+  int has_alpha;
+  int bits_per_sample;
+
+  art_u8 *pixels;
+  int width;
+  int height;
+  int rowstride;
+};
+
+ArtPixBuf *
+art_pixbuf_new_rgb (art_u8 *pixels, int width, int height, int rowstride);
+
+ArtPixBuf *
+art_pixbuf_new_rgba (art_u8 *pixels, int width, int height, int rowstride);
+
 void
-art_rgb_affine (art_u8 *dst, int x0, int y0, int x1, int y1, int dst_rowstride,
-		const art_u8 *src,
-		int src_width, int src_height, int src_rowstride,
-		const double affine[6],
-		ArtFilterLevel level,
-		ArtAlphaGamma *alphagamma);
+art_pixbuf_free (ArtPixBuf *pixbuf);
+
+void
+art_pixbuf_free_shallow (ArtPixBuf *pixbuf);
 
 #ifdef __cplusplus
 }

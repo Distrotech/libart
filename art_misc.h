@@ -56,4 +56,7 @@ typedef unsigned int art_u32;
 void
 art_die (const char *fmt, ...);
 
+void
+art_warn (const char *fmt, ...);
+
 #endif /* __ART_MISC_H__ */

@@ -24,7 +24,7 @@
 #include <stdarg.h>
 #include "art_misc.h"
 
-/* Print the error message to stdout and exit with a return code of 1 */
+/* Print the error message to stderr and exit with a return code of 1 */
 void
 art_die (const char *fmt, ...)
 {
@@ -34,4 +34,15 @@ art_die (const char *fmt, ...)
   vfprintf (stderr, fmt, ap);
   va_end (ap);
   exit (1);
+}
+
+/* Print the error message to stderr */
+void
+art_warn (const char *fmt, ...)
+{
+  va_list ap;
+
+  va_start (ap, fmt);
+  vfprintf (stderr, fmt, ap);
+  va_end (ap);
 }

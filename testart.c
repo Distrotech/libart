@@ -32,6 +32,7 @@
 #include "art_rgb_affine.h"
 #include "art_rgb_bitmap_affine.h"
 #include "art_rgb_rgba_affine.h"
+#include "art_alphagamma.h"
 
 void
 test_affine (void) {
@@ -171,12 +172,13 @@ main (int argc, char **argv)
   double affine[6];
   double affine2[6];
   double affine3[6];
+  ArtAlphaGamma *alphagamma;
 
 #ifdef TEST_AFFINE
   test_affine ();
   exit (0);
 #endif
-  
+
   vpath = randstar (50);
   svp = art_svp_from_vpath (vpath);
 
@@ -230,7 +232,9 @@ main (int argc, char **argv)
   affine3[3] = 5;
   affine3[4] = 384;
   affine3[5] = 32;
-  
+
+  alphagamma = art_alphagamma_new (1.8);
+  alphagamma = NULL;
 
 #ifdef COLOR
   printf ("P6\n512 512\n255\n");
@@ -244,31 +248,34 @@ main (int argc, char **argv)
 	{
 	  art_rgb_svp_aa (svp, i, j, i + TILE_SIZE, j + TILE_SIZE,
 			  0xffe0a0, 0x100040,
-			  buf + (j * 512 + i) * BYTES_PP, 512 * BYTES_PP);
+			  buf + (j * 512 + i) * BYTES_PP, 512 * BYTES_PP,
+			  alphagamma);
 	  art_rgb_svp_alpha (svp2, i, j, i + TILE_SIZE, j + TILE_SIZE,
 			     0xff000080,
-			     buf + (j * 512 + i) * BYTES_PP, 512 * BYTES_PP);
+			     buf + (j * 512 + i) * BYTES_PP, 512 * BYTES_PP,
+			     alphagamma);
 	  art_rgb_svp_alpha (svp3, i, j, i + TILE_SIZE, j + TILE_SIZE,
 			     0x00ff0080,
-			     buf + (j * 512 + i) * BYTES_PP, 512 * BYTES_PP);
+			     buf + (j * 512 + i) * BYTES_PP, 512 * BYTES_PP,
+			     alphagamma);
 	  art_rgb_affine (buf + (j * 512 + i) * BYTES_PP,
 			  i, j, i + TILE_SIZE, j + TILE_SIZE, 512 * BYTES_PP,
 			  (art_u8 *)colorimg, 256, 256, 256 * 3,
 			  affine,
-			  ART_FILTER_NEAREST);
+			  ART_FILTER_NEAREST, alphagamma);
 	  art_rgb_rgba_affine (buf + (j * 512 + i) * BYTES_PP,
 			       i, j, i + TILE_SIZE, j + TILE_SIZE,
 			       512 * BYTES_PP,
 			       (art_u8 *)rgbaimg, 256, 256, 256 * 4,
 			       affine2,
-			       ART_FILTER_NEAREST);
+			       ART_FILTER_NEAREST, alphagamma);
 	  art_rgb_bitmap_affine (buf + (j * 512 + i) * BYTES_PP,
 				 i, j, i + TILE_SIZE, j + TILE_SIZE,
 				 512 * BYTES_PP,
 				 (art_u8 *)bitimg, 16, 16, 2,
 				 0xffff00ff,
 				 affine3,
-				 ART_FILTER_NEAREST);
+				 ART_FILTER_NEAREST, alphagamma);
 	}
 #else
 	art_gray_svp_aa (svp, i, j, i + TILE_SIZE, j + TILE_SIZE,

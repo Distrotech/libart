@@ -24,6 +24,7 @@
    over rgb pixel buffers. */
 
 #include <libart_lgpl/art_filterlevel.h>
+#include <libart_lgpl/art_alphagamma.h>
 
 #ifdef __cplusplus
 extern "C" {
@@ -35,7 +36,8 @@ art_rgb_rgba_affine (art_u8 *dst,
 		     const art_u8 *src,
 		     int src_width, int src_height, int src_rowstride,
 		     const double affine[6],
-		     ArtFilterLevel level);
+		     ArtFilterLevel level,
+		     ArtAlphaGamma *alphagamma);
 
 #ifdef __cplusplus
 }

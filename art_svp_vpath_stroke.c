@@ -389,6 +389,8 @@ art_svp_vpath_stroke_raw (ArtVpath *vpath,
   return result;
 }
 
+#define noVERBOSE
+
 #ifdef VERBOSE
 
 #define XOFF 50

@@ -56,6 +56,10 @@ art_affine_rotate (double dst[6], double theta);
 void
 art_affine_translate (double dst[6], double tx, double ty);
 
+/* find the affine's "expansion factor", i.e. the scale amount */
+double
+art_affine_expansion (const double src[6]);
+
 #ifdef __cplusplus
 }
 #endif /* __cplusplus */
