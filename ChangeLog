@@ -1,3 +1,8 @@
+2003-04-11  Alexander Larsson  <alexl@redhat.com>
+
+	* art_svp_vpath_stroke.c (render_seg):
+	Handle cases when dmr2 is very small better.
+
 2003-04-10  Alexander Larsson  <alexl@redhat.com>
 
 	* art_svp_wind.c (x_order_2):
