@@ -1,3 +1,25 @@
+2001-05-17  Mathieu Lacage  <mathieu@gnu.org>
+
+	* Makefile.am: add gtk-doc test.
+	* configure.in: add doc subdir.
+
+	adds draft doc for libart.
+	* doc/Makefile.am:
+	* doc/fdl.sgml:
+	* doc/libart-decl.txt:
+	* doc/libart-sections.txt:
+	* doc/libart.sgml:
+	* doc/tmpl/art_affine.sgml:
+	* doc/tmpl/art_buffer_affine.sgml:
+	* doc/tmpl/art_construction_core.sgml:
+	* doc/tmpl/art_construction_extended.sgml:
+	* doc/tmpl/art_construction_trans.sgml:
+	* doc/tmpl/art_gamma.sgml:
+	* doc/tmpl/art_memory.sgml:
+	* doc/tmpl/art_pixbuf.sgml:
+	* doc/tmpl/art_render.sgml:
+	* doc/tmpl/art_svp.sgml:
+
 2000-10-19  Ramiro Estrugo  <ramiro@eazel.com>
 
 	* art_svp_wind.c: (x_order), (x_order_2):

@@ -1,0 +1,98 @@
+<!-- ##### SECTION Title ##### -->
+Core Construction APIs
+
+<!-- ##### SECTION Short_Description ##### -->
+
+
+<!-- ##### SECTION Long_Description ##### -->
+<para>
+
+</para>
+
+<!-- ##### SECTION See_Also ##### -->
+<para>
+
+</para>
+
+<!-- ##### STRUCT ArtPoint ##### -->
+<para>
+
+</para>
+
+@x: 
+@y: 
+
+<!-- ##### ENUM ArtPathcode ##### -->
+<para>
+
+</para>
+
+@ART_MOVETO: 
+@ART_MOVETO_OPEN: 
+@ART_CURVETO: 
+@ART_LINETO: 
+@ART_END: 
+
+<!-- ##### STRUCT ArtVpath ##### -->
+<para>
+
+</para>
+
+@code: 
+@x: 
+@y: 
+
+<!-- ##### STRUCT ArtBpath ##### -->
+<para>
+
+</para>
+
+@code: 
+@x1: 
+@y1: 
+@x2: 
+@y2: 
+@x3: 
+@y3: 
+
+<!-- ##### FUNCTION art_vpath_add_point ##### -->
+<para>
+
+</para>
+
+@p_vpath: 
+@pn_points: 
+@pn_points_max: 
+@code: 
+@x: 
+@y: 
+
+
+<!-- ##### FUNCTION art_bezier_to_vec ##### -->
+<para>
+
+</para>
+
+@x0: 
+@y0: 
+@x1: 
+@y1: 
+@x2: 
+@y2: 
+@x3: 
+@y3: 
+@p: 
+@level: 
+@Returns: 
+
+
+<!-- ##### FUNCTION art_bez_path_to_vec ##### -->
+<para>
+
+</para>
+
+@bez: 
+@flatness: 
+@Returns: 
+
+

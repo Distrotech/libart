@@ -1,0 +1,92 @@
+<!-- ##### SECTION Title ##### -->
+Extended Construction APIs
+
+<!-- ##### SECTION Short_Description ##### -->
+
+
+<!-- ##### SECTION Long_Description ##### -->
+<para>
+
+</para>
+
+<!-- ##### SECTION See_Also ##### -->
+<para>
+
+</para>
+
+<!-- ##### STRUCT ArtVpathDash ##### -->
+<para>
+
+</para>
+
+@offset: 
+@n_dash: 
+@dash: 
+
+<!-- ##### FUNCTION art_vpath_dash ##### -->
+<para>
+
+</para>
+
+@vpath: 
+@dash: 
+@Returns: 
+
+
+<!-- ##### ENUM ArtPathStrokeJoinType ##### -->
+<para>
+
+</para>
+
+@ART_PATH_STROKE_JOIN_MITER: 
+@ART_PATH_STROKE_JOIN_ROUND: 
+@ART_PATH_STROKE_JOIN_BEVEL: 
+
+<!-- ##### ENUM ArtPathStrokeCapType ##### -->
+<para>
+
+</para>
+
+@ART_PATH_STROKE_CAP_BUTT: 
+@ART_PATH_STROKE_CAP_ROUND: 
+@ART_PATH_STROKE_CAP_SQUARE: 
+
+<!-- ##### FUNCTION art_svp_vpath_stroke ##### -->
+<para>
+
+</para>
+
+@vpath: 
+@join: 
+@cap: 
+@line_width: 
+@miter_limit: 
+@flatness: 
+@Returns: 
+
+
+<!-- ##### FUNCTION art_svp_vpath_stroke_raw ##### -->
+<para>
+
+</para>
+
+@vpath: 
+@join: 
+@cap: 
+@line_width: 
+@miter_limit: 
+@flatness: 
+@Returns: 
+
+
+<!-- ##### FUNCTION art_vpath_new_circle ##### -->
+<para>
+
+</para>
+
+@x: 
+@y: 
+@r: 
+@Returns: 
+
+

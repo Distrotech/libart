@@ -1,0 +1,110 @@
+<!-- ##### SECTION Title ##### -->
+Svp rendering
+
+<!-- ##### SECTION Short_Description ##### -->
+
+
+<!-- ##### SECTION Long_Description ##### -->
+<para>
+
+</para>
+
+<!-- ##### SECTION See_Also ##### -->
+<para>
+
+</para>
+
+<!-- ##### FUNCTION art_rgb_fill_run ##### -->
+<para>
+
+</para>
+
+@buf: 
+@r: 
+@g: 
+@b: 
+@n: 
+
+
+<!-- ##### FUNCTION art_rgb_run_alpha ##### -->
+<para>
+
+</para>
+
+@buf: 
+@r: 
+@g: 
+@b: 
+@alpha: 
+@n: 
+
+
+<!-- ##### FUNCTION art_gray_svp_aa ##### -->
+<para>
+
+</para>
+
+@svp: 
+@x0: 
+@y0: 
+@x1: 
+@y1: 
+@buf: 
+@rowstride: 
+
+
+<!-- ##### FUNCTION art_rgb_svp_aa ##### -->
+<para>
+
+</para>
+
+@svp: 
+@x0: 
+@y0: 
+@x1: 
+@y1: 
+@fg_color: 
+@bg_color: 
+@buf: 
+@rowstride: 
+@alphagamma: 
+
+
+<!-- ##### FUNCTION art_rgb_svp_alpha ##### -->
+<para>
+
+</para>
+
+@svp: 
+@x0: 
+@y0: 
+@x1: 
+@y1: 
+@rgba: 
+@buf: 
+@rowstride: 
+@alphagamma: 
+
+
+<!-- ##### STRUCT ArtSVPRenderAAStep ##### -->
+<para>
+
+</para>
+
+@x: 
+@delta: 
+
+<!-- ##### FUNCTION art_svp_render_aa ##### -->
+<para>
+
+</para>
+
+@svp: 
+@x0: 
+@y0: 
+@x1: 
+@y1: 
+@callback: 
+@callback_data: 
+
+

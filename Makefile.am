@@ -1,3 +1,5 @@
+SUBDIRS = doc
+
 noinst_PROGRAMS = testart testuta gen_art_config
 
 bin_SCRIPTS = \

@@ -1,0 +1,149 @@
+<!-- ##### SECTION Title ##### -->
+Pixel Buffers
+
+<!-- ##### SECTION Short_Description ##### -->
+
+
+<!-- ##### SECTION Long_Description ##### -->
+<para>
+
+</para>
+
+<!-- ##### SECTION See_Also ##### -->
+<para>
+
+</para>
+
+<!-- ##### USER_FUNCTION ArtDestroyNotify ##### -->
+<para>
+
+</para>
+
+@func_data: 
+@data: 
+
+
+<!-- ##### STRUCT ArtPixBuf ##### -->
+<para>
+
+</para>
+
+@format: 
+@n_channels: 
+@has_alpha: 
+@bits_per_sample: 
+@pixels: 
+@width: 
+@height: 
+@rowstride: 
+@destroy_data: 
+@destroy: 
+
+<!-- ##### ENUM ArtPixFormat ##### -->
+<para>
+
+</para>
+
+@ART_PIX_RGB: 
+
+<!-- ##### FUNCTION art_pixbuf_new_rgb ##### -->
+<para>
+
+</para>
+
+@pixels: 
+@width: 
+@height: 
+@rowstride: 
+@Returns: 
+
+
+<!-- ##### FUNCTION art_pixbuf_new_rgba ##### -->
+<para>
+
+</para>
+
+@pixels: 
+@width: 
+@height: 
+@rowstride: 
+@Returns: 
+
+
+<!-- ##### FUNCTION art_pixbuf_new_const_rgb ##### -->
+<para>
+
+</para>
+
+@pixels: 
+@width: 
+@height: 
+@rowstride: 
+@Returns: 
+
+
+<!-- ##### FUNCTION art_pixbuf_new_const_rgba ##### -->
+<para>
+
+</para>
+
+@pixels: 
+@width: 
+@height: 
+@rowstride: 
+@Returns: 
+
+
+<!-- ##### FUNCTION art_pixbuf_new_rgb_dnotify ##### -->
+<para>
+
+</para>
+
+@pixels: 
+@width: 
+@height: 
+@rowstride: 
+@dfunc_data: 
+@dfunc: 
+@Returns: 
+
+
+<!-- ##### FUNCTION art_pixbuf_new_rgba_dnotify ##### -->
+<para>
+
+</para>
+
+@pixels: 
+@width: 
+@height: 
+@rowstride: 
+@dfunc_data: 
+@dfunc: 
+@Returns: 
+
+
+<!-- ##### FUNCTION art_pixbuf_free ##### -->
+<para>
+
+</para>
+
+@pixbuf: 
+
+
+<!-- ##### FUNCTION art_pixbuf_free_shallow ##### -->
+<para>
+
+</para>
+
+@pixbuf: 
+
+
+<!-- ##### FUNCTION art_pixbuf_duplicate ##### -->
+<para>
+
+</para>
+
+@pixbuf: 
+@Returns: 
+
+

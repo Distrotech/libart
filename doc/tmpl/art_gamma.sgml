@@ -1,0 +1,39 @@
+<!-- ##### SECTION Title ##### -->
+Art Alpha Gamma Stuff
+
+<!-- ##### SECTION Short_Description ##### -->
+
+
+<!-- ##### SECTION Long_Description ##### -->
+<para>
+
+</para>
+
+<!-- ##### SECTION See_Also ##### -->
+<para>
+
+</para>
+
+<!-- ##### STRUCT ArtAlphaGamma ##### -->
+<para>
+
+</para>
+
+
+<!-- ##### FUNCTION art_alphagamma_new ##### -->
+<para>
+
+</para>
+
+@gamma: 
+@Returns: 
+
+
+<!-- ##### FUNCTION art_alphagamma_free ##### -->
+<para>
+
+</para>
+
+@alphagamma: 
+
+

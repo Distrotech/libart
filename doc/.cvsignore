@@ -1,0 +1,10 @@
+Makefile
+Makefile.in
+*.bak
+libart.hierarchy
+libart.signals
+libart-unused.txt
+libart.args
+*.stamp
+html
+sgml

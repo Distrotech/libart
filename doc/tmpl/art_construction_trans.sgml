@@ -1,0 +1,45 @@
+<!-- ##### SECTION Title ##### -->
+Transformation operations
+
+<!-- ##### SECTION Short_Description ##### -->
+
+
+<!-- ##### SECTION Long_Description ##### -->
+<para>
+
+</para>
+
+<!-- ##### SECTION See_Also ##### -->
+<para>
+
+</para>
+
+<!-- ##### FUNCTION art_vpath_perturb ##### -->
+<para>
+
+</para>
+
+@src: 
+@Returns: 
+
+
+<!-- ##### FUNCTION art_vpath_affine_transform ##### -->
+<para>
+
+</para>
+
+@src: 
+@matrix: 
+@Returns: 
+
+
+<!-- ##### FUNCTION art_bpath_affine_transform ##### -->
+<para>
+
+</para>
+
+@src: 
+@matrix: 
+@Returns: 
+
+

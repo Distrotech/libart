@@ -1,0 +1,139 @@
+<!-- ##### SECTION Title ##### -->
+Affine transformation matrices
+
+<!-- ##### SECTION Short_Description ##### -->
+
+
+<!-- ##### SECTION Long_Description ##### -->
+<para>
+
+</para>
+
+<!-- ##### SECTION See_Also ##### -->
+<para>
+
+</para>
+
+<!-- ##### FUNCTION art_affine_point ##### -->
+<para>
+
+</para>
+
+@dst: 
+@src: 
+@affine: 
+
+
+<!-- ##### FUNCTION art_affine_invert ##### -->
+<para>
+
+</para>
+
+@dst_affine: 
+@src_affine: 
+
+
+<!-- ##### FUNCTION art_affine_flip ##### -->
+<para>
+
+</para>
+
+@dst_affine: 
+@src_affine: 
+@horz: 
+@vert: 
+
+
+<!-- ##### FUNCTION art_affine_to_string ##### -->
+<para>
+
+</para>
+
+@str: 
+@src: 
+
+
+<!-- ##### FUNCTION art_affine_multiply ##### -->
+<para>
+
+</para>
+
+@dst: 
+@src1: 
+@src2: 
+
+
+<!-- ##### FUNCTION art_affine_identity ##### -->
+<para>
+
+</para>
+
+@dst: 
+
+
+<!-- ##### FUNCTION art_affine_scale ##### -->
+<para>
+
+</para>
+
+@dst: 
+@sx: 
+@sy: 
+
+
+<!-- ##### FUNCTION art_affine_rotate ##### -->
+<para>
+
+</para>
+
+@dst: 
+@theta: 
+
+
+<!-- ##### FUNCTION art_affine_shear ##### -->
+<para>
+
+</para>
+
+@dst: 
+@theta: 
+
+
+<!-- ##### FUNCTION art_affine_translate ##### -->
+<para>
+
+</para>
+
+@dst: 
+@tx: 
+@ty: 
+
+
+<!-- ##### FUNCTION art_affine_expansion ##### -->
+<para>
+
+</para>
+
+@src: 
+@Returns: 
+
+
+<!-- ##### FUNCTION art_affine_rectilinear ##### -->
+<para>
+
+</para>
+
+@src: 
+@Returns: 
+
+
+<!-- ##### FUNCTION art_affine_equal ##### -->
+<para>
+
+</para>
+
+@matrix1: 
+@matrix2: 
+@Returns: 
+
+

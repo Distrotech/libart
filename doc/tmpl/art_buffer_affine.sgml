@@ -1,0 +1,104 @@
+<!-- ##### SECTION Title ##### -->
+Pixel buffer affine transformations
+
+<!-- ##### SECTION Short_Description ##### -->
+
+
+<!-- ##### SECTION Long_Description ##### -->
+<para>
+
+</para>
+
+<!-- ##### SECTION See_Also ##### -->
+<para>
+
+</para>
+
+<!-- ##### ENUM ArtFilterLevel ##### -->
+<para>
+
+</para>
+
+@ART_FILTER_NEAREST: 
+@ART_FILTER_TILES: 
+@ART_FILTER_BILINEAR: 
+@ART_FILTER_HYPER: 
+
+<!-- ##### FUNCTION art_rgb_pixbuf_affine ##### -->
+<para>
+
+</para>
+
+@dst: 
+@x0: 
+@y0: 
+@x1: 
+@y1: 
+@dst_rowstride: 
+@pixbuf: 
+@affine: 
+@level: 
+@alphagamma: 
+
+
+<!-- ##### FUNCTION art_rgb_affine ##### -->
+<para>
+
+</para>
+
+@dst: 
+@x0: 
+@y0: 
+@x1: 
+@y1: 
+@dst_rowstride: 
+@src: 
+@src_width: 
+@src_height: 
+@src_rowstride: 
+@affine: 
+@level: 
+@alphagamma: 
+
+
+<!-- ##### FUNCTION art_rgb_rgba_affine ##### -->
+<para>
+
+</para>
+
+@dst: 
+@x0: 
+@y0: 
+@x1: 
+@y1: 
+@dst_rowstride: 
+@src: 
+@src_width: 
+@src_height: 
+@src_rowstride: 
+@affine: 
+@level: 
+@alphagamma: 
+
+
+<!-- ##### FUNCTION art_rgb_bitmap_affine ##### -->
+<para>
+
+</para>
+
+@dst: 
+@x0: 
+@y0: 
+@x1: 
+@y1: 
+@dst_rowstride: 
+@src: 
+@src_width: 
+@src_height: 
+@src_rowstride: 
+@rgba: 
+@affine: 
+@level: 
+@alphagamma: 
+
+

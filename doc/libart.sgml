@@ -1,0 +1,497 @@
+<!doctype book PUBLIC "-//Davenport//DTD DocBook V3.0//EN" [
+<!entity FDL SYSTEM "fdl.sgml">
+<!entity art-construction-core SYSTEM "sgml/art_construction_core.sgml">
+<!entity art-construction-extended SYSTEM "sgml/art_construction_extended.sgml">
+<!entity art-construction-trans SYSTEM "sgml/art_construction_trans.sgml">
+<!entity art-gamma SYSTEM "sgml/art_gamma.sgml">
+<!entity art-affine SYSTEM "sgml/art_affine.sgml">
+<!entity art-memory SYSTEM "sgml/art_memory.sgml">
+<!entity art-svp SYSTEM "sgml/art_svp.sgml">
+<!entity art-render SYSTEM "sgml/art_render.sgml">
+<!entity art-pixbuf SYSTEM "sgml/art_pixbuf.sgml">
+<!entity art-buffer-affine SYSTEM "sgml/art_buffer_affine.sgml">
+]>
+
+
+<book id="libart">
+  <bookinfo>
+    <title>The libart library</title>
+
+    <authorgroup>
+      <author>
+        <firstname>Mathieu</firstname>
+        <surname>Lacage</surname>
+        <affiliation>
+          <address>
+            <email>mathieu@gnu.org</email>
+          </address>
+        </affiliation>
+      </author>
+    </authorgroup>
+
+
+    <legalnotice>
+      <para>
+	Permission is granted to copy, distribute and/or modify this document
+	under the terms of the GNU Free Documentation License, Version 1.1
+	or any later version published by the Free Software Foundation;
+	with the Invariant Sections being  with no
+	Front-Cover Texts, and with no Back-Cover Texts.
+	A copy of the license is included in the section entitled "GNU
+	Free Documentation License".
+      </para>
+    </legalnotice>
+
+    <copyright>
+      <year>2001</year>
+      <holder>Mathieu Lacage and Raph Levien</holder>
+    </copyright>
+  </bookinfo>
+
+  <chapter id="intro">
+    <title>What is Libart ?</title>
+
+    <sect1 id="intro-intro">
+      <title>Introduction</title>
+      <para>
+	Libart is a 2D drawing library: its goal is to be a high-quality vector-based
+	2D library with antialiasing and alpha composition. Libart was developed by
+	Raph Levien in an attempt to provide a powerful yet easy-to-use foundation
+	layer for the development of Gui-based applications in Gnome. Libart is thus
+	distributed as a part of Gnome under the LGPL. Libart can also be licensed 
+	under other licenses from XXX.
+      </para>
+
+      <para>
+	This documentation is itself licenced under the GNU FDL and the copyright is owned by
+	Raph Levien and Mathieu Lacage.
+      </para>
+
+    </sect1>
+
+    <sect1 id="intro-file-names">
+      <title>File names</title>
+      
+      <para>
+	Whether or not you are a Core HaXXor, you may be used to reading
+	the source code for the libraries you are using, perhaps
+	to understand how those libraries work in more detail.
+      </para>
+      
+      <para>
+	The first step is to find the file containing the code that
+	deals with a particular data structure.
+	libart tries to make this process easy for you.
+	File names are structured as follows:
+	<computeroutput>art_sourcestructure_deststructure_details.{h|c}</computeroutput>.
+	For example, the source file <computeroutput>art_svp_vpath.h</computeroutput>
+	contains the source code which manipulates svp data structures and generates vpath 
+	data structures. Most notably, the following function can be found in there:
+	<function>art_svp_from_vpath</function>.
+      </para>
+
+	<para>
+	  I hope you will get used to the marvelous world of <emphasis>documentation by code</emphasis>
+	  since everyone knows that the code is the ultimate source of rightness.
+	</para>
+
+      </sect1>
+
+
+    <sect1>
+      <title>LibArt's overall architecture</title>
+
+      <sect2>
+	<title>Using libart</title>
+
+	<para>
+	  Using libart to display vector graphics on screen can be a pretty difficult task
+	  for beginers: libart was not designed to draw vector graphics on screen. It was 
+	  designed to draw graphics in pixel buffers. It is up to the reader to draw those
+	  pixel buffers on screen after rendering.
+	</para>
+
+	<figure>
+	  <title>LibArt's Use scenarios</title>
+	  <graphic fileref="art-overall-arch.png" scale="50"></graphic>
+	</figure>
+
+	<para>
+	  The diagram above shows how you could use libart: the pixel buffers can be stored
+	  -they could be also manipulated before doing so- but they can also be rendered on screen
+	  using GTK+' Gdkrgb code.
+	</para>
+
+	<para>
+	  Some sample code shows how to achieve both of those scenarios by hand, but application 
+	  developers should remember that it is pretty unlikely that they will have to do this. Higher-level
+	  APIs which deal with structured vector graphics are available and they take care of
+	  all the rendering of the vector data you feed them. The <function>GnomeCanvas</function>
+	  can be used for this: its antialiased version uses libart to render vector data in pixel
+	  buffers and Gdkrgb to render those pixel buffers in X windows.
+	</para>
+
+      </sect2>
+
+      <sect2>
+	<title>From vector data to pixel buffers</title>
+
+	<para>
+	  Libart's vector input is described using 2 data structures: <function>ArtBpath</function> (short 
+	  for Bezier Paths)
+	  and <function>ArtVPath</function> (short for Vector Paths). libart provides a number of 
+	  helper functions to manipulate these data structures and instantiate specific geometric 
+	  shapes easily.
+	</para>
+
+	<para>
+	  To render these data vectors to a pixel buffer, libart wants you to transform them in 
+	  <function>ArtSVP</function>s (short for Sorted Vector Paths). Svps are a rendering-friendly
+	  version of the original vectors. I would strongly suggest against constructing your own
+	  svps by hand without using the libart's construction APIs: these SVPs need to verify a number
+	  of properties which are not trivial and I have no idea what would happen if you passed
+	  a corrupted svp to the rendering code (probably bad things)...
+	  For example, <function>art_svp_from_vpath</function> will generate the svp corresponding
+	  to your vpaths.
+	</para>
+
+	<para>
+	  Once you have constructed your svps, you can manipulate those svps before rendering them.
+	  It is thus possible to apply arbitrary affine transformations to those svps. It is also possible
+	  to intersect 2 svps and generate the svp representing the union of these svps...
+	</para>
+
+	<para>
+	  Finally, it is time for you to render your svps in a pixel buffer. This can be done 
+	  pretty easily using <function>art_rgb_svp_aa</function> and/or 
+	  <function>art_rgb_svp_alpha</function>.
+	</para>
+
+	<para>
+	  All the above steps are summarized in the following diagram:
+	</para>
+
+	<figure>
+	  <title>LibArt's data flow</title>
+	  <graphic fileref="art-data-flow.png" scale="50"></graphic>
+	</figure>
+
+      </sect2>
+
+    </sect1>
+
+  </chapter>
+
+  <chapter id="sample">
+    <title>Sample code</title>
+
+    <sect1 id="sample-non-display">
+      <title>A non-displaying application</title>
+
+      <para>
+	To get a good idea on how to use libart 
+	in your own application, here is a simple example which does
+	nothing but render in a pixel buffer a small square. The full 
+	source for this example is available for download:
+	<ulink url="./art-non-diplay.tar.gz">art-non-diplay.tar.gz</ulink>
+	(includes a simple Makefile to build it).
+      </para>
+
+      <programlisting>
+int main (int argc, char *argv[])
+{
+  ArtSVP *path;
+  char *buffer;
+
+  path = make_path ();
+
+  buffer = render_path (path);
+
+  save_buffer (buffer, "foo.png");
+
+  return 0;
+}
+      </programlisting>
+
+      <para>
+	As shown above, we begin by creating an SVP, then we render it in a pixel buffer and
+	last we save it to a file.
+	Creating the SVP is very easy:
+      </para>
+<programlisting>
+static ArtSVP *
+make_path (void)
+{
+  ArtVpath *vec = NULL;
+  ArtSVP *svp = NULL;
+  
+  vec = art_new (ArtVpath, 10);
+  vec[0].code = ART_MOVETO;
+  vec[0].x = 0;
+  vec[0].y = 0;
+  vec[1].code = ART_LINETO;
+  vec[1].x = 0;
+  vec[1].y = 10;
+  vec[2].code = ART_LINETO;
+  vec[2].x = 10;
+  vec[2].y = 10;
+  vec[3].code = ART_LINETO;
+  vec[3].x = 10;
+  vec[3].y = 0;
+  vec[4].code = ART_END;
+
+  svp = art_svp_from_vpath (vec);
+
+  return svp;
+}
+</programlisting>
+      <para>
+	The above VPath is a list of drawing commands. There are 5 different drawing commands:
+	<function>ART_MOVETO</function>, <function>ART_MOVETO_OPEN</function>,
+	<function>ART_LINETO</function>, <function>ART_CURVETO</function> an <function>ART_END</function>.
+	<itemizedlist>
+	  <listitem>
+	    <para>
+	      <function>ART_MOVETO</function> and <function>ART_MOVETO_OPEN</function> describe where the
+	      pen of the painter starts to draw the vectors. <function>ART_MOVETO</function> starts
+	      a closed vector path (the last point of the vector path will be connected to the first one).
+	    </para>
+	  </listitem>
+
+	  <listitem>
+	    <para>
+	      <function>ART_END</function> ends a vector path.
+	    </para>
+	  </listitem>
+
+	  <listitem>
+	    <para>
+	      <function>ART_LINETO</function> and <function>ART_CURVETO</function> describe
+	      the following point in the vector path.
+	      <function>ART_CURVETO</function> is reserved for use with <function>BPath</function>s and
+	      cannot be used with a <function>Vpath</function>.
+	    </para>
+	  </listitem>
+	</itemizedlist>
+      </para>
+      
+      <para>
+	The following figure summarizes the behaviour of these drawing commands:
+	<figure>
+	  <title>Drawing commands</title>
+	  <graphic fileref="art-drawing-commands.png" scale="50"></graphic>
+	</figure>
+	Once the SVP is built, we render it and save it to a file:
+      </para>
+
+<programlisting>
+static unsigned char *
+render_path (const ArtSVP *path)
+{
+  art_u8 *buffer = NULL;
+  art_u32 color = (0xFF << 24) | (0x00 <<16) | (0x00<<8) | (0xFF) ; /* RRGGBBAA */
+    
+
+  buffer = art_new (art_u8, WIDTH*HEIGHT*BYTES_PER_PIXEL);
+  art_rgb_run_alpha (buffer, 0xFF, 0xFF, 0xFF, 0xFF, WIDTH*HEIGHT);
+  art_rgb_svp_alpha (path, 0, 0, WIDTH, HEIGHT, 
+		     color, buffer, ROWSTRIDE, NULL);
+
+  return (unsigned char *) buffer;
+}
+
+static void
+save_buffer (const unsigned char *buffer, const char *filename)
+{
+  GdkPixbuf *pixbuf;
+
+  pixbuf = gdk_pixbuf_new_from_data (buffer,
+				     GDK_COLORSPACE_RGB, 
+				     FALSE, 8,
+				     WIDTH, HEIGHT,
+				     ROWSTRIDE,
+				     NULL, NULL);
+
+  pixbuf_save_to_file (pixbuf, filename);
+ 
+  gdk_pixbuf_unref (pixbuf);
+}
+</programlisting>
+
+      <para>
+	The rendering is itself pretty simple: we first fill the buffer with the 0xFFFFFFFF rgba color
+	(that is, 0xFFFFFF rgb color with a transparency of 0xFF which means no transparency at all. It
+	should be called opacity actually ;) with the <function>art_rgb_run_alpha</function> function.
+	Then, we fill the svp in the buffer with the 0xFF0000FF rgba color with the 
+	<function>art_rgb_svp_alpha</function> function.
+      </para>
+
+      <para>
+	Last, to save the pixel buffer, we just instantiate a <function>GdkPixbuf</function>
+	and save it with the <function>pixbuf_save_to_file</function> function we stole 
+	from random pieces of code (namely, nautilus and gnome-iconedit).
+      </para>
+
+      <para>
+	Easy, was it not ?
+      </para>
+
+    </sect1>
+
+    <sect1 id="sample-display">
+      <title>A displaying application</title>
+      
+      <para>
+	Once more, the code for this example can be found 
+	<ulink url="./art-display.tar.gz">there</ulink>.
+      </para>
+
+      <para>
+	Now that we know how to render our data in a pixel buffer, we want to display it 
+	on screen in a window. To do this, we use the gdkrgb library which transfers
+	pixel buffers to the X server in Drawables.
+	The code below is very similar to our previous example: we just initialize GTK+ and
+	gdkrgb and instead of saving the pixel buffer to a file, we create a widget to display 
+	it and run the GTK+ main loop:
+      </para>
+
+      <programlisting>
+int main (int argc, char *argv[])
+{
+  ArtSVP *path;
+  char *buffer;
+
+  /* gtk/gdkrgb initialization */
+  gtk_init (&amp;argc, &amp;argv);
+  gdk_rgb_init ();
+  gtk_widget_set_default_colormap(gdk_rgb_get_cmap());
+  gtk_widget_set_default_visual(gdk_rgb_get_visual());
+
+  path = make_path ();
+
+  buffer = render_path (path);
+
+  build_widget (buffer);
+
+  /* gtk main loop */
+  gtk_main ();
+
+  return 0;
+}
+      </programlisting>
+
+      <para>
+	The only new function is <function>build_widget</function> which is shown
+	below. This function just creates a drawing area and connects a drawing
+	callback to the expose signal.
+      </para>
+
+      <programlisting>
+static void 
+build_widget (unsigned char *buffer)
+{
+  GtkWidget *window = NULL, *drawing_area = NULL;
+
+  window = gtk_window_new (GTK_WINDOW_TOPLEVEL);
+  gtk_window_set_default_size (GTK_WINDOW(window), WIDTH, HEIGHT);
+  gtk_signal_connect (GTK_OBJECT (window), "delete_event",
+		      GTK_SIGNAL_FUNC (destroy_cb), NULL);
+  gtk_signal_connect (GTK_OBJECT (window), "destroy",
+		      GTK_SIGNAL_FUNC (destroy_cb), NULL);
+  drawing_area = gtk_drawing_area_new ();
+  gtk_container_add (GTK_CONTAINER (window),
+		     GTK_WIDGET (drawing_area));
+
+  gtk_signal_connect (GTK_OBJECT (drawing_area), "expose_event",
+		      GTK_SIGNAL_FUNC (expose_cb), buffer);
+  gtk_signal_connect (GTK_OBJECT (drawing_area), "configure_event",
+		      GTK_SIGNAL_FUNC (expose_cb), buffer);
+
+  gtk_widget_show_all (window);
+}
+      </programlisting>
+
+      <para>
+	The expose callback is very simple: it just calls gdkrgb's entry point
+	to render the pixel buffer onto the drawing area we instantiated a little
+	before.
+      </para>
+      
+      <programlisting>
+static int 
+expose_cb (GtkWidget *widget, GdkEventExpose *evt, gpointer data)
+{
+  art_u8 *buf = (art_u8 *)data;
+
+  gdk_draw_rgb_image (widget->window, widget->style->black_gc, 
+		      0, 0, WIDTH, HEIGHT, 
+		      GDK_RGB_DITHER_NONE,
+		      buf,
+		      ROWSTRIDE);
+  return FALSE;
+}
+      </programlisting>
+    </sect1>
+
+  </chapter>
+
+
+  <chapter id="basic">
+    <title>Basic APIs</title>
+
+    <sect1 id="basic-misc">
+      <title>Miscealeanous useful APIs</title>
+
+      &art-memory;
+      &art-affine;
+      &art-gamma;
+      
+    </sect1>
+
+
+    <sect1 id="basic-foo">
+      <title>Construction APIs</title>
+
+      &art-construction-core;
+      &art-construction-extended;
+      &art-construction-trans;
+
+    </sect1>
+
+    <sect1 id="basic-rendering">
+      <title>Rendering APIs</title>
+
+      &art-svp;
+      &art-render;
+      
+    </sect1>
+    
+  </chapter>
+
+
+
+  <chapter id="advanced">
+    <title>Advanced APIs</title>
+
+    <sect1 id="basic-buffer">
+      <title>Pixel buffer manipulation APIs</title>
+
+      &art-pixbuf;
+      &art-buffer-affine;
+      
+    </sect1>
+
+    <sect1 id="advanced-uta">
+      <title>MicroTile Arrays</title>
+      <para></para>
+    </sect1>
+
+  </chapter>
+
+
+  &FDL;
+
+
+</book>
+
+

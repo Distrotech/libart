@@ -1,0 +1,66 @@
+<!-- ##### SECTION Title ##### -->
+Memory Management
+
+<!-- ##### SECTION Short_Description ##### -->
+
+
+<!-- ##### SECTION Long_Description ##### -->
+<para>
+
+</para>
+
+<!-- ##### SECTION See_Also ##### -->
+<para>
+
+</para>
+
+<!-- ##### MACRO art_alloc ##### -->
+<para>
+
+</para>
+
+
+
+<!-- ##### MACRO art_free ##### -->
+<para>
+
+</para>
+
+
+
+<!-- ##### MACRO art_realloc ##### -->
+<para>
+
+</para>
+
+
+
+<!-- ##### MACRO art_new ##### -->
+<para>
+
+</para>
+
+@type: 
+@n: 
+
+
+<!-- ##### MACRO art_renew ##### -->
+<para>
+
+</para>
+
+@p: 
+@type: 
+@n: 
+
+
+<!-- ##### MACRO art_expand ##### -->
+<para>
+
+</para>
+
+@p: 
+@type: 
+@max: 
+
+
