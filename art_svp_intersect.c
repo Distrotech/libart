@@ -26,9 +26,9 @@
 /* Sanitychecking verifies the main invariant on every priority queue
    point. Do not use in production, as it slows things down way too
    much. */
-#define SANITYCHECK
+#define noSANITYCHECK
 
-#define VERBOSE
+#define noVERBOSE
 #ifdef VERBOSE
 #include <stdio.h>
 #endif
@@ -416,6 +416,19 @@ art_svp_writer_rewind_close_segment (ArtSvpWriter *self, int seg_id)
 {
   /* Not needed for this simple implementation. A potential future
      optimization is to merge segments that can be merged safely. */
+#ifdef SANITYCHECK
+  ArtSvpWriterRewind *swr = (ArtSvpWriterRewind *)self;
+  ArtSVPSeg *seg;
+
+  if (seg_id >= 0)
+    {
+      seg = &swr->svp->segs[seg_id];
+      if (seg->n_points < 2)
+	art_warn ("*** closing segment %d with only %d point%s\n",
+		  seg_id, seg->n_points, seg->n_points == 1 ? "" : "s");
+    }
+#endif
+
 #ifdef VERBOSE
   printf ("swr close_segment: %d\n", seg_id);
 #endif
@@ -463,13 +476,12 @@ typedef struct _ArtActiveSeg ArtActiveSeg;
    list. */
 #define ART_ACTIVE_FLAGS_IN_ACTIVE 2
 
+/* This flag is set when the segment is to be deleted in the
+   horiz commit process. */
 #define ART_ACTIVE_FLAGS_DEL 4
-#define ART_ACTIVE_FLAGS_INS 8
 
 /* This flag is set if the seg_id is a valid output segment. */
-#define ART_ACTIVE_FLAGS_OUT 16
-
-/* todo: tangle flag */
+#define ART_ACTIVE_FLAGS_OUT 8
 
 struct _ArtActiveSeg {
   int flags;
@@ -492,6 +504,7 @@ struct _ArtActiveSeg {
   /* horiz commit list */
   ArtActiveSeg *horiz_left, *horiz_right;
   double horiz_x;
+  int horiz_delta_wind;
   int seg_id;
 };
 
@@ -534,7 +547,7 @@ art_svp_intersect_setup_seg (ArtActiveSeg *seg, ArtPriPoint *pri_pt)
   int in_curs = seg->in_curs++;
   double x0, y0, x1, y1;
   double dx, dy, s;
-  double a, b;
+  double a, b, r2;
 
   x0 = in_seg->points[in_curs].x;
   y0 = in_seg->points[in_curs].y;
@@ -544,7 +557,8 @@ art_svp_intersect_setup_seg (ArtActiveSeg *seg, ArtPriPoint *pri_pt)
   pri_pt->y = y1;
   dx = x1 - x0;
   dy = y1 - y0;
-  s = 1 / sqrt (dx * dx + dy * dy);
+  r2 = dx * dx + dy * dy;
+  s = r2 == 0 ? 1 : 1 / sqrt (r2);
   seg->a = a = dy * s;
   seg->b = b = -dx * s;
   seg->c = -(a * x0 + b * y0);
@@ -790,7 +804,7 @@ art_svp_intersect_test_cross (ArtIntersectCtx *ctx,
  * @ctx: Intersection context.
  * @seg: Segment to delete.
  *
- * Deletes @seg from the active list, and frees it.
+ * Deletes @seg from the active list.
  **/
 static /* todo inline */ void
 art_svp_intersect_active_delete (ArtIntersectCtx *ctx, ArtActiveSeg *seg)
@@ -803,9 +817,20 @@ art_svp_intersect_active_delete (ArtIntersectCtx *ctx, ArtActiveSeg *seg)
     ctx->active_head = right;
   if (right != NULL)
     right->left = left;
+}
+
+/**
+ * art_svp_intersect_active_free: Free an active segment.
+ * @seg: Segment to delete.
+ *
+ * Frees @seg.
+ **/
+static /* todo inline */ void
+art_svp_intersect_active_free (ArtActiveSeg *seg)
+{
   art_free (seg->stack);
 #ifdef VERBOSE
-  printf ("Freeing %lx\n", seg);
+  printf ("Freeing %lx\n", (unsigned long) seg);
 #endif
   art_free (seg);
 }
@@ -833,7 +858,7 @@ art_svp_intersect_add_horiz (ArtIntersectCtx *ctx, ArtActiveSeg *seg)
   ArtActiveSeg *place_right = NULL;
 
 #ifdef VERBOSE
-  printf ("add_horiz %lx, x = %g\n", seg, seg->horiz_x);
+  printf ("add_horiz %lx, x = %g\n", (unsigned long) seg, seg->horiz_x);
 #endif
   for (place = *pp; place != NULL && (place->horiz_x > seg->horiz_x ||
 				      (place->horiz_x == seg->horiz_x &&
@@ -852,6 +877,12 @@ art_svp_intersect_add_horiz (ArtIntersectCtx *ctx, ArtActiveSeg *seg)
     place->horiz_right = seg;
 }
 
+/**
+ * art_svp_intersect_insert_cross: Test crossings of newly inserted line.
+ *
+ * Tests @seg against its left and right neighbors for intersections.
+ * Precondition: the line in @seg is not purely horizontal.
+ **/
 static void
 art_svp_intersect_insert_cross (ArtIntersectCtx *ctx,
 				ArtActiveSeg *seg)
@@ -887,132 +918,6 @@ art_svp_intersect_insert_cross (ArtIntersectCtx *ctx,
       else
 	break;
     }
-}
-
-static void
-art_svp_intersect_process_intersection (ArtIntersectCtx *ctx,
-					ArtActiveSeg *seg)
-{
-  int n_stack = --seg->n_stack;
-  seg->x[1] = seg->stack[n_stack - 1].x;
-  seg->y1 = seg->stack[n_stack - 1].y;
-  seg->x[0] = seg->stack[n_stack].x;
-  seg->y0 = seg->stack[n_stack].y;
-  seg->horiz_x = seg->x[0];
-  art_svp_intersect_add_horiz (ctx, seg);
-  art_svp_intersect_insert_cross (ctx, seg);
-}
-
-static void
-art_svp_intersect_advance_cursor (ArtIntersectCtx *ctx, ArtActiveSeg *seg,
-				  ArtPriPoint *pri_pt)
-{
-  const ArtSVPSeg *in_seg = seg->in_seg;
-  int in_curs = seg->in_curs;
-  ArtSvpWriter *swr = seg->flags & ART_ACTIVE_FLAGS_OUT ? ctx->out : NULL;
-
-  if (swr != NULL)
-    swr->add_point (swr, seg->seg_id, seg->x[1], seg->y1);
-  if (in_curs + 1 == in_seg->n_points)
-    {
-      ArtActiveSeg *left = seg->left, *right = seg->right;
-
-      if (swr != NULL)
-	swr->close_segment (swr, seg->seg_id);
-      art_svp_intersect_active_delete (ctx, seg);
-      if (left != NULL && right != NULL)
-	art_svp_intersect_test_cross (ctx, left, right);
-    }
-  else
-    {
-      seg->horiz_x = seg->x[1];
-      art_svp_intersect_add_horiz (ctx, seg);
-
-      art_svp_intersect_setup_seg (seg, pri_pt);
-      art_pri_insert (ctx->pq, pri_pt);
-      art_svp_intersect_insert_cross (ctx, seg);
-    }
-}
-
-/**
- * art_svp_intersect_horiz_commit: Commit points in horiz list to output.
- * @ctx: Intersection context.
- *
- * Commits the points in the horizontal list to the output, and
- * reorders the active list so that, below the current sweep line, it
- * is consistent with the actual geometry.
- *
- * Much of the "heavy lifting" of the intersection algorithm occurs in
- * this routine. The active list can get out of order from ordinary
- * intersection events, and also from numerical fuzz. In the latter case,
- * points are shifted slightly.
- *
- * This "commit" pass is also where winding numbers are assigned,
- * because doing it here provides much greater tolerance for inputs
- * which are not in strict SVP order.
- **/
-static void
-art_svp_intersect_horiz_commit (ArtIntersectCtx *ctx)
-{
-  ArtActiveSeg *seg;
-  int winding_number;
-
-#ifdef VERBOSE
-      printf ("art_svp_intersect_horiz_commit: y=%g\n", ctx->y);
-#endif
-
-  /* Output points to svp writer. */
-  for (seg = ctx->horiz_first; seg != NULL;)
-    {
-      /* Find a cluster with common horiz_x, */
-      ArtActiveSeg *curs;
-      double x = seg->horiz_x;
-
-      /* Beginning of cluster. */
-      for (curs = seg; curs->left != NULL; curs = curs->left)
-	if (curs->left->horiz_x != x)
-	  break;
-
-      if (curs->left != NULL)
-	winding_number = curs->left->wind_left + curs->left->delta_wind;
-      else
-	winding_number = 0;
-
-      do
-	{
-#ifdef VERBOSE
-	  printf (" winding_number = %d += %d\n",
-		  winding_number, curs->delta_wind);
-#endif
-	  if (!(curs->flags & ART_ACTIVE_FLAGS_OUT) ||
-	      curs->wind_left != winding_number)
-	    {
-	      ArtSvpWriter *swr = ctx->out;
-
-	      if (curs->flags & ART_ACTIVE_FLAGS_OUT)
-		{
-		  swr->add_point (swr, curs->seg_id, curs->horiz_x, ctx->y);
-		  swr->close_segment (swr, curs->seg_id);
-		}
-
-	      curs->seg_id = swr->add_segment (swr, winding_number,
-					       curs->delta_wind,
-					       curs->horiz_x, ctx->y);
-	      curs->flags |= ART_ACTIVE_FLAGS_OUT;
-	    }
-	  curs->wind_left = winding_number;
-	  winding_number += curs->delta_wind;
-	  curs = curs->right;
-	}
-      while (curs != NULL && curs->horiz_x == x);
-
-      /* Skip past cluster. */
-      do
-	seg = seg->horiz_right;
-      while (seg != NULL && seg->horiz_x == x);
-    }
-  ctx->horiz_first = NULL;
-  ctx->horiz_last = NULL;
 }
 
 /**
@@ -1131,6 +1036,120 @@ art_svp_intersect_add_point (ArtIntersectCtx *ctx, double x, double y,
   return result;
 }
 
+/**
+ * art_svp_intersect_horiz: Add horizontal line segment.
+ * @ctx: Intersector context.
+ * @seg: Segment on which to add horizontal line.
+ * @x0: Old x position.
+ * @x1: New x position.
+ *
+ * Adds a horizontal line from @x0 to @x1, and updates the current
+ * location of @seg to @x1.
+ **/
+static void
+art_svp_intersect_horiz (ArtIntersectCtx *ctx, ArtActiveSeg *seg,
+			 double x0, double x1)
+{
+  ArtActiveSeg *hs = art_new (ArtActiveSeg, 1);
+
+  hs->flags = ART_ACTIVE_FLAGS_DEL | (seg->flags & ART_ACTIVE_FLAGS_OUT);
+  if (seg->flags & ART_ACTIVE_FLAGS_OUT)
+    {
+      ArtSvpWriter *swr = ctx->out;
+
+      swr->add_point (swr, seg->seg_id, x0, ctx->y);
+    }
+  hs->seg_id = seg->seg_id;
+  hs->horiz_x = x0;
+  hs->horiz_delta_wind += seg->delta_wind;
+  hs->stack = NULL;
+  hs->horiz_delta_wind = 0;
+  seg->horiz_delta_wind -= seg->delta_wind;
+
+  art_svp_intersect_add_horiz (ctx, hs);
+
+  seg->x[0] = x1;
+  seg->x[1] = x1;
+  seg->horiz_x = x1;
+  seg->flags &= ~ART_ACTIVE_FLAGS_OUT;
+}
+
+/**
+ * art_svp_intersect_insert_line: Insert a line into the active list.
+ * @ctx: Intersector context.
+ * @seg: Segment containing line to insert.
+ *
+ * Inserts the line into the intersector context, taking care of any
+ * intersections, and adding the appropriate horizontal points to the
+ * active list.
+ **/
+static void
+art_svp_intersect_insert_line (ArtIntersectCtx *ctx, ArtActiveSeg *seg)
+{
+  if (seg->y1 == seg->y0)
+    {
+#ifdef VERBOSE
+      printf ("art_svp_intersect_insert_line: %lx is horizontal\n",
+	      (unsigned long)seg);
+#endif
+      art_svp_intersect_horiz (ctx, seg, seg->x[0], seg->x[1]);
+    }
+  else
+    {
+      art_svp_intersect_insert_cross (ctx, seg);
+      art_svp_intersect_add_horiz (ctx, seg);
+    }
+}
+
+static void
+art_svp_intersect_process_intersection (ArtIntersectCtx *ctx,
+					ArtActiveSeg *seg)
+{
+  int n_stack = --seg->n_stack;
+  seg->x[1] = seg->stack[n_stack - 1].x;
+  seg->y1 = seg->stack[n_stack - 1].y;
+  seg->x[0] = seg->stack[n_stack].x;
+  seg->y0 = seg->stack[n_stack].y;
+  seg->horiz_x = seg->x[0];
+  art_svp_intersect_insert_line (ctx, seg);
+}
+
+static void
+art_svp_intersect_advance_cursor (ArtIntersectCtx *ctx, ArtActiveSeg *seg,
+				  ArtPriPoint *pri_pt)
+{
+  const ArtSVPSeg *in_seg = seg->in_seg;
+  int in_curs = seg->in_curs;
+  ArtSvpWriter *swr = seg->flags & ART_ACTIVE_FLAGS_OUT ? ctx->out : NULL;
+
+  if (swr != NULL)
+    swr->add_point (swr, seg->seg_id, seg->x[1], seg->y1);
+  if (in_curs + 1 == in_seg->n_points)
+    {
+      ArtActiveSeg *left = seg->left, *right = seg->right;
+
+#if 0
+      if (swr != NULL)
+	swr->close_segment (swr, seg->seg_id);
+      seg->flags &= ~ART_ACTIVE_FLAGS_OUT;
+#endif
+      seg->flags |= ART_ACTIVE_FLAGS_DEL;
+      art_svp_intersect_add_horiz (ctx, seg);
+      art_svp_intersect_active_delete (ctx, seg);
+      if (left != NULL && right != NULL)
+	art_svp_intersect_test_cross (ctx, left, right);
+      art_free (pri_pt);
+    }
+  else
+    {
+      seg->horiz_x = seg->x[1];
+
+      art_svp_intersect_setup_seg (seg, pri_pt);
+      art_pri_insert (ctx->pq, pri_pt);
+      art_svp_intersect_insert_line (ctx, seg);
+    }
+}
+
 static void
 art_svp_intersect_add_seg (ArtIntersectCtx *ctx, const ArtSVPSeg *in_seg)
 {
@@ -1148,6 +1167,8 @@ art_svp_intersect_add_seg (ArtIntersectCtx *ctx, const ArtSVPSeg *in_seg)
 
   seg->n_stack_max = 4;
   seg->stack = art_new (ArtPoint, seg->n_stack_max);
+
+  seg->horiz_delta_wind = 0;
 
   pri_pt->user_data = seg;
   art_svp_intersect_setup_seg (seg, pri_pt);
@@ -1195,14 +1216,134 @@ art_svp_intersect_add_seg (ArtIntersectCtx *ctx, const ArtSVPSeg *in_seg)
   seg->delta_wind = in_seg->dir ? 1 : -1;
   seg->horiz_x = x0;
 
-  art_svp_intersect_add_horiz (ctx, seg);
+  art_svp_intersect_insert_line (ctx, seg);
+}
 
-  while (seg->left != NULL)
-    if (!art_svp_intersect_test_cross (ctx, seg->left, seg))
-      break;
-  while (seg->right != NULL)
-    if (!art_svp_intersect_test_cross (ctx, seg, seg->right))
-      break;
+/**
+ * art_svp_intersect_horiz_commit: Commit points in horiz list to output.
+ * @ctx: Intersection context.
+ *
+ * The main function of the horizontal commit is to output new
+ * points to the output writer.
+ *
+ * This "commit" pass is also where winding numbers are assigned,
+ * because doing it here provides much greater tolerance for inputs
+ * which are not in strict SVP order.
+ *
+ * Each cluster in the horiz_list contains both segments that are in
+ * the active list (ART_ACTIVE_FLAGS_DEL is false) and that are not,
+ * and are scheduled to be deleted (ART_ACTIVE_FLAGS_DEL is true). We
+ * need to deal with both.
+ **/
+static void
+art_svp_intersect_horiz_commit (ArtIntersectCtx *ctx)
+{
+  ArtActiveSeg *seg;
+  int winding_number;
+  int horiz_wind = 0;
+  double last_x = 0; /* initialization just to avoid warning */
+
+#ifdef VERBOSE
+  printf ("art_svp_intersect_horiz_commit: y=%g\n", ctx->y);
+  for (seg = ctx->horiz_first; seg != NULL; seg = seg->horiz_right)
+    printf (" %lx: %g %+d\n",
+	    (unsigned long)seg, seg->horiz_x, seg->horiz_delta_wind);
+#endif
+
+  /* Output points to svp writer. */
+  for (seg = ctx->horiz_first; seg != NULL;)
+    {
+      /* Find a cluster with common horiz_x, */
+      ArtActiveSeg *curs;
+      double x = seg->horiz_x;
+
+      /* Generate any horizontal segments. */
+      if (horiz_wind != 0)
+	{
+	  ArtSvpWriter *swr = ctx->out;
+	  int seg_id;
+
+	  seg_id = swr->add_segment (swr, winding_number, horiz_wind,
+				     last_x, ctx->y);
+	  swr->add_point (swr, seg_id, x, ctx->y);
+	  swr->close_segment (swr, seg_id);
+	}
+
+      /* Find first active segment in cluster. */
+
+      for (curs = seg; curs != NULL && curs->horiz_x == x;
+	   curs = curs->horiz_right)
+	if (!(curs->flags & ART_ACTIVE_FLAGS_DEL))
+	  break;
+
+      if (curs != NULL && curs->horiz_x == x)
+	{
+	  /* There exists at least one active segment in this cluster. */
+
+	  /* Find beginning of cluster. */
+	  for (; curs->left != NULL; curs = curs->left)
+	    if (curs->left->horiz_x != x)
+	      break;
+
+	  if (curs->left != NULL)
+	    winding_number = curs->left->wind_left + curs->left->delta_wind;
+	  else
+	    winding_number = 0;
+
+	  do
+	    {
+#ifdef VERBOSE
+	      printf (" winding_number = %d += %d\n",
+		      winding_number, curs->delta_wind);
+#endif
+	      if (!(curs->flags & ART_ACTIVE_FLAGS_OUT) ||
+		  curs->wind_left != winding_number)
+		{
+		  ArtSvpWriter *swr = ctx->out;
+
+		  if (curs->flags & ART_ACTIVE_FLAGS_OUT)
+		    {
+		      swr->add_point (swr, curs->seg_id,
+				      curs->horiz_x, ctx->y);
+		      swr->close_segment (swr, curs->seg_id);
+		    }
+
+		  curs->seg_id = swr->add_segment (swr, winding_number,
+						   curs->delta_wind,
+						   x, ctx->y);
+		  curs->flags |= ART_ACTIVE_FLAGS_OUT;
+		}
+	      curs->wind_left = winding_number;
+	      winding_number += curs->delta_wind;
+	      curs = curs->right;
+	    }
+	  while (curs != NULL && curs->horiz_x == x);
+	}
+
+      /* Skip past cluster. */
+      do
+	{
+	  ArtActiveSeg *next = seg->horiz_right;
+
+	  horiz_wind += seg->horiz_delta_wind;
+	  seg->horiz_delta_wind = 0;
+	  if (seg->flags & ART_ACTIVE_FLAGS_DEL)
+	    {
+	      if (seg->flags & ART_ACTIVE_FLAGS_OUT)
+		{
+		  ArtSvpWriter *swr = ctx->out;
+		  swr->close_segment (swr, seg->seg_id);
+		}
+	      art_svp_intersect_active_free (seg);
+	    }
+	  seg = next;
+	}
+      while (seg != NULL && seg->horiz_x == x);
+
+      last_x = x;
+    }
+  ctx->horiz_first = NULL;
+  ctx->horiz_last = NULL;
 }
 
 #ifdef VERBOSE

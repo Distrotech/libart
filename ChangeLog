@@ -1,3 +1,13 @@
+2001-10-05  Raph Levien  <raph@pixel.artofcode.com>
+
+	* art_svp_intersect.c: Major changes to accommodate
+	horizontal lines. Intersections of horizontal lines
+	aren't fully processed, but should work a lot better
+	than before.
+
+	* testart.c: Minor tweaks. testpat now frees memory
+	so it can be run under memprof to detect leaks.
+
 2001-10-03  Raph Levien  <raph@pixel.artofcode.com>
 
 	* art_svp_intersect.c (art_svp_intersect_advance_cursor):

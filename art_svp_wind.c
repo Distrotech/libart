@@ -1325,7 +1325,7 @@ art_svp_uncross (ArtSVP *vp)
  *
  * With @rule == ART_WIND_RULE_POSITIVE, the resulting svp has a
  * winding number of 1 where @vp has a positive winding number. It is
- * usefull for implementing asymmetric difference.
+ * useful for implementing asymmetric difference.
  *
  * This routine needs to be redone from scratch with numerical robustness
  * in mind. I'm working on it.

@@ -144,7 +144,7 @@ randstar (int n)
 #define BYTES_PP 1
 #endif
 
-#ifdef DEAD_CODE
+#ifndef nDEAD_CODE
 static void
 print_svp (ArtSVP *vp)
 {
@@ -213,6 +213,7 @@ make_testpat (void)
 
   vpath = randstar (50);
   svp = art_svp_from_vpath (vpath);
+  art_free (vpath);
 
   vpath2 = randstar (50);
 #if 1
@@ -224,6 +225,7 @@ make_testpat (void)
 			       15,
 			       4,
 			       0.5);
+  art_free (vpath3);
 #else
   svp2 = art_svp_from_vpath (vpath2);
 #endif
@@ -234,9 +236,9 @@ make_testpat (void)
   svp3 = svp2;
 #endif
 
-  /*
-  print_svp (svp2);
-  */
+#if 0
+  print_svp (svp);
+#endif
 
   for (y = 0; y < 256; y++)
     for (x = 0; x < 256; x++)
@@ -276,8 +278,11 @@ make_testpat (void)
   affine3[4] = 384;
   affine3[5] = 32;
 
+#if 0
   alphagamma = art_alphagamma_new (1.8);
+#else
   alphagamma = NULL;
+#endif
 
 #ifdef COLOR
   printf ("P6\n512 512\n255\n");
@@ -287,8 +292,8 @@ make_testpat (void)
   for (iter = 0; iter < NUM_ITERS; iter++)
     for (j = 0; j < 512; j += TILE_SIZE)
       for (i = 0; i < 512; i += TILE_SIZE)
-#ifdef COLOR
 	{
+#ifdef COLOR
 	  art_rgb_svp_aa (svp, i, j, i + TILE_SIZE, j + TILE_SIZE,
 			  0xffe0a0, 0x100040,
 			  buf + (j * 512 + i) * BYTES_PP, 512 * BYTES_PP,
@@ -319,13 +324,19 @@ make_testpat (void)
 				 0xffff00ff,
 				 affine3,
 				 ART_FILTER_NEAREST, alphagamma);
-	}
 #else
-	art_gray_svp_aa (svp, i, j, i + TILE_SIZE, j + TILE_SIZE,
-		   buf + (j * 512 + i) * BYTES_PP, 512 * BYTES_PP);
+	  art_gray_svp_aa (svp, i, j, i + TILE_SIZE, j + TILE_SIZE,
+			   buf + (j * 512 + i) * BYTES_PP, 512 * BYTES_PP);
 #endif
+	}
 
+  art_svp_free (svp2);
+  art_svp_free (svp3);
+  art_svp_free (svp);
+
+#if 1
   fwrite (buf, 1, 512 * 512 * BYTES_PP, stdout);
+#endif
 }
 
 static void
@@ -519,7 +530,7 @@ test_intersect (void)
 {
   ArtVpath vpath[] = {
 
-#if 1
+#if 0
     /* two triangles */
     { ART_MOVETO, 100, 100 },
     { ART_LINETO, 300, 400 },
@@ -540,6 +551,26 @@ test_intersect (void)
     { ART_LINETO, 100, 100 },
 #endif
 
+#if 1
+    /* a square */
+    { ART_MOVETO, 100, 100 },
+    { ART_LINETO, 100, 400 },
+    { ART_LINETO, 400, 400 },
+    { ART_LINETO, 400, 100 },
+    { ART_LINETO, 100, 100 },
+#endif
+
+#if 1
+    /* another square */
+#define XOFF 10
+#define YOFF 10
+    { ART_MOVETO, 100 + XOFF, 100 + YOFF },
+    { ART_LINETO, 100 + XOFF, 400 + YOFF },
+    { ART_LINETO, 400 + XOFF, 400 + YOFF },
+    { ART_LINETO, 400 + XOFF, 100 + YOFF },
+    { ART_LINETO, 100 + XOFF, 100 + YOFF },
+#endif
+
     { ART_END, 0, 0}
   };
   ArtSVP *svp, *svp2;
@@ -555,8 +586,10 @@ test_intersect (void)
   svp2 = art_svp_writer_rewind_reap (swr);
 #endif
 
-#if 1
+#if 0
   output_svp_ppm (svp2);
+#else
+  print_svp (svp2);
 #endif
 
   art_svp_free (svp);
@@ -574,7 +607,8 @@ usage (void)
 "  testpat    -- make random star + gradients test pattern\n"
 "  gradient   -- test pattern for rendered gradients\n"
 "  dash       -- dash test (output is valid PostScript)\n"
-"  dist       -- distance test\n");
+"  dist       -- distance test\n"
+"  intersect  -- softball test for intersector\n");
   exit (1);
 }
 
