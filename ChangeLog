@@ -1,3 +1,7 @@
+2003-08-08  Alexander Larsson  <alexl@redhat.com>
+
+	* configure.in: 2.3.14
+
 Fri Jul 25 12:29:35 2003  George Lebl <jirka@5z.com>
 
 	* art_render_gradient.c (art_render_gradient_linear_render_8)
