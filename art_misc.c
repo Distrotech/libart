@@ -45,8 +45,8 @@ art_die (const char *fmt, ...)
 }
 
 /**
- * art_die: Print the error message to stderr.
- * @fmt: The printf-style format for the error message.
+ * art_warn: Print the warning message to stderr.
+ * @fmt: The printf-style format for the warning message.
  *
  * Used for generating warnings.
  **/
@@ -59,3 +59,20 @@ art_warn (const char *fmt, ...)
   vfprintf (stderr, fmt, ap);
   va_end (ap);
 }
+
+/**
+ * art_dprint: Print the debug message to stderr.
+ * @fmt: The printf-style format for the debug message.
+ *
+ * Used for generating debug output.
+ **/
+void
+art_dprint (const char *fmt, ...)
+{
+  va_list ap;
+
+  va_start (ap, fmt);
+  vfprintf (stderr, fmt, ap);
+  va_end (ap);
+}
+

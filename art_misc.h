@@ -84,13 +84,13 @@ art_die (const char *fmt, ...) ART_GNUC_PRINTF (1, 2);
 void
 art_warn (const char *fmt, ...) ART_GNUC_PRINTF (1, 2);
 
+void
+art_dprint (const char *fmt, ...) ART_GNUC_PRINTF (1, 2);
+
 #ifdef __cplusplus
 }
 #endif
 
-/* Currently, the use of the new intersector is a compile-time option.
-   I'll leave it unset in CVS until I have considerable confidence in
-   the new intersector. */
-#define noART_USE_NEW_INTERSECTOR
+#define ART_USE_NEW_INTERSECTOR
 
 #endif /* __ART_MISC_H__ */

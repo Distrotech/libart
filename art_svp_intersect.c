@@ -33,9 +33,6 @@
 #define CHEAP_SANITYCHECK
 
 #define noVERBOSE
-#ifdef VERBOSE
-#include <stdio.h>
-#endif
 
 #include "art_misc.h"
 #include "art_svp.h"
@@ -350,7 +347,7 @@ art_svp_writer_rewind_add_segment (ArtSvpWriter *self, int wind_left,
     {
       /* discard segment now */
 #ifdef VERBOSE
-      printf ("swr add_segment: %d += %d (%g, %g) --> -1\n",
+      art_dprint ("swr add_segment: %d += %d (%g, %g) --> -1\n",
 	      wind_left, delta_wind, x, y);
 #endif
       return -1;
@@ -380,7 +377,7 @@ art_svp_writer_rewind_add_segment (ArtSvpWriter *self, int wind_left,
   seg->points[0].x = x;
   seg->points[0].y = y;
 #ifdef VERBOSE
-    printf ("swr add_segment: %d += %d (%g, %g) --> %d(%s)\n",
+    art_dprint ("swr add_segment: %d += %d (%g, %g) --> %d(%s)\n",
 	    wind_left, delta_wind, x, y, seg_num,
 	    seg->dir ? "v" : "^");
 #endif
@@ -396,7 +393,7 @@ art_svp_writer_rewind_add_point (ArtSvpWriter *self, int seg_id,
   int n_points;
 
 #ifdef VERBOSE
-  printf ("swr add_point: %d (%g, %g)\n", seg_id, x, y);
+  art_dprint ("swr add_point: %d (%g, %g)\n", seg_id, x, y);
 #endif
   if (seg_id < 0)
     /* omitted segment */
@@ -434,7 +431,7 @@ art_svp_writer_rewind_close_segment (ArtSvpWriter *self, int seg_id)
 #endif
 
 #ifdef VERBOSE
-  printf ("swr close_segment: %d\n", seg_id);
+  art_dprint ("swr close_segment: %d\n", seg_id);
 #endif
 }
 
@@ -610,7 +607,7 @@ art_svp_intersect_add_horiz (ArtIntersectCtx *ctx, ArtActiveSeg *seg)
 #endif
 
 #ifdef VERBOSE
-  printf ("add_horiz %lx, x = %g\n", (unsigned long) seg, seg->horiz_x);
+  art_dprint ("add_horiz %lx, x = %g\n", (unsigned long) seg, seg->horiz_x);
 #endif
   for (place = *pp; place != NULL && (place->horiz_x > seg->horiz_x ||
 				      (place->horiz_x == seg->horiz_x &&
@@ -855,7 +852,7 @@ art_svp_intersect_test_cross (ArtIntersectCtx *ctx,
 #ifdef VERBOSE 
   static int count = 0;
 
-  printf ("art_svp_intersect_test_cross %lx <-> %lx: count=%d\n",
+  art_dprint ("art_svp_intersect_test_cross %lx <-> %lx: count=%d\n",
 	  (unsigned long)left_seg, (unsigned long)right_seg, count++);
 #endif
 
@@ -973,7 +970,7 @@ art_svp_intersect_test_cross (ArtIntersectCtx *ctx,
       if (y != right_seg->y0)
 	{
 #ifdef VERBOSE
-	  printf ("art_svp_intersect_test_cross: intersection (%g, %g) matches former y0 of %lx, %lx\n",
+	  art_dprint ("art_svp_intersect_test_cross: intersection (%g, %g) matches former y0 of %lx, %lx\n",
 		    x, y, (unsigned long)left_seg, (unsigned long)right_seg);
 #endif
 	  art_svp_intersect_push_pt (ctx, right_seg, x, y);
@@ -1000,7 +997,7 @@ art_svp_intersect_test_cross (ArtIntersectCtx *ctx,
   else if (y == right_seg->y0)
     {
 #ifdef VERBOSE
-      printf ("*** art_svp_intersect_test_cross: intersection (%g, %g) matches latter y0 of %lx, %lx\n",
+      art_dprint ("*** art_svp_intersect_test_cross: intersection (%g, %g) matches latter y0 of %lx, %lx\n",
 	      x, y, (unsigned long)left_seg, (unsigned long)right_seg);
 #endif
       art_svp_intersect_push_pt (ctx, left_seg, x, y);
@@ -1010,7 +1007,7 @@ art_svp_intersect_test_cross (ArtIntersectCtx *ctx,
   else
     {
 #ifdef VERBOSE
-      printf ("Inserting (%g, %g) into %lx, %lx\n",
+      art_dprint ("Inserting (%g, %g) into %lx, %lx\n",
 	      x, y, (unsigned long)left_seg, (unsigned long)right_seg);
 #endif
       /* Insert the intersection point into both segments. */
@@ -1055,7 +1052,7 @@ art_svp_intersect_active_free (ArtActiveSeg *seg)
 {
   art_free (seg->stack);
 #ifdef VERBOSE
-  printf ("Freeing %lx\n", (unsigned long) seg);
+  art_dprint ("Freeing %lx\n", (unsigned long) seg);
 #endif
   art_free (seg);
 }
@@ -1074,9 +1071,15 @@ art_svp_intersect_insert_cross (ArtIntersectCtx *ctx,
 
   for (;;)
     {
-      if (left != NULL && left->left != NULL)
+      if (left != NULL)
 	{
-	  if (art_svp_intersect_test_cross (ctx, left->left, left,
+	  ArtActiveSeg *leftc;
+
+	  for (leftc = left->left; leftc != NULL; leftc = leftc->left)
+	    if (!(leftc->flags & ART_ACTIVE_FLAGS_DEL))
+	      break;
+	  if (leftc != NULL &&
+	      art_svp_intersect_test_cross (ctx, leftc, left,
 					    ART_BREAK_LEFT))
 	    {
 	      if (left == right || right == NULL)
@@ -1089,7 +1092,13 @@ art_svp_intersect_insert_cross (ArtIntersectCtx *ctx,
 	}
       else if (right != NULL && right->right != NULL)
 	{
-	  if (art_svp_intersect_test_cross (ctx, right, right->right,
+	  ArtActiveSeg *rightc;
+
+	  for (rightc = right->right; rightc != NULL; rightc = rightc->right)
+	    if (!(rightc->flags & ART_ACTIVE_FLAGS_DEL))
+	      break;
+	  if (rightc != NULL &&
+	      art_svp_intersect_test_cross (ctx, right, rightc,
 					    ART_BREAK_RIGHT))
 	    {
 	      if (left == right || left == NULL)
@@ -1135,9 +1144,8 @@ art_svp_intersect_horiz (ArtIntersectCtx *ctx, ArtActiveSeg *seg,
     }
   hs->seg_id = seg->seg_id;
   hs->horiz_x = x0;
-  hs->horiz_delta_wind += seg->delta_wind;
+  hs->horiz_delta_wind = seg->delta_wind;
   hs->stack = NULL;
-  hs->horiz_delta_wind = 0;
   seg->horiz_delta_wind -= seg->delta_wind;
 
   art_svp_intersect_add_horiz (ctx, hs);
@@ -1145,6 +1153,7 @@ art_svp_intersect_horiz (ArtIntersectCtx *ctx, ArtActiveSeg *seg,
   if (x0 > x1)
     {
       ArtActiveSeg *left;
+      art_boolean first = ART_TRUE;
 
       for (left = seg->left; left != NULL; left = seg->left)
 	{
@@ -1160,15 +1169,22 @@ art_svp_intersect_horiz (ArtIntersectCtx *ctx, ArtActiveSeg *seg,
 	      art_svp_intersect_break (ctx, left, ctx->y);
 	    }
 #ifdef VERBOSE
-	  printf ("x0=%g > x1=%g, swapping %lx, %lx\n",
+	  art_dprint ("x0=%g > x1=%g, swapping %lx, %lx\n",
 		  x0, x1, (unsigned long)left, (unsigned long)seg);
 #endif
 	  art_svp_intersect_swap_active (ctx, left, seg);
+	  if (first && left->right != NULL)
+	    {
+	      art_svp_intersect_test_cross (ctx, left, left->right,
+					    ART_BREAK_LEFT);
+	      first = ART_FALSE;
+	    }
 	}
     }
   else
     {
       ArtActiveSeg *right;
+      art_boolean first = ART_TRUE;
 
       for (right = seg->right; right != NULL; right = seg->right)
 	{
@@ -1184,10 +1200,16 @@ art_svp_intersect_horiz (ArtIntersectCtx *ctx, ArtActiveSeg *seg,
 	      art_svp_intersect_break (ctx, right, ctx->y);
 	    }
 #ifdef VERBOSE
-	  printf ("x0=%g < x1=%g, swapping %lx, %lx\n",
+	  art_dprint ("[right]x0=%g < x1=%g, swapping %lx, %lx\n",
 		  x0, x1, (unsigned long)seg, (unsigned long)right);
 #endif
 	  art_svp_intersect_swap_active (ctx, seg, right);
+	  if (first && right->left != NULL)
+	    {
+	      art_svp_intersect_test_cross (ctx, right->left, right,
+					    ART_BREAK_RIGHT);
+	      first = ART_FALSE;
+	    }
 	}
     }
 
@@ -1212,7 +1234,7 @@ art_svp_intersect_insert_line (ArtIntersectCtx *ctx, ArtActiveSeg *seg)
   if (seg->y1 == seg->y0)
     {
 #ifdef VERBOSE
-      printf ("art_svp_intersect_insert_line: %lx is horizontal\n",
+      art_dprint ("art_svp_intersect_insert_line: %lx is horizontal\n",
 	      (unsigned long)seg);
 #endif
       art_svp_intersect_horiz (ctx, seg, seg->x[0], seg->x[1]);
@@ -1397,9 +1419,9 @@ art_svp_intersect_horiz_commit (ArtIntersectCtx *ctx)
   double last_x = 0; /* initialization just to avoid warning */
 
 #ifdef VERBOSE
-  printf ("art_svp_intersect_horiz_commit: y=%g\n", ctx->y);
+  art_dprint ("art_svp_intersect_horiz_commit: y=%g\n", ctx->y);
   for (seg = ctx->horiz_first; seg != NULL; seg = seg->horiz_right)
-    printf (" %lx: %g %+d\n",
+    art_dprint (" %lx: %g %+d\n",
 	    (unsigned long)seg, seg->horiz_x, seg->horiz_delta_wind);
 #endif
 
@@ -1446,7 +1468,7 @@ art_svp_intersect_horiz_commit (ArtIntersectCtx *ctx)
 	  do
 	    {
 #ifdef VERBOSE
-	      printf (" winding_number = %d += %d\n",
+	      art_dprint (" winding_number = %d += %d\n",
 		      winding_number, curs->delta_wind);
 #endif
 	      if (!(curs->flags & ART_ACTIVE_FLAGS_OUT) ||
@@ -1509,10 +1531,10 @@ art_svp_intersect_print_active (ArtIntersectCtx *ctx)
 {
   ArtActiveSeg *seg;
 
-  printf ("Active list (y = %g):\n", ctx->y);
+  art_dprint ("Active list (y = %g):\n", ctx->y);
   for (seg = ctx->active_head; seg != NULL; seg = seg->right)
     {
-      printf (" %lx: (%g, %g)-(%g, %g), (a, b, c) = (%g, %g, %g)\n",
+      art_dprint (" %lx: (%g, %g)-(%g, %g), (a, b, c) = (%g, %g, %g)\n",
 	      (unsigned long)seg,
 	      seg->x[0], seg->y0, seg->x[1], seg->y1,
 	      seg->a, seg->b, seg->c);
@@ -1626,9 +1648,9 @@ art_svp_intersector (const ArtSVP *in, ArtSvpWriter *out)
       ArtActiveSeg *seg = (ArtActiveSeg *)pri_point->user_data;
 
 #ifdef VERBOSE
-      printf ("\nIntersector step %d\n", count++);
+      art_dprint ("\nIntersector step %d\n", count++);
       art_svp_intersect_print_active (ctx);
-      printf ("priq choose (%g, %g) %lx\n", pri_point->x, pri_point->y,
+      art_dprint ("priq choose (%g, %g) %lx\n", pri_point->x, pri_point->y,
 	      (unsigned long)pri_point->user_data);
 #endif
 #ifdef SANITYCHECK

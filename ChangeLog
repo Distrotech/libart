@@ -1,3 +1,16 @@
+2001-11-07  Raph Levien  <raph@pixel.artofcode.com>
+
+	* art_svp_intersect.c (art_svp_intersect_horiz): Fixed important
+	logic bug, failing to test crossings of neighbors when inserting
+	horizontal lines. Also changed printf to art_dprint.
+
+	* art_misc.c (art_dprint): Added function for debug printing,
+	so verbose intersector output doesn't have to go through printf.
+
+	* art_misc.h (ART_USE_NEW_INTERSECTOR): I've turned this on
+	now, as the new intersector certainly seems to be performing
+	better than the old one now.
+
 2001-10-31  Anders Carlsson  <andersca@gnu.org>
 
 	* Release 2.3.7
