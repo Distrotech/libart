@@ -53,34 +53,21 @@ extra_files =				\
 
 # CFLAGS and LDFLAGS for compiling scan program. Only needed
 # if $(DOC_MODULE).types is non-empty.
-GTKDOC_CFLAGS = @STRIP_BEGIN@ 				\
-	@CFLAGS@					\
-	-I$(top_srcdir) 				\
-	-I$(top_builddir)/gdk				\
-	-DGTK_DISABLE_COMPAT_H				\
-	@GTK_DEBUG_FLAGS@				\
-	@GTK_XIM_FLAGS@					\
-	@GTK_LOCALE_FLAGS@				\
-	@PANGO_CFLAGS@					\
-	@GLIB_CFLAGS@					\
-	@more_cflags@					\
-@STRIP_END@
-
-GTKDOC_LIBS = @STRIP_BEGIN@ 				\
-	$(top_builddir)/gdk-pixbuf/libgdk_pixbuf-1.3.la	\
-	$(top_builddir)/gdk/@gdktargetlib@        	\
-	$(top_builddir)/gtk/@gtktargetlib@ 		\
-	@more_ldflags@					\
-	@more_libs@					\
-	@GDK_WLIBS@					\
-	@PANGO_LIBS@					\
-	@GLIB_LIBS@					\
-	@GTK_LIBS_EXTRA@				\
-	-lm						\
-@STRIP_END@
+GTKDOC_CFLAGS =
+GTKDOC_LIBS =
 
 GTKDOC_CC=$(LIBTOOL) --mode=compile $(CC)
 GTKDOC_LD=$(LIBTOOL) --mode=link $(CC)
+
+# If you need to override some of the declarations, place them in this file
+# and uncomment this line.
+#DOC_OVERRIDES = $(DOC_MODULE)-overrides.txt
+DOC_OVERRIDES = 
+
+# If you have GObject types in the module, create the follow file as described
+# in the docs and put the contents there.
+#DOC_TYPES = $(DOC_MODULE)-types.txt
+DOC_TYPES = 
 
 
 ####################################
@@ -94,9 +81,9 @@ EXTRA_DIST = 				\
 	$(extra_files)			\
 	$(HTML_IMAGES)			\
 	$(DOC_MAIN_SGML_FILE)		\
-	$(DOC_MODULE).types		\
+	$(DOC_TYPES)			\
 	$(DOC_MODULE)-sections.txt	\
-	$(DOC_MODULE)-overrides.txt
+	$(DOC_OVERRIDES)
 
 DOC_STAMPS=scan-build.stamp tmpl-build.stamp sgml-build.stamp html-build.stamp \
 	   $(srcdir)/tmpl.stamp $(srcdir)/sgml.stamp $(srcdir)/html.stamp
@@ -114,7 +101,7 @@ all-local: html-build.stamp
 scan-build.stamp: $(HFILE_GLOB)
 	@echo '*** Scanning header files ***'
 	cd $(srcdir) && ( \
-	if grep -l '^..*$$' $(DOC_MODULE).types > /dev/null ; then \
+	if test -f $(DOC_MODULE).types && grep -l '^..*$$' $(DOC_MODULE).types > /dev/null ; then \
 	    CC="$(GTKDOC_CC)" LD="$(GTKDOC_LD)" CFLAGS="$(GTKDOC_CFLAGS)" LDFLAGS="$(GTKDOC_LIBS)" gtkdoc-scangobj --module=$(DOC_MODULE) ; \
 	else \
 	    for i in $(SCANOBJ_FILES) ; do \
@@ -130,7 +117,7 @@ $(DOC_MODULE)-decl.txt $(SCANOBJ_FILES): scan-build.stamp
 
 #### templates ####
 
-tmpl-build.stamp: $(DOC_MODULE)-decl.txt $(SCANOBJ_FILES) $(DOC_MODULE)-sections.txt $(DOC_MODULE)-overrides.txt
+tmpl-build.stamp: $(DOC_MODULE)-decl.txt $(SCANOBJ_FILES) $(DOC_MODULE)-sections.txt $(DOC_OVERRIDES)
 	@echo '*** Rebuilding template files ***'
 	cd $(srcdir) && gtkdoc-mktmpl --module=$(DOC_MODULE)
 	touch tmpl-build.stamp
