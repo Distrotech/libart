@@ -1,3 +1,10 @@
+2001-07-16  Mathieu Lacage <mathieu@gnu.org>
+
+	Is anyone going to review it ?
+	
+	* doc/tmpl/art_render.sgml: write documentation.
+	* doc/libart-sections.txt: tweak.
+	
 2001-07-14  Mathieu Lacage <mathieu@gnu.org>
 
 	I just need to finish the section on rendering API and

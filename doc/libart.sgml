@@ -505,10 +505,10 @@ expose_cb (GtkWidget *widget, GdkEventExpose *evt, gpointer data)
   </chapter>
 -->
 
-  <chapter>
+  <chapter id="problems">
     <title>Known problems</title>
 
-    <sect1>
+    <sect1 id="problems-numerical">
       <title>Numerical Stability</title>
 
       <para>
@@ -538,7 +538,7 @@ expose_cb (GtkWidget *widget, GdkEventExpose *evt, gpointer data)
       </para>
     </sect1>
 
-    <sect1>
+    <sect1 id="problems-memory">
       <title>Memory Footprint</title>
 
       <para>
@@ -557,10 +557,10 @@ expose_cb (GtkWidget *widget, GdkEventExpose *evt, gpointer data)
 
   </chapter>
 
-  <chapter>
+  <chapter id="internals">
     <title>Libart Internals</title>
 
-    <sect1>
+    <sect1 id="internals-scanline">
       <title>Scanline algorithm</title>
 
       <para>
@@ -569,7 +569,7 @@ expose_cb (GtkWidget *widget, GdkEventExpose *evt, gpointer data)
 
     </sect1>
 
-    <sect1>
+    <sect1 id="internals-intersector">
       <title>Intersector</title>
 
       <para>

@@ -2,11 +2,61 @@
 Svp rendering
 
 <!-- ##### SECTION Short_Description ##### -->
-
+How to actually render SVPs into pixel buffers.
 
 <!-- ##### SECTION Long_Description ##### -->
 <para>
+Once SVPs have been generated from %ArtVPaths and %ArtBPaths, you need to do
+the actual rasterization into pixel buffers. This step can be done with three
+routines: <link linkend="art-rgb-svp-aa">art_rgb_svp_aa</link>, 
+<link linkend="art-rgb-svp-alpha">art_rgb_svp_alpha</link> or
+<link linkend="art-gray-svp-aa">art_gray_svp_aa</link>. There also exist
+a low-level API for rasterizing, <link linkend="art-svp-render-aa">art_svp_render_aa</link>.
+For conveniance, libart also provides some simple functions to fill pixel buffers with 
+background colors such as <link linkend="art-rgb-fill-run">art_rgb_fill_run</link> and
+<link linkend="art-rgb-run-alpha">art_rgb_run_alpha</link>
+</para>
 
+<para>
+Each of the three high-level function used for rendering represents pixel buffers by
+two parameters: a rowstride and pointer to an array of art_u8. The exact semantics of these
+parameters depend of course on the nature pixel buffer (namely, the semantics are slightly
+different for B&amp;W and color pixel buffers) but the spirit is the same. An image is represented
+by the list of the values of each of its pixels. Libart manipulates only images where each
+such pixel value is coded on 8 bits (that is, a byte/octet): this does not harm libart's usefulness
+since this is the most widely used format both in software and hardware. For example, a 256x256
+B&amp;W image will use 256 * 256 = 65536 bytes and a color image will use 256 * 256 * 3 = 196608 bytes
+(because in a color image, we code separatly the red, green and blue components of the image,
+each on 8 bits).
+</para>
+
+<para>
+It is a natural idea to store these pixels one after the other, building a pixel buffer which 
+is represented by the art_u8 array (pixels are listed from left to right/top to bottom). Once you
+know the kind of pixel you are using (either B&amp;W or color), all you need to know to parse
+efficiently the buffer is to know the width of the original image (so that you can jump from line 
+to line). It happens that people are used to represent this information with rowstrides. The
+rowstride of our 256x256 B&amp;W image is 256: it is the number of bytes a row of the image needs to
+be stored.
+</para>
+
+<para>
+Code to use the three rendering functions can be found in the previous examples. The only thing you 
+need to take care of when using them is to make sure the rendering area defined by (x0,y0,x1,y1) is 
+smaller than the pixel buffer where the vector paths are to be rendered (otherwise, bad segfaults 
+will happen).
+</para>
+
+<para>
+Finally, users who want to do cool rendering (such as filling a vector path with a pattern or a gradient
+instead of using a solid color should look into librsvg. librsvg is a library used by nautilus to render 
+svg graphics which extends libart and provides a number of rendering functions using the low-level 
+<link linkend="art-rgb-run-alpha">art_rgb_run_alpha</link> function. It should be noted that librsvg
+contains code from the unstable branch of libart_lgpl which was backported to the stable libart
+but not included in it because of binary compatibility.). Users could also write their own rendering 
+callbacks with <link linkend="art-rgb-run-alpha">art_rgb_run_alpha</link> but doing so requires a lot of 
+knowledge of the internals of libart: if you really want to do this, read the section
+<link linkend="internals">Libart Internals</link>.
 </para>
 
 <!-- ##### SECTION See_Also ##### -->
@@ -37,20 +87,6 @@ Svp rendering
 @b: 
 @alpha: 
 @n: 
-
-
-<!-- ##### FUNCTION art_gray_svp_aa ##### -->
-<para>
-
-</para>
-
-@svp: 
-@x0: 
-@y0: 
-@x1: 
-@y1: 
-@buf: 
-@rowstride: 
 
 
 <!-- ##### FUNCTION art_rgb_svp_aa ##### -->
@@ -84,6 +120,20 @@ Svp rendering
 @buf: 
 @rowstride: 
 @alphagamma: 
+
+
+<!-- ##### FUNCTION art_gray_svp_aa ##### -->
+<para>
+
+</para>
+
+@svp: 
+@x0: 
+@y0: 
+@x1: 
+@y1: 
+@buf: 
+@rowstride: 
 
 
 <!-- ##### STRUCT ArtSVPRenderAAStep ##### -->

@@ -86,10 +86,10 @@ art_svp_diff
 <FILE>art_render</FILE>
 art_rgb_fill_run
 art_rgb_run_alpha
-art_gray_svp_aa
 
 art_rgb_svp_aa
 art_rgb_svp_alpha
+art_gray_svp_aa
 
 ArtSVPRenderAAStep
 art_svp_render_aa
