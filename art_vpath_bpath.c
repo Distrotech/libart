@@ -166,17 +166,17 @@ art_vpath_render_bez (ArtVpath **p_vpath, int *pn, int *pn_max,
   if (z2_perp * z2_perp > max_perp_sq)
     goto subdivide;
 
+  z1_dot = (x1 - x0) * x3_0 + (y1 - y0) * y3_0;
   if (z1_dot < 0 && z1_dot * z1_dot > max_perp_sq)
     goto subdivide;
 
+  z2_dot = (x3 - x2) * x3_0 + (y3 - y2) * y3_0;
   if (z2_dot < 0 && z2_dot * z2_dot > max_perp_sq)
     goto subdivide;
 
-  z1_dot = (x1 - x0) * x3_0 + (y1 - y0) * y3_0;
   if (z1_dot + z1_dot > z3_0_dot)
     goto subdivide;
 
-  z2_dot = (x3 - x2) * x3_0 + (y3 - y2) * y3_0;
   if (z2_dot + z2_dot > z3_0_dot)
     goto subdivide;
 

@@ -17,11 +17,35 @@ VERSION=$LIBART_VERSION
 
 AM_INIT_AUTOMAKE(libart_lgpl, $VERSION)
 
+AC_ARG_ENABLE(ansi, [  --enable-ansi           turn on strict ansi [default=no]],
+		    , enable_ansi=no)
+
 AC_PROG_CC
 AC_PROG_CPP
 AM_PROG_LIBTOOL
 
 AM_MAINTAINER_MODE
+
+changequote(,)dnl
+if test "x$GCC" = "xyes"; then
+  case " $CFLAGS " in
+  *[\ \	]-Wall[\ \	]*) ;;
+  *) CFLAGS="$CFLAGS -Wall" ;;
+  esac
+
+  if test "x$enable_ansi" = "xyes"; then
+    case " $CFLAGS " in
+    *[\ \	]-ansi[\ \	]*) ;;
+    *) CFLAGS="$CFLAGS -ansi" ;;
+    esac
+
+    case " $CFLAGS " in
+    *[\ \	]-pedantic[\ \	]*) ;;
+    *) CFLAGS="$CFLAGS -pedantic" ;;
+    esac
+  fi
+fi
+changequote([,])dnl
 
 LIBART_LIBDIR='-L${libdir}'
 LIBART_INCLUDEDIR='-I${includedir}'

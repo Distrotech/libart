@@ -1,3 +1,10 @@
+1999-07-02  Raph Levien  <raph@gimp.org>
+
+	* art_vpath_bpath.c (art_vpath_render_bez): Bad bad uninitialized
+	variables.
+
+	* configure.in: added compile warnings. Guess why :)
+
 1999-06-28  Raph Levien  <raph@gimp.org>
 
 	* art_svp_point.h:
