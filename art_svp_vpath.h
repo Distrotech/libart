@@ -17,23 +17,20 @@
  * Boston, MA 02111-1307, USA.
  */
 
-#ifndef __ART_PATHCODE_H__
-#define __ART_PATHCODE_H__
+#ifndef __ART_SVP_VPATH_H__
+#define __ART_SVP_VPATH_H__
+
+/* Sort vector paths into sorted vector paths. */
 
 #ifdef __cplusplus
 extern "C" {
 #endif /* __cplusplus */
 
-typedef enum {
-  ART_MOVETO,
-  ART_MOVETO_OPEN,
-  ART_CURVETO,
-  ART_LINETO,
-  ART_END
-} ArtPathcode;
+ArtSVP *
+art_svp_from_vpath (ArtVpath *vpath);
 
 #ifdef __cplusplus
 }
 #endif /* __cplusplus */
 
-#endif /* __ART_PATHCODE_H__ */
+#endif /* __ART_SVP_VPATH_H__ */

@@ -17,23 +17,33 @@
  * Boston, MA 02111-1307, USA.
  */
 
-#ifndef __ART_PATHCODE_H__
-#define __ART_PATHCODE_H__
+#ifndef __ART_SVP_RENDER_AA_H__
+#define __ART_SVP_RENDER_AA_H__
+
+/* The spiffy antialiased renderer for sorted vector paths. */
 
 #ifdef __cplusplus
 extern "C" {
 #endif /* __cplusplus */
 
-typedef enum {
-  ART_MOVETO,
-  ART_MOVETO_OPEN,
-  ART_CURVETO,
-  ART_LINETO,
-  ART_END
-} ArtPathcode;
+typedef struct _ArtSVPRenderAAStep ArtSVPRenderAAStep;
+
+struct _ArtSVPRenderAAStep {
+  int x;
+  int delta; /* stored with 16 fractional bits */
+};
+
+void
+art_svp_render_aa (const ArtSVP *svp,
+		   int x0, int y0, int x1, int y1,
+		   void (*callback) (void *callback_data,
+				     int y,
+				     int start,
+				     ArtSVPRenderAAStep *steps, int n_steps),
+		   void *callback_data);
 
 #ifdef __cplusplus
 }
 #endif /* __cplusplus */
 
-#endif /* __ART_PATHCODE_H__ */
+#endif /* __ART_SVP_RENDER_AA_H__ */

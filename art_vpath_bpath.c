@@ -84,45 +84,56 @@ art_bezier_to_vec (double x0, double y0,
 #define RENDER_LEVEL 4
 #define RENDER_SIZE (1 << (RENDER_LEVEL))
 
-/* Creates a new vector path, given a bezier path. Bezier subdivision
-   level is (currently) hardcoded. */
+/* Creates a new vector path, given a bezier path. The flatness
+   argument is present in the api but is not used. A value of 0.5
+   should usually be appropriate for antialiased display (1 for "lego"
+   displays) - at least if the resulting vpath is not going to be
+   scaled. */
 
 /* We could scan first and allocate to fit, but we don't. */
-vec_path_el *
-art_bez_path_to_vec (bez_path_el *bez)
+ArtVpath *
+art_bez_path_to_vec (ArtBpath *bez, double flatness)
 {
-  vec_path_el *vec;
+  ArtVpath *vec;
   int vec_n, vec_n_max;
   int bez_index;
   int space_needed;
   double x, y;
-  point seg[RENDER_SIZE];
+  ArtPoint seg[RENDER_SIZE];
   int i;
 
   vec_n = 0;
   vec_n_max = RENDER_SIZE;
-  vec = z_new (vec_path_el, vec_n_max);
+  vec = art_new (ArtVpath, vec_n_max);
+
+  /* Initialization is unnecessary because of the precondition that the
+     bezier path does not begin with LINETO or CURVETO, but is here
+     to make the code warning-free. */
+  x = 0;
+  y = 0;
 
   bez_index = 0;
   do
     {
 #ifdef VERBOSE
       printf ("%s %g %g\n",
-	      bez[bez_index].code == CURVETO ? "curveto" :
-	      bez[bez_index].code == LINETO ? "lineto" :
-	      bez[bez_index].code == MOVETO ? "moveto" :
+	      bez[bez_index].code == ART_CURVETO ? "curveto" :
+	      bez[bez_index].code == ART_LINETO ? "lineto" :
+	      bez[bez_index].code == ART_MOVETO ? "moveto" :
+	      bez[bez_index].code == ART_MOVETO_OPEN ? "moveto-open" :
 	      "end", bez[bez_index].x3, bez[bez_index].y3);
 #endif
-      if (bez[bez_index].code == CURVETO)
+      if (bez[bez_index].code == ART_CURVETO)
 	space_needed = RENDER_SIZE;
       else
 	space_needed = 1;
       if (vec_n + space_needed > vec_n_max)
 	/* We know a simple doubling will do it because space_needed
 	   is always <= vec_n_max */
-	z_double (vec, vec_path_el, vec_n_max);
+	art_expand (vec, ArtVpath, vec_n_max);
       switch (bez[bez_index].code)
 	{
+	case ART_MOVETO_OPEN:
 	case ART_MOVETO:
 	case ART_LINETO:
 	  x = bez[bez_index].x3;

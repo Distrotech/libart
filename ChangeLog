@@ -1,3 +1,28 @@
+Mon Nov 30 01:30:25 1998  Raph Levien  <raph@gimp.org>
+
+	* testart.c: added vector path rendering stuff. Some of it needs
+	to go out of the test framework and into the module, but the
+	api hasn't settled down entirely yet (in the real code, all
+	x's in the step field are within bounds).
+
+	* art_svp_render_aa.c, art_svp_render_aa.c.h: added.
+
+	* art_svp_vpath.c, art_svp_vpath.h: added.
+
+	* art_pathcode.h: added ART_MOVETO_OPEN (libart uses an
+	ART_MOVETO_OPEN code at the beginning to indicate an open path,
+	while PostScript uses the lack of a closepath at the end).
+
+	* art_vpath_bpath.c, art_vpath_bpath.h: fixed it up, added
+	flatness arg to api.
+
+	* Makefile.am: added new source files.
+
+Wed Nov 25 17:19:44 1998  Raph Levien  <raph@gimp.org>
+
+	* art_svp.h, art_svp.c: added, basic constructors for sorted
+	vector paths.
+
 Sun Nov 22 23:21:09 1998  Raph Levien  <raph@gimp.org>
 
 	* Makefile.am (libart_lgplincdir): Fixed stupid bug in naming of

@@ -31,7 +31,7 @@ ArtPoint *art_bezier_to_vec (double x0, double y0,
 			     ArtPoint *p,
 			     int level);
 
-ArtVpath *art_bez_path_to_vec (ArtBpath *bez);
+ArtVpath *art_bez_path_to_vec (ArtBpath *bez, double flatness);
 
 };
 
