@@ -103,7 +103,7 @@ art_rgb_fill_run (art_u8 *buf, art_u8 r, art_u8 g, art_u8 b, int n)
 	      *buf++ = g;
 	      *buf++ = b;
 	    }
-#ifndef ART_BIGENDIAN
+#ifndef WORDS_BIGENDIAN
 	  v1 = r | (g << 8) | (b << 16) | (r << 24);
 	  v3 = (v1 << 8) | b;
 	  v2 = (v3 << 8) | g;

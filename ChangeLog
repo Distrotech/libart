@@ -1,3 +1,8 @@
+1999-07-26  Raph Levien  <raph@gimp.org>
+
+	* art_rgb.c (art_rgb_fill_run): fixed incorrect test for
+	big-endianness. Thanks to Michael Zucchi for spotting it.
+
 Fri Jul 16 23:42:59 1999  Tim Janik  <timj@gtk.org>
 
 	* art_affine.c (art_affine_flip): flip translation matrixes as well, by
