@@ -1,3 +1,17 @@
+2001-10-15  Raph Levien  <raph@pixel.artofcode.com>
+
+	* art_svp_intersect.c (CHEAP_SANITYCHECK): Added an inexpensive
+	sanitycheck to detect multiple insertions of a segment into the
+	horiz list.
+
+	(art_svp_writer_rewind_add_point): Avoid breaking lines below
+	their bottom point.
+
+	(art_svp_intersect_test_cross): Handle cases correctly where
+	intersection point matches y0 of left or right segment. These _do_
+	happen in real world examples. Also, do add_point on newly
+	inserted intersection point.
+
 2001-10-14  Raph Levien  <raph@pixel.artofcode.com>
 
 	* art_svp_intersect.c (art_svp_intersect_add_point): Fixed

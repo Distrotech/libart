@@ -28,6 +28,10 @@
    much. */
 #define noSANITYCHECK
 
+/* This can be used in production, to prevent hangs. Eventually, it
+   should not be necessary. */
+#define CHEAP_SANITYCHECK
+
 #define noVERBOSE
 #ifdef VERBOSE
 #include <stdio.h>
@@ -483,6 +487,9 @@ typedef struct _ArtActiveSeg ArtActiveSeg;
 /* This flag is set if the seg_id is a valid output segment. */
 #define ART_ACTIVE_FLAGS_OUT 8
 
+/* This flag is set if the segment is in the horiz list. */
+#define ART_ACTIVE_FLAGS_IN_HORIZ 16
+
 struct _ArtActiveSeg {
   int flags;
   int wind_left, delta_wind;
@@ -592,6 +599,16 @@ art_svp_intersect_add_horiz (ArtIntersectCtx *ctx, ArtActiveSeg *seg)
   ArtActiveSeg *place;
   ArtActiveSeg *place_right = NULL;
 
+
+#ifdef CHEAP_SANITYCHECK
+  if (seg->flags & ART_ACTIVE_FLAGS_IN_HORIZ)
+    {
+      art_warn ("*** attempt to put segment in horiz list twice\n");
+      return;
+    }
+  seg->flags |= ART_ACTIVE_FLAGS_IN_HORIZ;
+#endif
+
 #ifdef VERBOSE
   printf ("add_horiz %lx, x = %g\n", (unsigned long) seg, seg->horiz_x);
 #endif
@@ -672,6 +689,118 @@ art_svp_intersect_break (ArtIntersectCtx *ctx, ArtActiveSeg *seg,
     }
 
   return x;
+}
+
+/**
+ * art_svp_intersect_add_point: Add a point, breaking nearby neighbors.
+ * @ctx: Intersector context.
+ * @x: X coordinate of point to add.
+ * @y: Y coordinate of point to add.
+ * @seg: "nearby" segment, or NULL if leftmost.
+ *
+ * Return value: Segment immediately to the left of the new point, or
+ * NULL if the new point is leftmost.
+ **/
+static ArtActiveSeg *
+art_svp_intersect_add_point (ArtIntersectCtx *ctx, double x, double y,
+			     ArtActiveSeg *seg)
+{
+  ArtActiveSeg *left, *right;
+  double x_min = x, x_max = x;
+  art_boolean left_live, right_live;
+  double d;
+  double new_x;
+  ArtActiveSeg *test, *result = NULL;
+  double x_test;
+
+  left = seg;
+  if (left == NULL)
+    right = ctx->active_head;
+  else
+    right = left->right; 
+  left_live = (left != NULL);
+  right_live = (right != NULL);
+  while (left_live || right_live)
+    {
+      if (left_live)
+	{
+	  if (x <= left->x[left->flags & ART_ACTIVE_FLAGS_BNEG] &&
+	      /* It may be that one of these conjuncts turns out to be always
+		 true. We test both anyway, to be defensive. */
+	      y != left->y0 && y < left->y1)
+	    {
+	      d = x_min * left->a + y * left->b + left->c;
+	      if (d < EPSILON_A)
+		{
+		  new_x = art_svp_intersect_break (ctx, left, y);
+		  if (new_x > x_max)
+		    {
+		      x_max = new_x;
+		      right_live = (right != NULL);
+		    }
+		  else if (new_x < x_min)
+		    x_min = new_x;
+		  left = left->left;
+		  left_live = (left != NULL);
+		}
+	      else
+		left_live = ART_FALSE;
+	    }
+	  else
+	    left_live = ART_FALSE;
+	}
+      else if (right_live)
+	{
+	  if (x <= right->x[(right->flags & ART_ACTIVE_FLAGS_BNEG) ^ 1] &&
+	      /* It may be that one of these conjuncts turns out to be always
+		 true. We test both anyway, to be defensive. */
+	      y != right->y0 && y < right->y1)
+	    {
+	      d = x_max * right->a + y * right->b + right->c;
+	      if (d > -EPSILON_A)
+		{
+		  new_x = art_svp_intersect_break (ctx, right, y);
+		  if (new_x < x_min)
+		    {
+		      x_min = new_x;
+		      left_live = (left != NULL);
+		    }
+		  else if (new_x >= x_max)
+		    x_max = new_x;
+		  right = right->right;
+		  right_live = (right != NULL);
+		}
+	      else
+		right_live = ART_FALSE;
+	    }
+	  else
+	    right_live = ART_FALSE;
+	}
+    }
+
+  /* Now, (left, right) defines an interval of segments broken. Sort
+     into ascending x order. */
+  test = left == NULL ? ctx->active_head : left->right;
+  result = left;
+  if (test != NULL && test != right)
+    {
+      x_test = test->x[1];
+      for (;;)
+	{
+	  if (x_test <= x)
+	    result = test;
+	  test = test->right;
+	  if (test == right)
+	    break;
+	  new_x = test->x[1];
+	  if (new_x < x_test)
+	    {
+	      art_warn ("art_svp_intersect_add_point: non-ascending x\n");
+	    }
+	  x_test = new_x;
+	}
+    }
+  return result;
 }
 
 static void
@@ -835,26 +964,42 @@ art_svp_intersect_test_cross (ArtIntersectCtx *ctx,
   if (y == left_seg->y0)
     {
       if (y != right_seg->y0)
-	art_warn ("*** art_svp_intersect_test_cross: intersection (%g, %g) matches former y0 of %lx, %lx\n",
-		  x, y, (unsigned long)left_seg, (unsigned long)right_seg);
-
-      /* Intersection takes place at current scan line; process immediately
-	 rather than queueing intersection point into priq. */
-
-      /* Choose "most vertical" segement */
-      if (left_seg->a > right_seg->a)
-	x = left_seg->x[0];
+	{
+#ifdef VERBOSE
+	  printf ("art_svp_intersect_test_cross: intersection (%g, %g) matches former y0 of %lx, %lx\n",
+		    x, y, (unsigned long)left_seg, (unsigned long)right_seg);
+#endif
+	  art_svp_intersect_push_pt (ctx, right_seg, x, y);
+	  if (right_seg->right != NULL)
+	    art_svp_intersect_add_point (ctx, x, y, right_seg->right);
+	}
       else
-	x = right_seg->x[0];
-      /* todo: fudge x */
+	{
+	  /* Intersection takes place at current scan line; process
+	     immediately rather than queueing intersection point into
+	     priq. */
 
-      art_svp_intersect_swap_active (ctx, left_seg, right_seg);
+	  /* Choose "most vertical" segement */
+	  if (left_seg->a > right_seg->a)
+	    x = left_seg->x[0];
+	  else
+	    x = right_seg->x[0];
+	  /* todo: fudge x */
 
-      return ART_TRUE;
+	  art_svp_intersect_swap_active (ctx, left_seg, right_seg);
+	  return ART_TRUE;
+	}
     }
   else if (y == right_seg->y0)
-    art_warn ("*** art_svp_intersect_test_cross: intersection (%g, %g) matches latter y0 of %lx, %lx\n",
+    {
+#ifdef VERBOSE
+      printf ("*** art_svp_intersect_test_cross: intersection (%g, %g) matches latter y0 of %lx, %lx\n",
 	      x, y, (unsigned long)left_seg, (unsigned long)right_seg);
+#endif
+      art_svp_intersect_push_pt (ctx, left_seg, x, y);
+      if (left_seg->left != NULL)
+	art_svp_intersect_add_point (ctx, x, y, left_seg->left);
+    }
   else
     {
 #ifdef VERBOSE
@@ -864,6 +1009,10 @@ art_svp_intersect_test_cross (ArtIntersectCtx *ctx,
       /* Insert the intersection point into both segments. */
       art_svp_intersect_push_pt (ctx, left_seg, x, y);
       art_svp_intersect_push_pt (ctx, right_seg, x, y);
+      if (left_seg->left != NULL)
+	art_svp_intersect_add_point (ctx, x, y, left_seg->left);
+      if (right_seg->right != NULL)
+	art_svp_intersect_add_point (ctx, x, y, right_seg->right);
     }
   return ART_FALSE;
 }
@@ -945,118 +1094,6 @@ art_svp_intersect_insert_cross (ArtIntersectCtx *ctx,
       else
 	break;
     }
-}
-
-/**
- * art_svp_intersect_add_point: Add a point, breaking nearby neighbors.
- * @ctx: Intersector context.
- * @x: X coordinate of point to add.
- * @y: Y coordinate of point to add.
- * @seg: "nearby" segment, or NULL if leftmost.
- *
- * Return value: Segment immediately to the left of the new point, or
- * NULL if the new point is leftmost.
- **/
-static ArtActiveSeg *
-art_svp_intersect_add_point (ArtIntersectCtx *ctx, double x, double y,
-			     ArtActiveSeg *seg)
-{
-  ArtActiveSeg *left, *right;
-  double x_min = x, x_max = x;
-  art_boolean left_live, right_live;
-  double d;
-  double new_x;
-  ArtActiveSeg *test, *result = NULL;
-  double x_test;
-
-  left = seg;
-  if (left == NULL)
-    right = ctx->active_head;
-  else
-    right = left->right; 
-  left_live = (left != NULL);
-  right_live = (right != NULL);
-  while (left_live || right_live)
-    {
-      if (left_live)
-	{
-	  if (x <= left->x[left->flags & ART_ACTIVE_FLAGS_BNEG] &&
-	      /* It may be that one of these conjuncts turns out to be always
-		 true. We test both anyway, to be defensive. */
-	      y != left->y0 && y != left->y1)
-	    {
-	      d = x_min * left->a + y * left->b + left->c;
-	      if (d < EPSILON_A)
-		{
-		  new_x = art_svp_intersect_break (ctx, left, y);
-		  if (new_x > x_max)
-		    {
-		      x_max = new_x;
-		      right_live = (right != NULL);
-		    }
-		  else if (new_x < x_min)
-		    x_min = new_x;
-		  left = left->left;
-		  left_live = (left != NULL);
-		}
-	      else
-		left_live = ART_FALSE;
-	    }
-	  else
-	    left_live = ART_FALSE;
-	}
-      else if (right_live)
-	{
-	  if (x <= right->x[(right->flags & ART_ACTIVE_FLAGS_BNEG) ^ 1] &&
-	      /* It may be that one of these conjuncts turns out to be always
-		 true. We test both anyway, to be defensive. */
-	      y != right->y0 && y != right->y1)
-	    {
-	      d = x_max * right->a + y * right->b + right->c;
-	      if (d > -EPSILON_A)
-		{
-		  new_x = art_svp_intersect_break (ctx, right, y);
-		  if (new_x < x_min)
-		    {
-		      x_min = new_x;
-		      left_live = (left != NULL);
-		    }
-		  else if (new_x >= x_max)
-		    x_max = new_x;
-		  right = right->right;
-		  right_live = (right != NULL);
-		}
-	      else
-		right_live = ART_FALSE;
-	    }
-	  else
-	    right_live = ART_FALSE;
-	}
-    }
-
-  /* Now, (left, right) defines an interval of segments broken. Sort
-     into ascending x order. */
-  test = left == NULL ? ctx->active_head : left->right;
-  result = left;
-  if (test != NULL && test != right)
-    {
-      x_test = test->x[1];
-      for (;;)
-	{
-	  if (x_test <= x)
-	    result = test;
-	  test = test->right;
-	  if (test == right)
-	    break;
-	  new_x = test->x[1];
-	  if (new_x < x_test)
-	    {
-	      art_warn ("art_svp_intersect_add_point: non-ascending x\n");
-	    }
-	  x_test = new_x;
-	}
-    }
-  return result;
 }
 
 /**
@@ -1429,6 +1466,7 @@ art_svp_intersect_horiz_commit (ArtIntersectCtx *ctx)
 	{
 	  ArtActiveSeg *next = seg->horiz_right;
 
+	  seg->flags &= ~ART_ACTIVE_FLAGS_IN_HORIZ;
 	  horiz_wind += seg->horiz_delta_wind;
 	  seg->horiz_delta_wind = 0;
 	  if (seg->flags & ART_ACTIVE_FLAGS_DEL)
