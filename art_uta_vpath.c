@@ -195,7 +195,12 @@ art_uta_add_line (ArtUta *uta, double x0, double y0, double x1, double y1,
 	      printf ("%% %d,%d\n", xt0, yt0);
 #endif
 	      yn = (yt0 + 1) << ART_UTILE_SHIFT;
-	      xn = x0 + dx_dy * (yn - y0);
+
+	      /* xn is the intercept with bottom edge of this tile. The
+		 following expression is careful to result in exactly
+		 x1 when yn = y1. */
+	      xn = x1 + dx_dy * (yn - y1);
+
 	      if (xt0 != (int)floor (xn) >> ART_UTILE_SHIFT)
 		{
 		  /* horizontal crossing */

@@ -1,3 +1,11 @@
+2002-05-08  Raph Levien  <raph@pixel.artofcode.com>
+
+	* art_uta_vpath.c (art_uta_add_line): Fixes very subtle
+	edge case found by Federico Mena Quintero: (96, 96) -
+	(96.220200017562348, 93.034868598919431). Previously, through
+	numerical error, xn was a hair to the left, throwing off
+	the Bresenham iteration.
+
 2002-03-08  Tor Lillqvist  <tml@iki.fi>
 
 	* configure.in: Minor changes for build on Win32. Call
