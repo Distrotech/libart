@@ -1,3 +1,14 @@
+2001-10-07  Raph Levien  <raph@pixel.artofcode.com>
+
+	* art_svp.c (EPSILON): Set to zero if new intersector is
+	in use - we want svp's to be in strict sorted order.
+
+	* art_svp_intersect.c (art_svp_intersect_test_cross): Explicitly
+	check that top points are equal, and swap immediately if b is out
+	of order.
+	(art_svp_intersect_horiz): Break segments that intersect
+	horizontal lines. Now passes "two squares with offset" test.
+
 2001-10-05  Raph Levien  <raph@pixel.artofcode.com>
 
 	* art_svp_intersect.c: Major changes to accommodate

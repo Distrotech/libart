@@ -526,9 +526,7 @@ struct _ArtIntersectCtx {
   int in_curs;
 };
 
-#define EPSILON_A 1e-6 /* Fuzz for insertion of new active segments */
-#define EPSILON_B 1e-6 /* Fuzz for crossing tests */
-#define EPSILON_C 1e-5 /* Threshold for breaking lines at point insertions */
+#define EPSILON_A 1e-5 /* Threshold for breaking lines at point insertions */
 
 /**
  * art_svp_intersect_setup_seg: Set up an active segment from input segment.
@@ -626,6 +624,22 @@ art_svp_intersect_break (ArtIntersectCtx *ctx, ArtActiveSeg *seg,
   return x;
 }
 
+static void
+art_svp_intersect_swap_active (ArtIntersectCtx *ctx,
+			       ArtActiveSeg *left_seg, ArtActiveSeg *right_seg)
+{
+  right_seg->left = left_seg->left;
+  if (right_seg->left != NULL)
+    right_seg->left->right = right_seg;
+  else
+    ctx->active_head = right_seg;
+  left_seg->right = right_seg->right;
+  if (left_seg->right != NULL)
+    left_seg->right->left = left_seg;
+  left_seg->left = right_seg;
+  right_seg->right = left_seg;
+}
+
 /**
  * art_svp_intersect_test_cross: Test crossing of a pair of active segments.
  * @ctx: Intersector context.
@@ -659,6 +673,17 @@ art_svp_intersect_test_cross (ArtIntersectCtx *ctx,
 	  (unsigned long)left_seg, (unsigned long)right_seg, count++);
 #endif
 
+  if (left_seg->y0 == right_seg->y0 && left_seg->x[0] == right_seg->x[0])
+    {
+      if (left_seg->b < right_seg->b)
+	{
+	  art_svp_intersect_swap_active (ctx, left_seg, right_seg);
+	  return ART_TRUE;
+	}
+      else
+	return ART_FALSE;
+    }
+
   if (left_y1 < right_y1)
     {
       /* Test left (x1, y1) against right segment */
@@ -669,9 +694,9 @@ art_svp_intersect_test_cross (ArtIntersectCtx *ctx,
 	  left_y1 == right_seg->y0)
 	return ART_FALSE;
       d = left_x1 * right_seg->a + left_y1 * right_seg->b + right_seg->c;
-      if (d < -EPSILON_C)
+      if (d < -EPSILON_A)
 	return ART_FALSE;
-      else if (d < EPSILON_C)
+      else if (d < EPSILON_A)
 	{
 	  art_warn ("art_svp_intersect_test_cross: need to break\n");
 	}
@@ -685,9 +710,9 @@ art_svp_intersect_test_cross (ArtIntersectCtx *ctx,
 	  right_y1 == left_seg->y0)
 	return ART_FALSE;
       d = right_x1 * left_seg->a + right_y1 * left_seg->b + left_seg->c;
-      if (d > EPSILON_C)
+      if (d > EPSILON_A)
 	return ART_FALSE;
-      else if (d > -EPSILON_C)
+      else if (d > -EPSILON_A)
 	{
 	  art_warn ("art_svp_intersect_test_cross: need to break\n");
 	}
@@ -769,17 +794,7 @@ art_svp_intersect_test_cross (ArtIntersectCtx *ctx,
 	x = right_seg->x[0];
       /* todo: fudge x */
 
-      /* Swap left_seg and right_seg in active list. */
-      right_seg->left = left_seg->left;
-      if (right_seg->left != NULL)
-	right_seg->left->right = right_seg;
-      else
-	ctx->active_head = right_seg;
-      left_seg->right = right_seg->right;
-      if (left_seg->right != NULL)
-	left_seg->right->left = left_seg;
-      left_seg->left = right_seg;
-      right_seg->right = left_seg;
+      art_svp_intersect_swap_active (ctx, left_seg, right_seg);
 
       return ART_TRUE;
     }
@@ -963,7 +978,7 @@ art_svp_intersect_add_point (ArtIntersectCtx *ctx, double x, double y,
 	      y != left->y0 && y != left->y1)
 	    {
 	      d = x_min * left->a + y * left->b + left->c;
-	      if (d < EPSILON_C)
+	      if (d < EPSILON_A)
 		{
 		  new_x = art_svp_intersect_break (ctx, left, y);
 		  if (new_x > x_max)
@@ -990,7 +1005,7 @@ art_svp_intersect_add_point (ArtIntersectCtx *ctx, double x, double y,
 	      y != right->y0 && y != right->y1)
 	    {
 	      d = x_max * right->a + y * right->b + right->c;
-	      if (d > -EPSILON_C)
+	      if (d > -EPSILON_A)
 		{
 		  new_x = art_svp_intersect_break (ctx, right, y);
 		  if (new_x < x_min)
@@ -1050,7 +1065,12 @@ static void
 art_svp_intersect_horiz (ArtIntersectCtx *ctx, ArtActiveSeg *seg,
 			 double x0, double x1)
 {
-  ArtActiveSeg *hs = art_new (ArtActiveSeg, 1);
+  ArtActiveSeg *hs;
+
+  if (x0 == x1)
+    return;
+
+  hs = art_new (ArtActiveSeg, 1);
 
   hs->flags = ART_ACTIVE_FLAGS_DEL | (seg->flags & ART_ACTIVE_FLAGS_OUT);
   if (seg->flags & ART_ACTIVE_FLAGS_OUT)
@@ -1067,6 +1087,55 @@ art_svp_intersect_horiz (ArtIntersectCtx *ctx, ArtActiveSeg *seg,
   seg->horiz_delta_wind -= seg->delta_wind;
 
   art_svp_intersect_add_horiz (ctx, hs);
+
+  if (x0 > x1)
+    {
+      ArtActiveSeg *left;
+      double d;
+
+      for (left = seg->left; left != NULL; left = seg->left)
+	{
+	  if (left->x[left->flags & ART_ACTIVE_FLAGS_BNEG] <= x1)
+	    break;
+	  d = x1 * left->a + ctx->y * left->b + left->c;
+	  if (d >= 0)
+	    break;
+	  if (left->y0 != ctx->y && left->y1 != ctx->y)
+	    {
+	      art_svp_intersect_break (ctx, left, ctx->y);
+	      art_svp_intersect_add_horiz (ctx, left);
+	    }
+#ifdef VERBOSE
+	  printf ("x0=%g > x1=%g, swapping %lx, %lx\n",
+		  x0, x1, left, seg);
+#endif
+	  art_svp_intersect_swap_active (ctx, left, seg);
+	}
+    }
+  else
+    {
+      ArtActiveSeg *right;
+      double d;
+
+      for (right = seg->right; right != NULL; right = seg->right)
+	{
+	  if (right->x[(right->flags & ART_ACTIVE_FLAGS_BNEG) ^ 1] >= x1)
+	    break;
+	  d = x1 * right->a + ctx->y * right->b + right->c;
+	  if (d <= 0)
+	    break;
+	  if (right->y0 != ctx->y && right->y1 != ctx->y)
+	    {
+	      art_svp_intersect_break (ctx, right, ctx->y);
+	      art_svp_intersect_add_horiz (ctx, right);
+	    }
+#ifdef VERBOSE
+	  printf ("x0=%g < x1=%g, swapping %lx, %lx\n",
+		  x0, x1, seg, right);
+#endif
+	  art_svp_intersect_swap_active (ctx, seg, right);
+	}
+    }
 
   seg->x[0] = x1;
   seg->x[1] = x1;
@@ -1239,7 +1308,7 @@ static void
 art_svp_intersect_horiz_commit (ArtIntersectCtx *ctx)
 {
   ArtActiveSeg *seg;
-  int winding_number;
+  int winding_number = 0; /* initialization just to avoid warning */
   int horiz_wind = 0;
   double last_x = 0; /* initialization just to avoid warning */
 
@@ -1398,7 +1467,7 @@ art_svp_intersect_sanitycheck (ArtIntersectCtx *ctx)
 		    last->y1 == seg->y0))
 		{
 		  d = last->x[1] * seg->a + last->y1 * seg->b + seg->c;
-		  if (d >= -EPSILON_C)
+		  if (d >= -EPSILON_A)
 		    art_warn ("*** bottom (%g, %g) of %lx is not clear of %lx to right (d = %g)\n",
 			      last->x[1], last->y1, (unsigned long) last,
 			      (unsigned long) seg, d);
@@ -1412,7 +1481,7 @@ art_svp_intersect_sanitycheck (ArtIntersectCtx *ctx)
 		    seg->y1 == last->y0))
 	      {
 		d = seg->x[1] * last->a + seg->y1 * last->b + last->c;
-		if (d <= EPSILON_C)
+		if (d <= EPSILON_A)
 		  art_warn ("*** bottom (%g, %g) of %lx is not clear of %lx to left (d = %g)\n",
 			      seg->x[1], seg->y1, (unsigned long) seg,
 			      (unsigned long) last, d);
