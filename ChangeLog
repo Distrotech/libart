@@ -1,3 +1,13 @@
+1999-07-28  Raph Levien  <raph@gimp.org>
+
+	* art_vpath_dash.[ch]: Added a function to add a dash style
+	to vpaths. It is tested, but has a couple of rough edges (see
+	code for details).
+
+	* testart.c: added tests for the new vpath_dash functionality.
+
+	* Makefile.am: added art_vpath_dash.[ch] files.
+
 1999-07-26  Raph Levien  <raph@gimp.org>
 
 	* art_rgb.c (art_rgb_fill_run): fixed incorrect test for

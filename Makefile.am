@@ -41,6 +41,7 @@ libart_lgpl_la_SOURCES = \
 	art_uta_svp.c \
 	art_vpath.c \
 	art_vpath_bpath.c \
+	art_vpath_dash.c \
 	art_vpath_svp.c
 
 libart_lgpl_la_LDFLAGS = -version-info @LIBART_VERSION_INFO@
@@ -79,6 +80,7 @@ libart_lgplinc_HEADERS = \
 	art_uta_svp.h \
 	art_vpath.h \
 	art_vpath_bpath.h \
+	art_vpath_dash.h \
 	art_vpath_svp.h
 
 INCLUDES = -I$(top_srcdir)/..
