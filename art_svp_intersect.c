@@ -969,16 +969,12 @@ art_svp_intersect_add_point (ArtIntersectCtx *ctx, double x, double y,
   ArtActiveSeg *test, *result = NULL;
   double x_test;
 
-  if (seg == NULL)
-    {
-      left = ctx->active_head;
-      if (left == NULL)
-	return NULL;
-    }
+  left = seg;
+  if (left == NULL)
+    right = ctx->active_head;
   else
-    left = seg;
-  right = left->right; 
-  left_live = ART_TRUE;
+    right = left->right; 
+  left_live = (left != NULL);
   right_live = (right != NULL);
   while (left_live || right_live)
     {
