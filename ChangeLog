@@ -1,3 +1,8 @@
+Fri Jun 30 22:56:58 2000  Raph Levien  <raph@acm.org>
+
+	* art_render.c (art_render_composite): Fixed a bug that caused
+	it to ignore the alpha setting. Also art_render_composite_8().
+
 2000-06-01  John Sullivan  <sullivan@eazel.com>
 
 	* art_svp_render_aa.c: (art_svp_render_aa_iter_step):
