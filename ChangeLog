@@ -1,3 +1,10 @@
+2001-10-09  Raph Levien  <raph@pixel.artofcode.com>
+
+	* art_svp_intersect.c (art_svp_intersect_break): Handle
+	case when break y equals sweep line correctly. Also adds
+	first try at winding number sanitychecker, but that makes
+	too many false positives.
+
 2001-10-07  Raph Levien  <raph@pixel.artofcode.com>
 
 	* art_svp.c (EPSILON): Set to zero if new intersector is

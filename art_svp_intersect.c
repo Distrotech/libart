@@ -570,6 +570,48 @@ art_svp_intersect_setup_seg (ArtActiveSeg *seg, ArtPriPoint *pri_pt)
   seg->stack[0].y = y1;
 }
 
+/**
+ * art_svp_intersect_add_horiz: Add point to horizontal list.
+ * @ctx: Intersector context.
+ * @seg: Segment with point to insert into horizontal list.
+ *
+ * Inserts @seg into horizontal list, keeping it in ascending horiz_x
+ * order.
+ *
+ * Note: the horiz_commit routine processes "clusters" of segs in the
+ * horiz list, all sharing the same horiz_x value. The cluster is
+ * processed in active list order, rather than horiz list order. Thus,
+ * the order of segs in the horiz list sharing the same horiz_x
+ * _should_ be irrelevant. Even so, we use b as a secondary sorting key,
+ * as a "belt and suspenders" defensive coding tactic.
+ **/
+static void
+art_svp_intersect_add_horiz (ArtIntersectCtx *ctx, ArtActiveSeg *seg)
+{
+  ArtActiveSeg **pp = &ctx->horiz_last;
+  ArtActiveSeg *place;
+  ArtActiveSeg *place_right = NULL;
+
+#ifdef VERBOSE
+  printf ("add_horiz %lx, x = %g\n", (unsigned long) seg, seg->horiz_x);
+#endif
+  for (place = *pp; place != NULL && (place->horiz_x > seg->horiz_x ||
+				      (place->horiz_x == seg->horiz_x &&
+				       place->b < seg->b));
+       place = *pp)
+    {
+      place_right = place;
+      pp = &place->horiz_left;
+    }
+  *pp = seg;
+  seg->horiz_left = place;
+  seg->horiz_right = place_right;
+  if (place == NULL)
+    ctx->horiz_first = seg;
+  else
+    place->horiz_right = seg;
+}
+
 static void
 art_svp_intersect_push_pt (ArtIntersectCtx *ctx, ArtActiveSeg *seg,
 			   double x, double y)
@@ -594,7 +636,7 @@ art_svp_intersect_push_pt (ArtIntersectCtx *ctx, ArtActiveSeg *seg,
 }
 
 /**
- * art_svp_intersect_break: Break an active segment at the scan line.
+ * art_svp_intersect_break: Break an active segment.
  *
  * Note: y must be greater than the top point's y, and less than
  * the bottom's.
@@ -619,7 +661,15 @@ art_svp_intersect_break (ArtIntersectCtx *ctx, ArtActiveSeg *seg,
   /* I think we can count on min(x0, x1) <= x <= max(x0, x1) with sane
      arithmetic, but it might be worthwhile to check just in case. */
 
-  art_svp_intersect_push_pt (ctx, seg, x, y);
+  if (y > ctx->y)
+    art_svp_intersect_push_pt (ctx, seg, x, y);
+  else
+    {
+      seg->x[0] = x;
+      seg->y0 = y;
+      seg->horiz_x = x;
+      art_svp_intersect_add_horiz (ctx, seg);
+    }
 
   return x;
 }
@@ -851,48 +901,6 @@ art_svp_intersect_active_free (ArtActiveSeg *seg)
 }
 
 /**
- * art_svp_intersect_add_horiz: Add point to horizontal list.
- * @ctx: Intersector context.
- * @seg: Segment with point to insert into horizontal list.
- *
- * Inserts @seg into horizontal list, keeping it in ascending horiz_x
- * order.
- *
- * Note: the horiz_commit routine processes "clusters" of segs in the
- * horiz list, all sharing the same horiz_x value. The cluster is
- * processed in active list order, rather than horiz list order. Thus,
- * the order of segs in the horiz list sharing the same horiz_x
- * _should_ be irrelevant. Even so, we use b as a secondary sorting key,
- * as a "belt and suspenders" defensive coding tactic.
- **/
-static void
-art_svp_intersect_add_horiz (ArtIntersectCtx *ctx, ArtActiveSeg *seg)
-{
-  ArtActiveSeg **pp = &ctx->horiz_last;
-  ArtActiveSeg *place;
-  ArtActiveSeg *place_right = NULL;
-
-#ifdef VERBOSE
-  printf ("add_horiz %lx, x = %g\n", (unsigned long) seg, seg->horiz_x);
-#endif
-  for (place = *pp; place != NULL && (place->horiz_x > seg->horiz_x ||
-				      (place->horiz_x == seg->horiz_x &&
-				       place->b < seg->b));
-       place = *pp)
-    {
-      place_right = place;
-      pp = &place->horiz_left;
-    }
-  *pp = seg;
-  seg->horiz_left = place;
-  seg->horiz_right = place_right;
-  if (place == NULL)
-    ctx->horiz_first = seg;
-  else
-    place->horiz_right = seg;
-}
-
-/**
  * art_svp_intersect_insert_cross: Test crossings of newly inserted line.
  *
  * Tests @seg against its left and right neighbors for intersections.
@@ -1103,11 +1111,10 @@ art_svp_intersect_horiz (ArtIntersectCtx *ctx, ArtActiveSeg *seg,
 	  if (left->y0 != ctx->y && left->y1 != ctx->y)
 	    {
 	      art_svp_intersect_break (ctx, left, ctx->y);
-	      art_svp_intersect_add_horiz (ctx, left);
 	    }
 #ifdef VERBOSE
 	  printf ("x0=%g > x1=%g, swapping %lx, %lx\n",
-		  x0, x1, left, seg);
+		  x0, x1, (unsigned long)left, (unsigned long)seg);
 #endif
 	  art_svp_intersect_swap_active (ctx, left, seg);
 	}
@@ -1127,11 +1134,10 @@ art_svp_intersect_horiz (ArtIntersectCtx *ctx, ArtActiveSeg *seg,
 	  if (right->y0 != ctx->y && right->y1 != ctx->y)
 	    {
 	      art_svp_intersect_break (ctx, right, ctx->y);
-	      art_svp_intersect_add_horiz (ctx, right);
 	    }
 #ifdef VERBOSE
 	  printf ("x0=%g < x1=%g, swapping %lx, %lx\n",
-		  x0, x1, seg, right);
+		  x0, x1, (unsigned long)seg, (unsigned long)right);
 #endif
 	  art_svp_intersect_swap_active (ctx, seg, right);
 	}
@@ -1288,6 +1294,35 @@ art_svp_intersect_add_seg (ArtIntersectCtx *ctx, const ArtSVPSeg *in_seg)
   art_svp_intersect_insert_line (ctx, seg);
 }
 
+#ifdef SANITYCHECK
+static void
+art_svp_intersect_sanitycheck_winding (ArtIntersectCtx *ctx)
+{
+#if 0
+  /* At this point, we seem to be getting false positives, so it's
+     turned off for now. */
+
+  ArtActiveSeg *seg;
+  int winding_number = 0;
+
+  for (seg = ctx->active_head; seg != NULL; seg = seg->right)
+    {
+      /* Check winding number consistency. */
+      if (seg->flags & ART_ACTIVE_FLAGS_OUT)
+	{
+	  if (winding_number != seg->wind_left)
+	    art_warn ("*** art_svp_intersect_sanitycheck_winding: seg %lx has wind_left of %d, expected %d\n",
+		  (unsigned long) seg, seg->wind_left, winding_number);
+	  winding_number = seg->wind_left + seg->delta_wind;
+	}
+    }
+  if (winding_number != 0)
+    art_warn ("*** art_svp_intersect_sanitycheck_winding: non-balanced winding number %d\n",
+	      winding_number);
+#endif
+}
+#endif
+
 /**
  * art_svp_intersect_horiz_commit: Commit points in horiz list to output.
  * @ctx: Intersection context.
@@ -1413,6 +1448,9 @@ art_svp_intersect_horiz_commit (ArtIntersectCtx *ctx)
     }
   ctx->horiz_first = NULL;
   ctx->horiz_last = NULL;
+#ifdef SANITYCHECK
+  art_svp_intersect_sanitycheck_winding (ctx);
+#endif
 }
 
 #ifdef VERBOSE
