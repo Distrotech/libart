@@ -20,12 +20,14 @@
 #include "art_misc.h"
 #include "art_pixbuf.h"
 
+#define PIXBUF_FLAG_DESTROY_PIXELS	1
+
 /* A generic data structure for holding a buffer of pixels. One way
    to think about this module is as a virtualization over specific
    pixel buffer formats. */
 
 ArtPixBuf *
-art_pixbuf_new_rgb (art_u8 *pixels, int width, int height, int rowstride)
+art_pixbuf_new_const_rgb (const art_u8 *pixels, int width, int height, int rowstride)
 {
   ArtPixBuf *pixbuf;
 
@@ -36,16 +38,17 @@ art_pixbuf_new_rgb (art_u8 *pixels, int width, int height, int rowstride)
   pixbuf->has_alpha = 0;
   pixbuf->bits_per_sample = 8;
 
-  pixbuf->pixels = pixels;
+  pixbuf->pixels = (art_u8 *) pixels;
   pixbuf->width = width;
   pixbuf->height = height;
   pixbuf->rowstride = rowstride;
+  pixbuf->flags = 0;
 
   return pixbuf;
 }
 
 ArtPixBuf *
-art_pixbuf_new_rgba (art_u8 *pixels, int width, int height, int rowstride)
+art_pixbuf_new_const_rgba (const art_u8 *pixels, int width, int height, int rowstride)
 {
   ArtPixBuf *pixbuf;
 
@@ -56,10 +59,33 @@ art_pixbuf_new_rgba (art_u8 *pixels, int width, int height, int rowstride)
   pixbuf->has_alpha = 1;
   pixbuf->bits_per_sample = 8;
 
-  pixbuf->pixels = pixels;
+  pixbuf->pixels = (art_u8 *) pixels;
   pixbuf->width = width;
   pixbuf->height = height;
   pixbuf->rowstride = rowstride;
+  pixbuf->flags = 0;
+
+  return pixbuf;
+}
+
+ArtPixBuf *
+art_pixbuf_new_rgb (art_u8 *pixels, int width, int height, int rowstride)
+{
+  ArtPixBuf *pixbuf;
+
+  pixbuf = art_pixbuf_new_const_rgb (pixels, width, height, rowstride);
+  pixbuf->flags |= PIXBUF_FLAG_DESTROY_PIXELS;
+
+  return pixbuf;
+}
+
+ArtPixBuf *
+art_pixbuf_new_rgba (art_u8 *pixels, int width, int height, int rowstride)
+{
+  ArtPixBuf *pixbuf;
+
+  pixbuf = art_pixbuf_new_const_rgba (pixels, width, height, rowstride);
+  pixbuf->flags |= PIXBUF_FLAG_DESTROY_PIXELS;
 
   return pixbuf;
 }
@@ -69,7 +95,8 @@ art_pixbuf_new_rgba (art_u8 *pixels, int width, int height, int rowstride)
 void
 art_pixbuf_free (ArtPixBuf *pixbuf)
 {
-  art_free (pixbuf->pixels);
+  if ((pixbuf->flags & PIXBUF_FLAG_DESTROY_PIXELS) && pixbuf->pixels)
+    art_free (pixbuf->pixels);
   art_free (pixbuf);
 }
 

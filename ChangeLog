@@ -1,3 +1,18 @@
+Tue Jul  6 19:03:39 1999  Tim Janik  <timj@gtk.org>
+
+	* art_pixbuf.h: added an int flags; member to the end of the
+	structure, it currently only holds information about whether the
+	pixels member should be freed. (raph: i think flags is more generic
+	than free_pixels, so we can reuse that field if further demands popup
+	in the future).
+
+	* art_pixbuf.c:
+	(art_pixbuf_new_const_rgba):
+	(art_pixbuf_new_const_rgb): new functions that prevent the pixels
+	member from being freed upon art_pixbuf_free ().
+	(art_pixbuf_free): only free the pixels member if it is non-NULL and
+	the PIXBUF_FLAG_DESTROY_PIXELS is set.
+
 1999-07-02  Raph Levien  <raph@gimp.org>
 
 	* art_vpath_bpath.c (art_vpath_render_bez): Bad bad uninitialized

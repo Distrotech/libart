@@ -49,6 +49,7 @@ struct _ArtPixBuf {
   int width;
   int height;
   int rowstride;
+  int flags;
 };
 
 ArtPixBuf *
@@ -56,6 +57,12 @@ art_pixbuf_new_rgb (art_u8 *pixels, int width, int height, int rowstride);
 
 ArtPixBuf *
 art_pixbuf_new_rgba (art_u8 *pixels, int width, int height, int rowstride);
+
+ArtPixBuf *
+art_pixbuf_new_const_rgb (const art_u8 *pixels, int width, int height, int rowstride);
+
+ArtPixBuf *
+art_pixbuf_new_const_rgba (const art_u8 *pixels, int width, int height, int rowstride);
 
 void
 art_pixbuf_free (ArtPixBuf *pixbuf);
