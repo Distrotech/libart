@@ -617,7 +617,7 @@ print_ps_svp (ArtSVP *vpath)
    Precision: The perturbation fuzzes the coordinates slightly,
    but not enough to be visible.  */
 /**
- * art_svp_from_vpath: Stroke a vector path.
+ * art_svp_vpath_stroke: Stroke a vector path.
  * @vpath: #ArtVPath to stroke.
  * @join: Join style.
  * @cap: Cap style.

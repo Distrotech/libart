@@ -4,13 +4,10 @@
 # Raph Levien <raph@acm.org>.
 
 DIE=0
-
-PROJECT=LibArt_LGPL
-
 srcdir=`dirname $0`
 test -z "$srcdir" && srcdir=.
-THISDIR="`pwd`"
-cd $srcdir
+
+PROJECT=LibArt_LGPL
 
 (autoconf --version) < /dev/null > /dev/null 2>&1 || {
 	echo
@@ -51,7 +48,7 @@ xlc )
     am_opt=--include-deps;;
 esac
 
-for dir in .
+for dir in $srcdir
 do 
   echo processing $dir
   (cd $dir; \
@@ -60,7 +57,6 @@ do
   autoheader; automake --add-missing --gnu $am_opt; autoconf)
 done
 
-cd $THISDIR
 $srcdir/configure "$@"
 
 echo 

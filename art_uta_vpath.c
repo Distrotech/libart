@@ -109,7 +109,7 @@ art_uta_add_line (ArtUta *uta, double x0, double y0, double x1, double y1,
       dy = y1 - y0;
       sx = dx > 0 ? 1 : dx < 0 ? -1 : 0;
       sy = dy > 0 ? 1 : dy < 0 ? -1 : 0;
-      if (ymin == ymax)
+      if (ymin == ymaxf)
 	{
 	  /* special case horizontal (dx/dy slope would be infinite) */
 	  xf0 = xmin & (ART_UTILE_SIZE - 1);
