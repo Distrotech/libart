@@ -22,7 +22,11 @@
 
 /* Render a sorted vector path into an RGB buffer. */
 
+#ifdef LIBART_COMPILATION
+#include "art_alphagamma.h"
+#else
 #include <libart_lgpl/art_alphagamma.h>
+#endif
 
 #ifdef __cplusplus
 extern "C" {

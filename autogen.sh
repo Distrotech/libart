@@ -7,6 +7,11 @@ DIE=0
 
 PROJECT=LibArt_LGPL
 
+srcdir=`dirname $0`
+test -z "$srcdir" && srcdir=.
+THISDIR="`pwd`"
+cd $srcdir
+
 (autoconf --version) < /dev/null > /dev/null 2>&1 || {
 	echo
 	echo "You must have autoconf installed to compile $PROJECT."
@@ -55,7 +60,8 @@ do
   autoheader; automake --add-missing --gnu $am_opt; autoconf)
 done
 
-./configure "$@"
+cd $THISDIR
+$srcdir/configure "$@"
 
 echo 
 echo "Now type 'make' to compile $PROJECT."

@@ -20,7 +20,11 @@
 #ifndef __ART_AFFINE_H__
 #define __ART_AFFINE_H__
 
+#ifdef LIBART_COMPILATION
+#include "art_point.h"
+#else
 #include <libart_lgpl/art_point.h>
+#endif
 
 #ifdef __cplusplus
 extern "C" {

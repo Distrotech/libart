@@ -20,8 +20,13 @@
 #ifndef __ART_BPATH_H__
 #define __ART_BPATH_H__
 
+#ifdef LIBART_COMPILATION
+#include "art_point.h"
+#include "art_pathcode.h"
+#else
 #include <libart_lgpl/art_point.h>
 #include <libart_lgpl/art_pathcode.h>
+#endif
 
 /* Basic data structures and constructors for bezier paths */
 

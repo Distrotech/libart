@@ -22,8 +22,13 @@
 
 /* Basic data structures and constructors for sorted vector paths */
 
+#ifdef LIBART_COMPILATION
+#include "art_rect.h"
+#include "art_point.h"
+#else
 #include <libart_lgpl/art_rect.h>
 #include <libart_lgpl/art_point.h>
+#endif
 
 #ifdef __cplusplus
 extern "C" {

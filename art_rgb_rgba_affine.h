@@ -23,8 +23,13 @@
 /* This module handles compositing of affine-transformed rgba images
    over rgb pixel buffers. */
 
+#ifdef LIBART_COMPILATION
+#include "art_filterlevel.h"
+#include "art_alphagamma.h"
+#else
 #include <libart_lgpl/art_filterlevel.h>
 #include <libart_lgpl/art_alphagamma.h>
+#endif
 
 #ifdef __cplusplus
 extern "C" {

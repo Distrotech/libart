@@ -26,6 +26,12 @@
 extern "C" {
 #endif /* __cplusplus */
 
+#ifdef LIBART_COMPILATION
+#include "art_misc.h"
+#else
+#include <libart_lgpl/art_misc.h>
+#endif
+
 typedef struct _ArtAlphaGamma ArtAlphaGamma;
 
 struct _ArtAlphaGamma {

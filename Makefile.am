@@ -43,7 +43,8 @@ libart_lgpl_la_SOURCES = \
 	art_vpath.c \
 	art_vpath_bpath.c \
 	art_vpath_dash.c \
-	art_vpath_svp.c
+	art_vpath_svp.c	\
+	libart-features.c
 
 libart_lgpl_la_LDFLAGS = -version-info @LIBART_VERSION_INFO@
 
@@ -82,9 +83,11 @@ libart_lgplinc_HEADERS = \
 	art_vpath.h \
 	art_vpath_bpath.h \
 	art_vpath_dash.h \
-	art_vpath_svp.h
+	art_vpath_svp.h	\
+	libart.h	\
+	libart-features.h
 
-INCLUDES = -I$(top_srcdir)/..
+INCLUDES = -I$(top_srcdir) -I$(top_builddir) -DLIBART_COMPILATION
 
 DEPS = $(top_builddir)/libart_lgpl.la
 LDADDS = $(top_builddir)/libart_lgpl.la

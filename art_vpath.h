@@ -20,8 +20,13 @@
 #ifndef __ART_VPATH_H__
 #define __ART_VPATH_H__
 
+#ifdef LIBART_COMPILATION
+#include "art_rect.h"
+#include "art_pathcode.h"
+#else
 #include <libart_lgpl/art_rect.h>
 #include <libart_lgpl/art_pathcode.h>
+#endif
 
 /* Basic data structures and constructors for simple vector paths */
 

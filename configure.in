@@ -58,5 +58,6 @@ AC_SUBST(LIBART_LIBS)
 AC_C_BIGENDIAN
 
 AC_OUTPUT([
+libart-features.h
 Makefile
 libart-config], [case "$CONFIG_FILES" in *libart-config*) chmod +x libart-config;; esac])

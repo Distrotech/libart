@@ -20,6 +20,12 @@
 #ifndef __ART_SVP_VPATH_H__
 #define __ART_SVP_VPATH_H__
 
+#ifdef LIBART_COMPILATION
+#include "art_vpath.h"
+#else
+#include <libart_lgpl/art_vpath.h>
+#endif
+
 /* Sort vector paths into sorted vector paths. */
 
 #ifdef __cplusplus
