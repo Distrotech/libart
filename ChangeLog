@@ -1,3 +1,20 @@
+2001-11-21  Raph Levien  <raph@pixel.artofcode.com>
+
+	* art_svp_intersect.c (art_svp_intersect_break): Changed break
+	logic systematically so that new breaks are always in order,
+	rather than allowing them to become out of order, then try to fix
+	them up later. It's no doubt possible to come up with cases in
+	which this reduces precision, but it simplifies life nicely, so I
+	did it.
+	
+	* (art_svp_intersect_horiz): Initialize (a, b, c) values of hs to
+	avoid UMR's when they are tested later.
+
+	* art_svp_ops.c (print_ps_vpath): Changed the coordinate
+	transform so that it's done in the PostScript rather than
+	the C code that outputs the coordinates. This makes it easier
+	to reconstruct the vector path from the debug output.
+
 2001-11-16  Alex Larsson  <alexl@redhat.com>
 
 	* art_rect.c (art_drect_svp_union, art_drect_svp):

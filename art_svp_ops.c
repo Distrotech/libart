@@ -86,21 +86,22 @@ print_ps_vpath (ArtVpath *vpath)
 {
   int i;
 
+  printf ("gsave %d %d translate 1 -1 scale\n", XOFF, YOFF);
   for (i = 0; vpath[i].code != ART_END; i++)
     {
       switch (vpath[i].code)
 	{
 	case ART_MOVETO:
-	  printf ("%g %g moveto\n", XOFF + vpath[i].x, YOFF - vpath[i].y);
+	  printf ("%g %g moveto\n", vpath[i].x, vpath[i].y);
 	  break;
 	case ART_LINETO:
-	  printf ("%g %g lineto\n", XOFF + vpath[i].x, YOFF - vpath[i].y);
+	  printf ("%g %g lineto\n", vpath[i].x, vpath[i].y);
 	  break;
 	default:
 	  break;
 	}
     }
-  printf ("stroke showpage\n");
+  printf ("stroke grestore showpage\n");
 }
 
 #define DELT 4

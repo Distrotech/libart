@@ -649,6 +649,11 @@ art_svp_intersect_push_pt (ArtIntersectCtx *ctx, ArtActiveSeg *seg,
   art_pri_insert (ctx->pq, pri_pt);
 }
 
+typedef enum {
+  ART_BREAK_LEFT = 1,
+  ART_BREAK_RIGHT = 2
+} ArtBreakFlags;
+
 /**
  * art_svp_intersect_break: Break an active segment.
  *
@@ -659,7 +664,7 @@ art_svp_intersect_push_pt (ArtIntersectCtx *ctx, ArtActiveSeg *seg,
  */
 static double
 art_svp_intersect_break (ArtIntersectCtx *ctx, ArtActiveSeg *seg,
-			 double y)
+			 double x_ref, double y, ArtBreakFlags break_flags)
 {
   double x0, y0, x1, y1;
   const ArtSVPSeg *in_seg = seg->in_seg;
@@ -671,6 +676,15 @@ art_svp_intersect_break (ArtIntersectCtx *ctx, ArtActiveSeg *seg,
   x1 = in_seg->points[in_curs].x;
   y1 = in_seg->points[in_curs].y;
   x = x0 + (x1 - x0) * ((y - y0) / (y1 - y0));
+  if ((break_flags == ART_BREAK_LEFT && x > x_ref) ||
+      (break_flags == ART_BREAK_RIGHT && x < x_ref))
+    {
+#ifdef VERBOSE
+      art_dprint ("art_svp_intersect_break: limiting x to %f, was %f, %s\n",
+		  x_ref, x, break_flags == ART_BREAK_LEFT ? "left" : "right");
+      x = x_ref;
+#endif
+    }
 
   /* I think we can count on min(x0, x1) <= x <= max(x0, x1) with sane
      arithmetic, but it might be worthwhile to check just in case. */
@@ -700,7 +714,7 @@ art_svp_intersect_break (ArtIntersectCtx *ctx, ArtActiveSeg *seg,
  **/
 static ArtActiveSeg *
 art_svp_intersect_add_point (ArtIntersectCtx *ctx, double x, double y,
-			     ArtActiveSeg *seg)
+			     ArtActiveSeg *seg, ArtBreakFlags break_flags)
 {
   ArtActiveSeg *left, *right;
   double x_min = x, x_max = x;
@@ -715,8 +729,8 @@ art_svp_intersect_add_point (ArtIntersectCtx *ctx, double x, double y,
     right = ctx->active_head;
   else
     right = left->right; 
-  left_live = (left != NULL);
-  right_live = (right != NULL);
+  left_live = (break_flags & ART_BREAK_LEFT) && (left != NULL);
+  right_live = (break_flags & ART_BREAK_RIGHT) && (right != NULL);
   while (left_live || right_live)
     {
       if (left_live)
@@ -729,7 +743,8 @@ art_svp_intersect_add_point (ArtIntersectCtx *ctx, double x, double y,
 	      d = x_min * left->a + y * left->b + left->c;
 	      if (d < EPSILON_A)
 		{
-		  new_x = art_svp_intersect_break (ctx, left, y);
+		  new_x = art_svp_intersect_break (ctx, left, x_min, y,
+						   ART_BREAK_LEFT);
 		  if (new_x > x_max)
 		    {
 		      x_max = new_x;
@@ -756,7 +771,8 @@ art_svp_intersect_add_point (ArtIntersectCtx *ctx, double x, double y,
 	      d = x_max * right->a + y * right->b + right->c;
 	      if (d > -EPSILON_A)
 		{
-		  new_x = art_svp_intersect_break (ctx, right, y);
+		  new_x = art_svp_intersect_break (ctx, right, x_max, y,
+						   ART_BREAK_RIGHT);
 		  if (new_x < x_min)
 		    {
 		      x_min = new_x;
@@ -774,6 +790,9 @@ art_svp_intersect_add_point (ArtIntersectCtx *ctx, double x, double y,
 	    right_live = ART_FALSE;
 	}
     }
+
+  /* Ascending order is guaranteed by break_flags. Thus, we don't need
+     to actually fix up non-ascending pairs. */
 
   /* Now, (left, right) defines an interval of segments broken. Sort
      into ascending x order. */
@@ -815,11 +834,6 @@ art_svp_intersect_swap_active (ArtIntersectCtx *ctx,
   left_seg->left = right_seg;
   right_seg->right = left_seg;
 }
-
-typedef enum {
-  ART_BREAK_LEFT = 1,
-  ART_BREAK_RIGHT = 2
-} ArtBreakFlags;
 
 /**
  * art_svp_intersect_test_cross: Test crossing of a pair of active segments.
@@ -881,7 +895,9 @@ art_svp_intersect_test_cross (ArtIntersectCtx *ctx,
 	return ART_FALSE;
       else if (d < EPSILON_A)
 	{
-	  double right_x1 = art_svp_intersect_break (ctx, right_seg, left_y1);
+	  double right_x1 = art_svp_intersect_break (ctx, right_seg,
+						     left_x1, left_y1,
+						     ART_BREAK_RIGHT);
 	  if (left_x1 <= right_x1)
 	    return ART_FALSE;
 	}
@@ -899,7 +915,9 @@ art_svp_intersect_test_cross (ArtIntersectCtx *ctx,
 	return ART_FALSE;
       else if (d > -EPSILON_A)
 	{
-	  double left_x1 = art_svp_intersect_break (ctx, left_seg, right_y1);
+	  double left_x1 = art_svp_intersect_break (ctx, left_seg,
+						    right_x1, right_y1,
+						    ART_BREAK_LEFT);
 	  if (left_x1 <= right_x1)
 	    return ART_FALSE;
 	}
@@ -975,7 +993,8 @@ art_svp_intersect_test_cross (ArtIntersectCtx *ctx,
 #endif
 	  art_svp_intersect_push_pt (ctx, right_seg, x, y);
 	  if ((break_flags & ART_BREAK_RIGHT) && right_seg->right != NULL)
-	    art_svp_intersect_add_point (ctx, x, y, right_seg->right);
+	    art_svp_intersect_add_point (ctx, x, y, right_seg->right,
+					 break_flags);
 	}
       else
 	{
@@ -1002,7 +1021,8 @@ art_svp_intersect_test_cross (ArtIntersectCtx *ctx,
 #endif
       art_svp_intersect_push_pt (ctx, left_seg, x, y);
       if ((break_flags & ART_BREAK_LEFT) && left_seg->left != NULL)
-	art_svp_intersect_add_point (ctx, x, y, left_seg->left);
+	art_svp_intersect_add_point (ctx, x, y, left_seg->left,
+				     break_flags);
     }
   else
     {
@@ -1014,9 +1034,9 @@ art_svp_intersect_test_cross (ArtIntersectCtx *ctx,
       art_svp_intersect_push_pt (ctx, left_seg, x, y);
       art_svp_intersect_push_pt (ctx, right_seg, x, y);
       if ((break_flags & ART_BREAK_LEFT) && left_seg->left != NULL)
-	art_svp_intersect_add_point (ctx, x, y, left_seg->left);
+	art_svp_intersect_add_point (ctx, x, y, left_seg->left, break_flags);
       if ((break_flags & ART_BREAK_RIGHT) && right_seg->right != NULL)
-	art_svp_intersect_add_point (ctx, x, y, right_seg->right);
+	art_svp_intersect_add_point (ctx, x, y, right_seg->right, break_flags);
     }
   return ART_FALSE;
 }
@@ -1146,6 +1166,16 @@ art_svp_intersect_horiz (ArtIntersectCtx *ctx, ArtActiveSeg *seg,
   hs->horiz_x = x0;
   hs->horiz_delta_wind = seg->delta_wind;
   hs->stack = NULL;
+
+  /* Ideally, the (a, b, c) values will never be read. However, there
+     are probably some tests remaining that don't check for _DEL
+     before evaluating the line equation. For those, these
+     initializations will at least prevent a UMR of the values, which
+     can crash on some platforms. */
+  hs->a = 0.0;
+  hs->b = 0.0;
+  hs->c = 0.0;
+
   seg->horiz_delta_wind -= seg->delta_wind;
 
   art_svp_intersect_add_horiz (ctx, hs);
@@ -1166,7 +1196,7 @@ art_svp_intersect_horiz (ArtIntersectCtx *ctx, ArtActiveSeg *seg,
 	    break;
 	  if (left->y0 != ctx->y && left->y1 != ctx->y)
 	    {
-	      art_svp_intersect_break (ctx, left, ctx->y);
+	      art_svp_intersect_break (ctx, left, x1, ctx->y, ART_BREAK_LEFT);
 	    }
 #ifdef VERBOSE
 	  art_dprint ("x0=%g > x1=%g, swapping %lx, %lx\n",
@@ -1176,7 +1206,7 @@ art_svp_intersect_horiz (ArtIntersectCtx *ctx, ArtActiveSeg *seg,
 	  if (first && left->right != NULL)
 	    {
 	      art_svp_intersect_test_cross (ctx, left, left->right,
-					    ART_BREAK_LEFT);
+					    ART_BREAK_RIGHT);
 	      first = ART_FALSE;
 	    }
 	}
@@ -1197,7 +1227,8 @@ art_svp_intersect_horiz (ArtIntersectCtx *ctx, ArtActiveSeg *seg,
 	    break;
 	  if (right->y0 != ctx->y && right->y1 != ctx->y)
 	    {
-	      art_svp_intersect_break (ctx, right, ctx->y);
+	      art_svp_intersect_break (ctx, right, x1, ctx->y,
+				       ART_BREAK_LEFT);
 	    }
 #ifdef VERBOSE
 	  art_dprint ("[right]x0=%g < x1=%g, swapping %lx, %lx\n",
@@ -1343,7 +1374,7 @@ art_svp_intersect_add_seg (ArtIntersectCtx *ctx, const ArtSVPSeg *in_seg)
       last = test;
     }
 
-  left = art_svp_intersect_add_point (ctx, x0, y0, last);
+  left = art_svp_intersect_add_point (ctx, x0, y0, last, ART_BREAK_LEFT | ART_BREAK_RIGHT);
   seg->left = left;
   if (left == NULL)
     {
@@ -1468,8 +1499,8 @@ art_svp_intersect_horiz_commit (ArtIntersectCtx *ctx)
 	  do
 	    {
 #ifdef VERBOSE
-	      art_dprint (" winding_number = %d += %d\n",
-		      winding_number, curs->delta_wind);
+	      art_dprint (" curs %lx: winding_number = %d += %d\n",
+		      (unsigned long)curs, winding_number, curs->delta_wind);
 #endif
 	      if (!(curs->flags & ART_ACTIVE_FLAGS_OUT) ||
 		  curs->wind_left != winding_number)
