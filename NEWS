@@ -1,1 +1,8 @@
-Please see http://www.levien.com/libart/ for the latest news.
+==============
+Version 2.3.17
+==============
+
+- Updated pkg-config files (Glynn Foster)
+- Distribute libart.def (Michael Meeks)
+- Add link to Mathieu's tutorial on libart (Kjartan)
+
