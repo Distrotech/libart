@@ -1,3 +1,11 @@
+2001-11-16  Alex Larsson  <alexl@redhat.com>
+
+	* art_rect.c (art_drect_svp_union, art_drect_svp):
+	Don't call art_drect_union() in these functions, since
+	it considers zero-width or zero-height svg segments to
+	be empty. This causes it to think i.e. rectangular svps
+	are empty.
+
 2001-11-07  Raph Levien  <raph@pixel.artofcode.com>
 
 	* art_svp_intersect.c (art_svp_intersect_horiz): Fixed important
