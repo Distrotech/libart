@@ -63,7 +63,7 @@ art_affine_point (ArtPoint *dst, const ArtPoint *src,
  * will be (to within roundoff error) the identity affine.
  **/
 void
-art_affine_invert (double dst_affine[6], const double src_affine[6])
+art_affine_invert (double dst[6], const double src[6])
 {
   double r_det;
 

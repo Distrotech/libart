@@ -1,149 +1,67 @@
-<STRUCT>
-<NAME>ArtVpathDash</NAME>
-</STRUCT>
-<STRUCT>
-<NAME>ArtVpathDash</NAME>
-struct ArtVpathDash {
-  double offset;
-  int n_dash;
-  double *dash;
-};
-</STRUCT>
 <FUNCTION>
-<NAME>art_vpath_dash</NAME>
-<RETURNS>ArtVpath  *</RETURNS>
-const ArtVpath *vpath, const ArtVpathDash *dash
-</FUNCTION>
-<FUNCTION>
-<NAME>art_vpath_from_svp</NAME>
-<RETURNS>ArtVpath  *</RETURNS>
-const ArtSVP *svp
-</FUNCTION>
-<ENUM>
-<NAME>ArtPathStrokeJoinType</NAME>
-typedef enum {
-  ART_PATH_STROKE_JOIN_MITER,
-  ART_PATH_STROKE_JOIN_ROUND,
-  ART_PATH_STROKE_JOIN_BEVEL
-} ArtPathStrokeJoinType;
-</ENUM>
-<ENUM>
-<NAME>ArtPathStrokeCapType</NAME>
-typedef enum {
-  ART_PATH_STROKE_CAP_BUTT,
-  ART_PATH_STROKE_CAP_ROUND,
-  ART_PATH_STROKE_CAP_SQUARE
-} ArtPathStrokeCapType;
-</ENUM>
-<FUNCTION>
-<NAME>art_svp_vpath_stroke</NAME>
-<RETURNS>ArtSVP  *</RETURNS>
-ArtVpath *vpath,ArtPathStrokeJoinType join,ArtPathStrokeCapType cap,double line_width,double miter_limit,double flatness
-</FUNCTION>
-<FUNCTION>
-<NAME>art_svp_vpath_stroke_raw</NAME>
-<RETURNS>ArtVpath  *</RETURNS>
-ArtVpath *vpath,ArtPathStrokeJoinType join,ArtPathStrokeCapType cap,double line_width,double miter_limit,double flatness
-</FUNCTION>
-<ENUM>
-<NAME>ArtWindRule</NAME>
-typedef enum {
-  ART_WIND_RULE_NONZERO,
-  ART_WIND_RULE_INTERSECT,
-  ART_WIND_RULE_ODDEVEN,
-  ART_WIND_RULE_POSITIVE
-} ArtWindRule;
-</ENUM>
-<FUNCTION>
-<NAME>art_svp_uncross</NAME>
-<RETURNS>ArtSVP  *</RETURNS>
-ArtSVP *vp
-</FUNCTION>
-<FUNCTION>
-<NAME>art_svp_rewind_uncrossed</NAME>
-<RETURNS>ArtSVP  *</RETURNS>
-ArtSVP *vp, ArtWindRule rule
-</FUNCTION>
-<FUNCTION>
-<NAME>art_rgb_affine</NAME>
+<NAME>art_affine_point</NAME>
 <RETURNS>void</RETURNS>
-art_u8 *dst, int x0, int y0, int x1, int y1, int dst_rowstride,const art_u8 *src,int src_width, int src_height, int src_rowstride,const double affine[6],ArtFilterLevel level,ArtAlphaGamma *alphagamma
+ArtPoint *dst, const ArtPoint *src,const double affine[6]
 </FUNCTION>
 <FUNCTION>
-<NAME>art_bezier_to_vec</NAME>
-<RETURNS>ArtPoint  *</RETURNS>
-double x0, double y0,double x1, double y1,double x2, double y2,double x3, double y3,ArtPoint *p,int level
-</FUNCTION>
-<FUNCTION>
-<NAME>art_bez_path_to_vec</NAME>
-<RETURNS>ArtVpath  *</RETURNS>
-const ArtBpath *bez, double flatness
-</FUNCTION>
-<FUNCTION>
-<NAME>art_svp_union</NAME>
-<RETURNS>ArtSVP  *</RETURNS>
-const ArtSVP *svp1, const ArtSVP *svp2
-</FUNCTION>
-<FUNCTION>
-<NAME>art_svp_intersect</NAME>
-<RETURNS>ArtSVP  *</RETURNS>
-const ArtSVP *svp1, const ArtSVP *svp2
-</FUNCTION>
-<FUNCTION>
-<NAME>art_svp_diff</NAME>
-<RETURNS>ArtSVP  *</RETURNS>
-const ArtSVP *svp1, const ArtSVP *svp2
-</FUNCTION>
-<FUNCTION>
-<NAME>art_svp_minus</NAME>
-<RETURNS>ArtSVP  *</RETURNS>
-const ArtSVP *svp1, const ArtSVP *svp2
-</FUNCTION>
-<FUNCTION>
-<NAME>art_gray_svp_aa</NAME>
+<NAME>art_affine_invert</NAME>
 <RETURNS>void</RETURNS>
-const ArtSVP *svp,int x0, int y0, int x1, int y1,art_u8 *buf, int rowstride
+double dst_affine[6], const double src_affine[6]
 </FUNCTION>
-<STRUCT>
-<NAME>ArtVpath</NAME>
-</STRUCT>
-<STRUCT>
-<NAME>ArtVpath</NAME>
-struct ArtVpath {
-  ArtPathcode code;
-  double x;
-  double y;
-};
-</STRUCT>
 <FUNCTION>
-<NAME>art_vpath_add_point</NAME>
+<NAME>art_affine_flip</NAME>
 <RETURNS>void</RETURNS>
-ArtVpath **p_vpath, int *pn_points, int *pn_points_max,ArtPathcode code, double x, double y
+double dst_affine[6], const double src_affine[6],int horz, int vert
 </FUNCTION>
 <FUNCTION>
-<NAME>art_vpath_new_circle</NAME>
-<RETURNS>ArtVpath  *</RETURNS>
-double x, double y, double r
-</FUNCTION>
-<FUNCTION>
-<NAME>art_vpath_affine_transform</NAME>
-<RETURNS>ArtVpath  *</RETURNS>
-const ArtVpath *src, const double matrix[6]
-</FUNCTION>
-<FUNCTION>
-<NAME>art_vpath_bbox_drect</NAME>
+<NAME>art_affine_to_string</NAME>
 <RETURNS>void</RETURNS>
-const ArtVpath *vec, ArtDRect *drect
+char str[128], const double src[6]
 </FUNCTION>
 <FUNCTION>
-<NAME>art_vpath_bbox_irect</NAME>
+<NAME>art_affine_multiply</NAME>
 <RETURNS>void</RETURNS>
-const ArtVpath *vec, ArtIRect *irect
+double dst[6],const double src1[6], const double src2[6]
 </FUNCTION>
 <FUNCTION>
-<NAME>art_vpath_perturb</NAME>
-<RETURNS>ArtVpath  *</RETURNS>
-ArtVpath *src
+<NAME>art_affine_identity</NAME>
+<RETURNS>void</RETURNS>
+double dst[6]
+</FUNCTION>
+<FUNCTION>
+<NAME>art_affine_scale</NAME>
+<RETURNS>void</RETURNS>
+double dst[6], double sx, double sy
+</FUNCTION>
+<FUNCTION>
+<NAME>art_affine_rotate</NAME>
+<RETURNS>void</RETURNS>
+double dst[6], double theta
+</FUNCTION>
+<FUNCTION>
+<NAME>art_affine_shear</NAME>
+<RETURNS>void</RETURNS>
+double dst[6], double theta
+</FUNCTION>
+<FUNCTION>
+<NAME>art_affine_translate</NAME>
+<RETURNS>void</RETURNS>
+double dst[6], double tx, double ty
+</FUNCTION>
+<FUNCTION>
+<NAME>art_affine_expansion</NAME>
+<RETURNS>double</RETURNS>
+const double src[6]
+</FUNCTION>
+<FUNCTION>
+<NAME>art_affine_rectilinear</NAME>
+<RETURNS>int</RETURNS>
+const double src[6]
+</FUNCTION>
+<FUNCTION>
+<NAME>art_affine_equal</NAME>
+<RETURNS>int</RETURNS>
+double matrix1[6], double matrix2[6]
 </FUNCTION>
 <STRUCT>
 <NAME>ArtAlphaGamma</NAME>
@@ -168,6 +86,27 @@ double gamma
 <RETURNS>void</RETURNS>
 ArtAlphaGamma *alphagamma
 </FUNCTION>
+<STRUCT>
+<NAME>ArtBpath</NAME>
+</STRUCT>
+<STRUCT>
+<NAME>ArtBpath</NAME>
+struct ArtBpath {
+  /*< public >*/
+  ArtPathcode code;
+  double x1;
+  double y1;
+  double x2;
+  double y2;
+  double x3;
+  double y3;
+};
+</STRUCT>
+<FUNCTION>
+<NAME>art_bpath_affine_transform</NAME>
+<RETURNS>ArtBpath  *</RETURNS>
+const ArtBpath *src, const double matrix[6]
+</FUNCTION>
 <ENUM>
 <NAME>ArtFilterLevel</NAME>
 typedef enum {
@@ -176,6 +115,84 @@ typedef enum {
   ART_FILTER_BILINEAR,
   ART_FILTER_HYPER
 } ArtFilterLevel;
+</ENUM>
+<FUNCTION>
+<NAME>art_gray_svp_aa</NAME>
+<RETURNS>void</RETURNS>
+const ArtSVP *svp,int x0, int y0, int x1, int y1,art_u8 *buf, int rowstride
+</FUNCTION>
+<MACRO>
+<NAME>art_alloc</NAME>
+#define art_alloc malloc
+</MACRO>
+<MACRO>
+<NAME>art_free</NAME>
+#define art_free free
+</MACRO>
+<MACRO>
+<NAME>art_realloc</NAME>
+#define art_realloc realloc
+</MACRO>
+<MACRO>
+<NAME>art_new</NAME>
+#define art_new(type, n) ((type *)art_alloc ((n) * sizeof(type)))
+</MACRO>
+<MACRO>
+<NAME>art_renew</NAME>
+#define art_renew(p, type, n) ((type *)art_realloc (p, (n) * sizeof(type)))
+</MACRO>
+<MACRO>
+<NAME>art_expand</NAME>
+#define art_expand(p, type, max) p = art_renew (p, type, max <<= 1)
+</MACRO>
+<TYPEDEF>
+<NAME>art_boolean</NAME>
+typedef int art_boolean;
+</TYPEDEF>
+<MACRO>
+<NAME>ART_FALSE</NAME>
+#define ART_FALSE 0
+</MACRO>
+<MACRO>
+<NAME>ART_TRUE</NAME>
+#define ART_TRUE 1
+</MACRO>
+<MACRO>
+<NAME>M_PI</NAME>
+#define M_PI 3.14159265358979323846
+</MACRO>
+<MACRO>
+<NAME>M_SQRT2</NAME>
+#define M_SQRT2         1.41421356237309504880  /* sqrt(2) */
+</MACRO>
+<MACRO>
+<NAME>ART_GNUC_PRINTF</NAME>
+#define ART_GNUC_PRINTF( format_idx, arg_idx )    \
+  __attribute__((format (printf, format_idx, arg_idx)))
+</MACRO>
+<MACRO>
+<NAME>ART_GNUC_PRINTF</NAME>
+#define ART_GNUC_PRINTF( format_idx, arg_idx )
+</MACRO>
+<FUNCTION>
+<NAME>art_die</NAME>
+<RETURNS>void</RETURNS>
+const char *fmt, ...) ART_GNUC_PRINTF (1, 2
+</FUNCTION>
+<FUNCTION>
+<NAME>art_warn</NAME>
+<RETURNS>void</RETURNS>
+const char *fmt, ...) ART_GNUC_PRINTF (1, 2
+</FUNCTION>
+<ENUM>
+<NAME>ArtPathcode</NAME>
+typedef enum {
+  ART_MOVETO,
+  ART_MOVETO_OPEN,
+  ART_CURVETO,
+  ART_LINETO,
+  ART_END
+} ArtPathcode;
 </ENUM>
 <USER_FUNCTION>
 <NAME>ArtDestroyNotify</NAME>
@@ -254,37 +271,6 @@ ArtPixBuf *pixbuf
 <RETURNS>ArtPixBuf  *</RETURNS>
 const ArtPixBuf *pixbuf
 </FUNCTION>
-<FUNCTION>
-<NAME>art_uta_from_irect</NAME>
-<RETURNS>ArtUta  *</RETURNS>
-ArtIRect *bbox
-</FUNCTION>
-<FUNCTION>
-<NAME>art_rgb_rgba_affine</NAME>
-<RETURNS>void</RETURNS>
-art_u8 *dst,int x0, int y0, int x1, int y1, int dst_rowstride,const art_u8 *src,int src_width, int src_height, int src_rowstride,const double affine[6],ArtFilterLevel level,ArtAlphaGamma *alphagamma
-</FUNCTION>
-<STRUCT>
-<NAME>ArtBpath</NAME>
-</STRUCT>
-<STRUCT>
-<NAME>ArtBpath</NAME>
-struct ArtBpath {
-  /*< public >*/
-  ArtPathcode code;
-  double x1;
-  double y1;
-  double x2;
-  double y2;
-  double x3;
-  double y3;
-};
-</STRUCT>
-<FUNCTION>
-<NAME>art_bpath_affine_transform</NAME>
-<RETURNS>ArtBpath  *</RETURNS>
-const ArtBpath *src, const double matrix[6]
-</FUNCTION>
 <STRUCT>
 <NAME>ArtPoint</NAME>
 </STRUCT>
@@ -295,99 +281,6 @@ struct ArtPoint {
   double x, y;
 };
 </STRUCT>
-<FUNCTION>
-<NAME>art_rgb_svp_aa</NAME>
-<RETURNS>void</RETURNS>
-const ArtSVP *svp,int x0, int y0, int x1, int y1,art_u32 fg_color, art_u32 bg_color,art_u8 *buf, int rowstride,ArtAlphaGamma *alphagamma
-</FUNCTION>
-<FUNCTION>
-<NAME>art_rgb_svp_alpha</NAME>
-<RETURNS>void</RETURNS>
-const ArtSVP *svp,int x0, int y0, int x1, int y1,art_u32 rgba,art_u8 *buf, int rowstride,ArtAlphaGamma *alphagamma
-</FUNCTION>
-<FUNCTION>
-<NAME>art_svp_from_vpath</NAME>
-<RETURNS>ArtSVP  *</RETURNS>
-ArtVpath *vpath
-</FUNCTION>
-<MACRO>
-<NAME>art_alloc</NAME>
-#define art_alloc malloc
-</MACRO>
-<MACRO>
-<NAME>art_free</NAME>
-#define art_free free
-</MACRO>
-<MACRO>
-<NAME>art_realloc</NAME>
-#define art_realloc realloc
-</MACRO>
-<MACRO>
-<NAME>art_new</NAME>
-#define art_new(type, n) ((type *)art_alloc ((n) * sizeof(type)))
-</MACRO>
-<MACRO>
-<NAME>art_renew</NAME>
-#define art_renew(p, type, n) ((type *)art_realloc (p, (n) * sizeof(type)))
-</MACRO>
-<MACRO>
-<NAME>art_expand</NAME>
-#define art_expand(p, type, max) p = art_renew (p, type, max <<= 1)
-</MACRO>
-<TYPEDEF>
-<NAME>art_boolean</NAME>
-typedef int art_boolean;
-</TYPEDEF>
-<MACRO>
-<NAME>ART_FALSE</NAME>
-#define ART_FALSE 0
-</MACRO>
-<MACRO>
-<NAME>ART_TRUE</NAME>
-#define ART_TRUE 1
-</MACRO>
-<MACRO>
-<NAME>M_PI</NAME>
-#define M_PI 3.14159265358979323846
-</MACRO>
-<MACRO>
-<NAME>M_SQRT2</NAME>
-#define M_SQRT2         1.41421356237309504880  /* sqrt(2) */
-</MACRO>
-<MACRO>
-<NAME>ART_GNUC_PRINTF</NAME>
-#define ART_GNUC_PRINTF( format_idx, arg_idx )    \
-  __attribute__((format (printf, format_idx, arg_idx)))
-</MACRO>
-<MACRO>
-<NAME>ART_GNUC_PRINTF</NAME>
-#define ART_GNUC_PRINTF( format_idx, arg_idx )
-</MACRO>
-<FUNCTION>
-<NAME>art_die</NAME>
-<RETURNS>void</RETURNS>
-const char *fmt, ...) ART_GNUC_PRINTF (1, 2
-</FUNCTION>
-<FUNCTION>
-<NAME>art_warn</NAME>
-<RETURNS>void</RETURNS>
-const char *fmt, ...) ART_GNUC_PRINTF (1, 2
-</FUNCTION>
-<STRUCT>
-<NAME>ArtSVPRenderAAStep</NAME>
-</STRUCT>
-<STRUCT>
-<NAME>ArtSVPRenderAAStep</NAME>
-struct ArtSVPRenderAAStep {
-  int x;
-  int delta; /* stored with 16 fractional bits */
-};
-</STRUCT>
-<FUNCTION>
-<NAME>art_svp_render_aa</NAME>
-<RETURNS>void</RETURNS>
-const ArtSVP *svp,int x0, int y0, int x1, int y1,void (*callback) (void *callback_data,int y,int start,ArtSVPRenderAAStep *steps, int n_steps),void *callback_data
-</FUNCTION>
 <STRUCT>
 <NAME>ArtDRect</NAME>
 </STRUCT>
@@ -459,100 +352,20 @@ ArtDRect *dst, const ArtDRect *src,const double matrix[6]
 ArtIRect *dst, ArtDRect *src
 </FUNCTION>
 <FUNCTION>
-<NAME>art_affine_point</NAME>
+<NAME>art_drect_svp</NAME>
 <RETURNS>void</RETURNS>
-ArtPoint *dst, const ArtPoint *src,const double affine[6]
+ArtDRect *bbox, const ArtSVP *svp
 </FUNCTION>
 <FUNCTION>
-<NAME>art_affine_invert</NAME>
+<NAME>art_drect_svp_union</NAME>
 <RETURNS>void</RETURNS>
-double dst_affine[6], const double src_affine[6]
+ArtDRect *bbox, const ArtSVP *svp
 </FUNCTION>
 <FUNCTION>
-<NAME>art_affine_flip</NAME>
-<RETURNS>void</RETURNS>
-double dst_affine[6], const double src_affine[6],int horz, int vert
+<NAME>art_rect_list_from_uta</NAME>
+<RETURNS>ArtIRect  *</RETURNS>
+ArtUta *uta, int max_width, int max_height,int *p_nrects
 </FUNCTION>
-<FUNCTION>
-<NAME>art_affine_to_string</NAME>
-<RETURNS>void</RETURNS>
-char str[128], const double src[6]
-</FUNCTION>
-<FUNCTION>
-<NAME>art_affine_multiply</NAME>
-<RETURNS>void</RETURNS>
-double dst[6],const double src1[6], const double src2[6]
-</FUNCTION>
-<FUNCTION>
-<NAME>art_affine_identity</NAME>
-<RETURNS>void</RETURNS>
-double dst[6]
-</FUNCTION>
-<FUNCTION>
-<NAME>art_affine_scale</NAME>
-<RETURNS>void</RETURNS>
-double dst[6], double sx, double sy
-</FUNCTION>
-<FUNCTION>
-<NAME>art_affine_rotate</NAME>
-<RETURNS>void</RETURNS>
-double dst[6], double theta
-</FUNCTION>
-<FUNCTION>
-<NAME>art_affine_shear</NAME>
-<RETURNS>void</RETURNS>
-double dst[6], double theta
-</FUNCTION>
-<FUNCTION>
-<NAME>art_affine_translate</NAME>
-<RETURNS>void</RETURNS>
-double dst[6], double tx, double ty
-</FUNCTION>
-<FUNCTION>
-<NAME>art_affine_expansion</NAME>
-<RETURNS>double</RETURNS>
-const double src[6]
-</FUNCTION>
-<FUNCTION>
-<NAME>art_affine_rectilinear</NAME>
-<RETURNS>int</RETURNS>
-const double src[6]
-</FUNCTION>
-<FUNCTION>
-<NAME>art_affine_equal</NAME>
-<RETURNS>int</RETURNS>
-double matrix1[6], double matrix2[6]
-</FUNCTION>
-<FUNCTION>
-<NAME>art_svp_point_wind</NAME>
-<RETURNS>int</RETURNS>
-ArtSVP *svp, double x, double y
-</FUNCTION>
-<FUNCTION>
-<NAME>art_svp_point_dist</NAME>
-<RETURNS>double</RETURNS>
-ArtSVP *svp, double x, double y
-</FUNCTION>
-<FUNCTION>
-<NAME>art_rgb_pixbuf_affine</NAME>
-<RETURNS>void</RETURNS>
-art_u8 *dst,int x0, int y0, int x1, int y1, int dst_rowstride,const ArtPixBuf *pixbuf,const double affine[6],ArtFilterLevel level,ArtAlphaGamma *alphagamma
-</FUNCTION>
-<FUNCTION>
-<NAME>art_rgb_affine_run</NAME>
-<RETURNS>void</RETURNS>
-int *p_x0, int *p_x1, int y,int src_width, int src_height,const double affine[6]
-</FUNCTION>
-<ENUM>
-<NAME>ArtPathcode</NAME>
-typedef enum {
-  ART_MOVETO,
-  ART_MOVETO_OPEN,
-  ART_CURVETO,
-  ART_LINETO,
-  ART_END
-} ArtPathcode;
-</ENUM>
 <FUNCTION>
 <NAME>art_rgb_fill_run</NAME>
 <RETURNS>void</RETURNS>
@@ -562,6 +375,41 @@ art_u8 *buf, art_u8 r, art_u8 g, art_u8 b, int n
 <NAME>art_rgb_run_alpha</NAME>
 <RETURNS>void</RETURNS>
 art_u8 *buf, art_u8 r, art_u8 g, art_u8 b, int alpha,int n
+</FUNCTION>
+<FUNCTION>
+<NAME>art_rgb_affine</NAME>
+<RETURNS>void</RETURNS>
+art_u8 *dst, int x0, int y0, int x1, int y1, int dst_rowstride,const art_u8 *src,int src_width, int src_height, int src_rowstride,const double affine[6],ArtFilterLevel level,ArtAlphaGamma *alphagamma
+</FUNCTION>
+<FUNCTION>
+<NAME>art_rgb_affine_run</NAME>
+<RETURNS>void</RETURNS>
+int *p_x0, int *p_x1, int y,int src_width, int src_height,const double affine[6]
+</FUNCTION>
+<FUNCTION>
+<NAME>art_rgb_bitmap_affine</NAME>
+<RETURNS>void</RETURNS>
+art_u8 *dst,int x0, int y0, int x1, int y1, int dst_rowstride,const art_u8 *src,int src_width, int src_height, int src_rowstride,art_u32 rgba,const double affine[6],ArtFilterLevel level,ArtAlphaGamma *alphagamma
+</FUNCTION>
+<FUNCTION>
+<NAME>art_rgb_pixbuf_affine</NAME>
+<RETURNS>void</RETURNS>
+art_u8 *dst,int x0, int y0, int x1, int y1, int dst_rowstride,const ArtPixBuf *pixbuf,const double affine[6],ArtFilterLevel level,ArtAlphaGamma *alphagamma
+</FUNCTION>
+<FUNCTION>
+<NAME>art_rgb_rgba_affine</NAME>
+<RETURNS>void</RETURNS>
+art_u8 *dst,int x0, int y0, int x1, int y1, int dst_rowstride,const art_u8 *src,int src_width, int src_height, int src_rowstride,const double affine[6],ArtFilterLevel level,ArtAlphaGamma *alphagamma
+</FUNCTION>
+<FUNCTION>
+<NAME>art_rgb_svp_aa</NAME>
+<RETURNS>void</RETURNS>
+const ArtSVP *svp,int x0, int y0, int x1, int y1,art_u32 fg_color, art_u32 bg_color,art_u8 *buf, int rowstride,ArtAlphaGamma *alphagamma
+</FUNCTION>
+<FUNCTION>
+<NAME>art_rgb_svp_alpha</NAME>
+<RETURNS>void</RETURNS>
+const ArtSVP *svp,int x0, int y0, int x1, int y1,art_u32 rgba,art_u8 *buf, int rowstride,ArtAlphaGamma *alphagamma
 </FUNCTION>
 <STRUCT>
 <NAME>ArtSVP</NAME>
@@ -599,6 +447,101 @@ ArtSVP *svp
 <NAME>art_svp_seg_compare</NAME>
 <RETURNS>int</RETURNS>
 const void *s1, const void *s2
+</FUNCTION>
+<FUNCTION>
+<NAME>art_svp_union</NAME>
+<RETURNS>ArtSVP  *</RETURNS>
+const ArtSVP *svp1, const ArtSVP *svp2
+</FUNCTION>
+<FUNCTION>
+<NAME>art_svp_intersect</NAME>
+<RETURNS>ArtSVP  *</RETURNS>
+const ArtSVP *svp1, const ArtSVP *svp2
+</FUNCTION>
+<FUNCTION>
+<NAME>art_svp_diff</NAME>
+<RETURNS>ArtSVP  *</RETURNS>
+const ArtSVP *svp1, const ArtSVP *svp2
+</FUNCTION>
+<FUNCTION>
+<NAME>art_svp_minus</NAME>
+<RETURNS>ArtSVP  *</RETURNS>
+const ArtSVP *svp1, const ArtSVP *svp2
+</FUNCTION>
+<FUNCTION>
+<NAME>art_svp_point_wind</NAME>
+<RETURNS>int</RETURNS>
+ArtSVP *svp, double x, double y
+</FUNCTION>
+<FUNCTION>
+<NAME>art_svp_point_dist</NAME>
+<RETURNS>double</RETURNS>
+ArtSVP *svp, double x, double y
+</FUNCTION>
+<STRUCT>
+<NAME>ArtSVPRenderAAStep</NAME>
+</STRUCT>
+<STRUCT>
+<NAME>ArtSVPRenderAAStep</NAME>
+struct ArtSVPRenderAAStep {
+  int x;
+  int delta; /* stored with 16 fractional bits */
+};
+</STRUCT>
+<FUNCTION>
+<NAME>art_svp_render_aa</NAME>
+<RETURNS>void</RETURNS>
+const ArtSVP *svp,int x0, int y0, int x1, int y1,void (*callback) (void *callback_data,int y,int start,ArtSVPRenderAAStep *steps, int n_steps),void *callback_data
+</FUNCTION>
+<FUNCTION>
+<NAME>art_svp_from_vpath</NAME>
+<RETURNS>ArtSVP  *</RETURNS>
+ArtVpath *vpath
+</FUNCTION>
+<ENUM>
+<NAME>ArtPathStrokeJoinType</NAME>
+typedef enum {
+  ART_PATH_STROKE_JOIN_MITER,
+  ART_PATH_STROKE_JOIN_ROUND,
+  ART_PATH_STROKE_JOIN_BEVEL
+} ArtPathStrokeJoinType;
+</ENUM>
+<ENUM>
+<NAME>ArtPathStrokeCapType</NAME>
+typedef enum {
+  ART_PATH_STROKE_CAP_BUTT,
+  ART_PATH_STROKE_CAP_ROUND,
+  ART_PATH_STROKE_CAP_SQUARE
+} ArtPathStrokeCapType;
+</ENUM>
+<FUNCTION>
+<NAME>art_svp_vpath_stroke</NAME>
+<RETURNS>ArtSVP  *</RETURNS>
+ArtVpath *vpath,ArtPathStrokeJoinType join,ArtPathStrokeCapType cap,double line_width,double miter_limit,double flatness
+</FUNCTION>
+<FUNCTION>
+<NAME>art_svp_vpath_stroke_raw</NAME>
+<RETURNS>ArtVpath  *</RETURNS>
+ArtVpath *vpath,ArtPathStrokeJoinType join,ArtPathStrokeCapType cap,double line_width,double miter_limit,double flatness
+</FUNCTION>
+<ENUM>
+<NAME>ArtWindRule</NAME>
+typedef enum {
+  ART_WIND_RULE_NONZERO,
+  ART_WIND_RULE_INTERSECT,
+  ART_WIND_RULE_ODDEVEN,
+  ART_WIND_RULE_POSITIVE
+} ArtWindRule;
+</ENUM>
+<FUNCTION>
+<NAME>art_svp_uncross</NAME>
+<RETURNS>ArtSVP  *</RETURNS>
+ArtSVP *vp
+</FUNCTION>
+<FUNCTION>
+<NAME>art_svp_rewind_uncrossed</NAME>
+<RETURNS>ArtSVP  *</RETURNS>
+ArtSVP *vp, ArtWindRule rule
 </FUNCTION>
 <TYPEDEF>
 <NAME>ArtUtaBbox</NAME>
@@ -662,6 +605,21 @@ int x0, int y0, int x1, int y1
 ArtUta *uta
 </FUNCTION>
 <FUNCTION>
+<NAME>art_uta_union</NAME>
+<RETURNS>ArtUta  *</RETURNS>
+ArtUta *uta1, ArtUta *uta2
+</FUNCTION>
+<FUNCTION>
+<NAME>art_uta_from_irect</NAME>
+<RETURNS>ArtUta  *</RETURNS>
+ArtIRect *bbox
+</FUNCTION>
+<FUNCTION>
+<NAME>art_uta_from_svp</NAME>
+<RETURNS>ArtUta  *</RETURNS>
+const ArtSVP *svp
+</FUNCTION>
+<FUNCTION>
 <NAME>art_uta_from_vpath</NAME>
 <RETURNS>ArtUta  *</RETURNS>
 const ArtVpath *vec
@@ -671,33 +629,103 @@ const ArtVpath *vec
 <RETURNS>void</RETURNS>
 ArtUta *uta, double x0, double y0, double x1, double y1,int *rbuf, int rbuf_rowstride
 </FUNCTION>
+<STRUCT>
+<NAME>ArtVpath</NAME>
+</STRUCT>
+<STRUCT>
+<NAME>ArtVpath</NAME>
+struct ArtVpath {
+  ArtPathcode code;
+  double x;
+  double y;
+};
+</STRUCT>
 <FUNCTION>
-<NAME>art_rgb_bitmap_affine</NAME>
+<NAME>art_vpath_add_point</NAME>
 <RETURNS>void</RETURNS>
-art_u8 *dst,int x0, int y0, int x1, int y1, int dst_rowstride,const art_u8 *src,int src_width, int src_height, int src_rowstride,art_u32 rgba,const double affine[6],ArtFilterLevel level,ArtAlphaGamma *alphagamma
+ArtVpath **p_vpath, int *pn_points, int *pn_points_max,ArtPathcode code, double x, double y
 </FUNCTION>
 <FUNCTION>
-<NAME>art_uta_union</NAME>
-<RETURNS>ArtUta  *</RETURNS>
-ArtUta *uta1, ArtUta *uta2
+<NAME>art_vpath_new_circle</NAME>
+<RETURNS>ArtVpath  *</RETURNS>
+double x, double y, double r
 </FUNCTION>
 <FUNCTION>
-<NAME>art_uta_from_svp</NAME>
-<RETURNS>ArtUta  *</RETURNS>
+<NAME>art_vpath_affine_transform</NAME>
+<RETURNS>ArtVpath  *</RETURNS>
+const ArtVpath *src, const double matrix[6]
+</FUNCTION>
+<FUNCTION>
+<NAME>art_vpath_bbox_drect</NAME>
+<RETURNS>void</RETURNS>
+const ArtVpath *vec, ArtDRect *drect
+</FUNCTION>
+<FUNCTION>
+<NAME>art_vpath_bbox_irect</NAME>
+<RETURNS>void</RETURNS>
+const ArtVpath *vec, ArtIRect *irect
+</FUNCTION>
+<FUNCTION>
+<NAME>art_vpath_perturb</NAME>
+<RETURNS>ArtVpath  *</RETURNS>
+ArtVpath *src
+</FUNCTION>
+<FUNCTION>
+<NAME>art_bezier_to_vec</NAME>
+<RETURNS>ArtPoint  *</RETURNS>
+double x0, double y0,double x1, double y1,double x2, double y2,double x3, double y3,ArtPoint *p,int level
+</FUNCTION>
+<FUNCTION>
+<NAME>art_bez_path_to_vec</NAME>
+<RETURNS>ArtVpath  *</RETURNS>
+const ArtBpath *bez, double flatness
+</FUNCTION>
+<STRUCT>
+<NAME>ArtVpathDash</NAME>
+</STRUCT>
+<STRUCT>
+<NAME>ArtVpathDash</NAME>
+struct ArtVpathDash {
+  double offset;
+  int n_dash;
+  double *dash;
+};
+</STRUCT>
+<FUNCTION>
+<NAME>art_vpath_dash</NAME>
+<RETURNS>ArtVpath  *</RETURNS>
+const ArtVpath *vpath, const ArtVpathDash *dash
+</FUNCTION>
+<FUNCTION>
+<NAME>art_vpath_from_svp</NAME>
+<RETURNS>ArtVpath  *</RETURNS>
 const ArtSVP *svp
 </FUNCTION>
-<FUNCTION>
-<NAME>art_drect_svp</NAME>
-<RETURNS>void</RETURNS>
-ArtDRect *bbox, const ArtSVP *svp
-</FUNCTION>
-<FUNCTION>
-<NAME>art_drect_svp_union</NAME>
-<RETURNS>void</RETURNS>
-ArtDRect *bbox, const ArtSVP *svp
-</FUNCTION>
-<FUNCTION>
-<NAME>art_rect_list_from_uta</NAME>
-<RETURNS>ArtIRect  *</RETURNS>
-ArtUta *uta, int max_width, int max_height,int *p_nrects
-</FUNCTION>
+<MACRO>
+<NAME>ART_SIZEOF_CHAR</NAME>
+#define ART_SIZEOF_CHAR 1
+</MACRO>
+<MACRO>
+<NAME>ART_SIZEOF_SHORT</NAME>
+#define ART_SIZEOF_SHORT 2
+</MACRO>
+<MACRO>
+<NAME>ART_SIZEOF_INT</NAME>
+#define ART_SIZEOF_INT 4
+</MACRO>
+<MACRO>
+<NAME>ART_SIZEOF_LONG</NAME>
+#define ART_SIZEOF_LONG 4
+</MACRO>
+<TYPEDEF>
+<NAME>art_u8</NAME>
+typedef unsigned char art_u8;
+</TYPEDEF>
+<TYPEDEF>
+<NAME>art_u16</NAME>
+typedef unsigned short art_u16;
+</TYPEDEF>
+<TYPEDEF>
+<NAME>art_u32</NAME>
+typedef unsigned int art_u32;
+</TYPEDEF>
