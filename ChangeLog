@@ -1,3 +1,31 @@
+Wed Dec  9 23:36:35 1998  Raph Levien  <raph@gimp.org>
+
+	* art_vpath.c (art_vpath_perturb): Made it deal correctly
+	with closed paths (the MOVETO and closing LINETO have to
+	agree).
+
+	* art_svp_wind.c: Made the bbox calculations for the resulting
+	svp's correct.
+
+	* art_svp.h:
+	* art_svp.c: The art_svp_seg_compare function moved here, because
+	it's required in art_svp_ops.
+
+	* art_svp.c (art_svp_add_segment): It now does bbox calculations.
+
+	* art_svp_ops.h: 
+	* art_svp_ops.c: Added. Populated with basic union, intersection,
+	and diff functions.
+
+	* art_vpath_svp.h: 
+	* art_vpath_svp.c: Added. Populated with a function to convert
+	from sorted to unsorted vector paths
+
+	* Makefile.am: added the new files
+
+	* testuta.c: exercise the stroke outline and vector path
+	operations.
+
 1998-12-08  Herbert Valerio Riedel  <hvr@hvrlab.ml.org>
 
 	* art_svp_wind.c: added #include <string.h> for memcpy()

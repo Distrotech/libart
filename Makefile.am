@@ -17,8 +17,10 @@ libart_lgpl_la_SOURCES = \
 	art_rgb.c \
 	art_rgb_svp.c \
 	art_svp.c \
+	art_svp_ops.c \
 	art_svp_render_aa.c \
 	art_svp_vpath.c \
+	art_svp_vpath_stroke.c \
 	art_svp_wind.c \
 	art_svp_wind.h \
 	art_uta.c \
@@ -26,7 +28,8 @@ libart_lgpl_la_SOURCES = \
 	art_uta_rect.c \
 	art_uta_vpath.c \
 	art_vpath.c \
-	art_vpath_bpath.c
+	art_vpath_bpath.c \
+	art_vpath_svp.c
 
 libart_lgpl_la_LDFLAGS = -version-info @LIBART_VERSION_INFO@
 
@@ -42,14 +45,17 @@ libart_lgplinc_HEADERS = \
 	art_rgb.h \
 	art_rgb_svp.h \
 	art_svp.h \
+	art_svp_ops.h \
 	art_svp_render_aa.h \
 	art_svp_vpath.h \
+	art_svp_vpath_stroke.h \
 	art_uta.h \
 	art_uta_ops.h \
 	art_uta_rect.h \
 	art_uta_vpath.h \
 	art_vpath.h \
-	art_vpath_bpath.h
+	art_vpath_bpath.h \
+	art_vpath_svp.h
 
 INCLUDES = -I$(top_srcdir)/..
 

@@ -33,22 +33,49 @@
 int
 art_svp_add_segment (ArtSVP **p_vp, int *pn_segs_max,
 		     int **pn_points_max,
-		     int n_points, int dir, ArtPoint *points)
+		     int n_points, int dir, ArtPoint *points,
+		     ArtDRect *bbox)
 {
   int seg_num;
+  ArtSVP *svp;
+  ArtSVPSeg *seg;
 
-  seg_num = (*p_vp)->n_segs++;
+  svp = *p_vp;
+  seg_num = svp->n_segs++;
   if (*pn_segs_max == seg_num)
     {
       *pn_segs_max <<= 1;
-      *p_vp = (ArtSVP *)art_realloc (*p_vp, sizeof(ArtSVP) +
-				(*pn_segs_max - 1) * sizeof(ArtSVPSeg));
+      svp = (ArtSVP *)art_realloc (svp, sizeof(ArtSVP) +
+				   (*pn_segs_max - 1) * sizeof(ArtSVPSeg));
+      *p_vp = svp;
       if (pn_points_max != NULL)
 	*pn_points_max = art_renew (*pn_points_max, int, *pn_segs_max);
     }
-  (*p_vp)->segs[seg_num].n_points = n_points;
-  (*p_vp)->segs[seg_num].dir = dir;
-  (*p_vp)->segs[seg_num].points = points;
+  seg = &svp->segs[seg_num];
+  seg->n_points = n_points;
+  seg->dir = dir;
+  seg->points = points;
+  if (bbox)
+    seg->bbox = *bbox;
+  else if (points)
+    {
+      double x_min, x_max;
+      int i;
+
+      x_min = x_max = points[0].x;
+      for (i = 1; i < n_points; i++)
+	{
+	  if (x_min > points[i].x)
+	    x_min = points[i].x;
+	  if (x_max < points[i].x)
+	    x_max = points[i].x;
+	}
+      seg->bbox.x0 = x_min;
+      seg->bbox.y0 = points[0].y;
+      
+      seg->bbox.x1 = x_max;
+      seg->bbox.y1 = points[n_points - 1].y;
+    }
   return seg_num;
 }
 
@@ -61,5 +88,24 @@ art_svp_free (ArtSVP *svp)
   for (i = 0; i < n_segs; i++)
     art_free (svp->segs[i].points);
   art_free (svp);
+}
+
+#define EPSILON 1e-6
+
+int
+art_svp_seg_compare (const void *s1, const void *s2)
+{
+  const ArtSVPSeg *seg1 = s1;
+  const ArtSVPSeg *seg2 = s2;
+
+  if (seg1->points[0].y - EPSILON > seg2->points[0].y) return 1;
+  else if (seg1->points[0].y + EPSILON < seg2->points[0].y) return -1;
+  else if (seg1->points[0].x - EPSILON > seg2->points[0].x) return 1;
+  else if (seg1->points[0].x + EPSILON < seg2->points[0].x) return -1;
+  else if ((seg1->points[1].x - seg1->points[0].x) *
+	   (seg2->points[1].y - seg2->points[0].y) -
+	   (seg1->points[1].y - seg1->points[0].y) *
+	   (seg2->points[1].x - seg2->points[0].x) > 0) return 1;
+  else return -1;
 }
 

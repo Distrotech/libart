@@ -26,13 +26,18 @@
 
 #include <stdio.h> /* for printf of debugging info */
 #include <string.h> /* for memcpy */
+#include <math.h>
 #include "art_misc.h"
 
 #include "art_rect.h"
 #include "art_svp.h"
 #include "art_svp_wind.h"
 
+#define noVERBOSE
+
 #define PT_EQ(p1,p2) ((p1).x == (p2).x && (p1).y == (p2).y)
+
+#define PT_CLOSE(p1,p2) (fabs ((p1).x - (p2).x) < 1e-6 && fabs ((p1).y - (p2).y) < 1e-6)
 
 /* return nonzero and set *p to the intersection point if the lines
    z0-z1 and z2-z3 intersect each other. */
@@ -48,6 +53,11 @@ intersect_lines (ArtPoint z0, ArtPoint z1, ArtPoint z2, ArtPoint z3,
   /* if the vectors share an endpoint, they don't intersect */
   if (PT_EQ (z0, z2) || PT_EQ (z0, z3) || PT_EQ (z1, z2) || PT_EQ (z1, z3))
     return 0;
+
+#if 0
+  if (PT_CLOSE (z0, z2) || PT_CLOSE (z0, z3) || PT_CLOSE (z1, z2) || PT_CLOSE (z1, z3))
+    return 0;
+#endif
 
   /* find line equations ax + by + c = 0 */
   a01 = z0.y - z1.y;
@@ -525,29 +535,31 @@ intersect_neighbors (int i, int *active_segs,
    removed.
 */
 static void
-svp_add_point (ArtSVP *vp, int *n_points_max,
+svp_add_point (ArtSVP *svp, int *n_points_max,
 	       ArtPoint p, int *seg_map, int *active_segs, int n_active_segs,
 	       int i)
 {
   int asi, asi_left, asi_right;
   int n_points, n_points_left, n_points_right;
+  ArtSVPSeg *seg;
 
   asi = seg_map[active_segs[i]];
-  n_points = vp->segs[asi].n_points;
+  seg = &svp->segs[asi];
+  n_points = seg->n_points;
   /* find out whether neighboring segments share a point */
   if (i > 0)
     {
       asi_left = seg_map[active_segs[i - 1]];
-      n_points_left = vp->segs[asi_left].n_points;
+      n_points_left = svp->segs[asi_left].n_points;
       if (n_points_left > 1 && 
-	  PT_EQ (vp->segs[asi_left].points[n_points_left - 2],
-		 vp->segs[asi].points[n_points - 1]))
+	  PT_EQ (svp->segs[asi_left].points[n_points_left - 2],
+		 svp->segs[asi].points[n_points - 1]))
 	{
 	  /* ok, new vector shares a top point with segment to the left -
 	     now, check that it satisfies ordering invariant */
-	  if (x_order (vp->segs[asi_left].points[n_points_left - 2],
-		       vp->segs[asi_left].points[n_points_left - 1],
-		       vp->segs[asi].points[n_points - 1],
+	  if (x_order (svp->segs[asi_left].points[n_points_left - 2],
+		       svp->segs[asi_left].points[n_points_left - 1],
+		       svp->segs[asi].points[n_points - 1],
 		       p) < 1)
 
 	    {
@@ -561,16 +573,16 @@ svp_add_point (ArtSVP *vp, int *n_points_max,
   if (i + 1 < n_active_segs)
     {
       asi_right = seg_map[active_segs[i + 1]];
-      n_points_right = vp->segs[asi_right].n_points;
+      n_points_right = svp->segs[asi_right].n_points;
       if (n_points_right > 1 && 
-	  PT_EQ (vp->segs[asi_right].points[n_points_right - 2],
-		 vp->segs[asi].points[n_points - 1]))
+	  PT_EQ (svp->segs[asi_right].points[n_points_right - 2],
+		 svp->segs[asi].points[n_points - 1]))
 	{
 	  /* ok, new vector shares a top point with segment to the right -
 	     now, check that it satisfies ordering invariant */
-	  if (x_order (vp->segs[asi_right].points[n_points_right - 2],
-		       vp->segs[asi_right].points[n_points_right - 1],
-		       vp->segs[asi].points[n_points - 1],
+	  if (x_order (svp->segs[asi_right].points[n_points_right - 2],
+		       svp->segs[asi_right].points[n_points_right - 1],
+		       svp->segs[asi].points[n_points - 1],
 		       p) > -1)
 	    {
 #ifdef VERBOSE
@@ -580,9 +592,14 @@ svp_add_point (ArtSVP *vp, int *n_points_max,
 	}
     }
   if (n_points_max[asi] == n_points)
-    art_expand (vp->segs[asi].points, ArtPoint, n_points_max[asi]);
-  vp->segs[asi].points[n_points] = p;
-  vp->segs[asi].n_points++;
+    art_expand (seg->points, ArtPoint, n_points_max[asi]);
+  seg->points[n_points] = p;
+  if (p.x < seg->bbox.x0)
+    seg->bbox.x0 = p.x;
+  else if (p.x > seg->bbox.x1)
+    seg->bbox.x1 = p.x;
+  seg->bbox.y1 = p.y;
+  seg->n_points++;
 }
 
 #if 0
@@ -693,6 +710,7 @@ fix_crossing (int start, int end, int *active_segs, int n_active_segs,
 #ifdef VERBOSE
   int k;
 #endif
+  ArtPoint *pts;
 
 #ifdef VERBOSE
   printf ("fix_crossing: [%d..%d)", start, end);
@@ -709,76 +727,78 @@ fix_crossing (int start, int end, int *active_segs, int n_active_segs,
 
       asi = active_segs[i];
       if (cursor[asi] < vp->segs[asi].n_points - 1) {
-      p0i = ips[asi][0];
-      if (n_ips[asi] == 1)
-	p1i = vp->segs[asi].points[cursor[asi] + 1];
-      else
-	p1i = ips[asi][1];
+	p0i = ips[asi][0];
+	if (n_ips[asi] == 1)
+	  p1i = vp->segs[asi].points[cursor[asi] + 1];
+	else
+	  p1i = ips[asi][1];
 
-      for (j = i - 1; j >= start; j--)
-	{
-	  asj = active_segs[j];
-	  if (cursor[asj] < vp->segs[asj].n_points - 1)
-	    {
-	      p0j = ips[asj][0];
-	      if (n_ips[asj] == 1)
-		p1j = vp->segs[asj].points[cursor[asj] + 1];
-	      else
-		p1j = ips[asj][1];
+	for (j = i - 1; j >= start; j--)
+	  {
+	    asj = active_segs[j];
+	    if (cursor[asj] < vp->segs[asj].n_points - 1)
+	      {
+		p0j = ips[asj][0];
+		if (n_ips[asj] == 1)
+		  p1j = vp->segs[asj].points[cursor[asj] + 1];
+		else
+		  p1j = ips[asj][1];
 
-	      /* we _hope_ p0i = p0j */
-	      if (x_order_2 (p0j, p1j, p0i, p1i) == -1)
-		break;
-	    }
-	}
+		/* we _hope_ p0i = p0j */
+		if (x_order_2 (p0j, p1j, p0i, p1i) == -1)
+		  break;
+	      }
+	  }
 
-      target = j + 1;
-      /* target is where active_seg[i] _should_ be in active_segs */
+	target = j + 1;
+	/* target is where active_seg[i] _should_ be in active_segs */
       
-      if (target != i)
-	{
-	  swap = 1;
+	if (target != i)
+	  {
+	    swap = 1;
 
 #ifdef VERBOSE
-	  printf ("fix_crossing: at %i should be %i\n", i, target);
+	    printf ("fix_crossing: at %i should be %i\n", i, target);
 #endif
 
-	  /* let's close off all relevant segments */
-	  for (j = i; j >= target; j--)
-	    {
-	      asi = active_segs[j];
-	      /* First conjunct: this isn't the last point in the original
-		 segment.
+	    /* let's close off all relevant segments */
+	    for (j = i; j >= target; j--)
+	      {
+		asi = active_segs[j];
+		/* First conjunct: this isn't the last point in the original
+		   segment.
 
-		 Second conjunct: this isn't the first point in the new
-		 segment (i.e. already broken).
-	      */
-	      if (cursor[asi] < vp->segs[asi].n_points - 1 &&
-		  (*p_new_vp)->segs[seg_map[asi]].n_points != 1)
-		{
-		  int seg_num;
-      		  /* so break here */
+		   Second conjunct: this isn't the first point in the new
+		   segment (i.e. already broken).
+		*/
+		if (cursor[asi] < vp->segs[asi].n_points - 1 &&
+		    (*p_new_vp)->segs[seg_map[asi]].n_points != 1)
+		  {
+		    int seg_num;
+		    /* so break here */
 #ifdef VERBOSE
-		  printf ("closing off %d\n", j);
+		    printf ("closing off %d\n", j);
 #endif
 
-		  seg_num = art_svp_add_segment (p_new_vp, pn_segs_max,
-						 pn_points_max,
-						 1, vp->segs[asi].dir,
-						 art_new (ArtPoint, 16));
-		  (*pn_points_max)[seg_num] = 16;
-		  (*p_new_vp)->segs[seg_num].points[0] = ips[asi][0];
-		  seg_map[asi] = seg_num;
-		}
-	    }
+		    pts = art_new (ArtPoint, 16);
+		    pts[0] = ips[asi][0];
+		    seg_num = art_svp_add_segment (p_new_vp, pn_segs_max,
+						   pn_points_max,
+						   1, vp->segs[asi].dir,
+						   pts,
+						   NULL);
+		    (*pn_points_max)[seg_num] = 16;
+		    seg_map[asi] = seg_num;
+		  }
+	      }
 
-	  /* now fix the ordering in active_segs */
-	  asi = active_segs[i];
-	  for (j = i; j > target; j--)
-	    active_segs[j] = active_segs[j - 1];
-	  active_segs[j] = asi;
-	}
-	}
+	    /* now fix the ordering in active_segs */
+	    asi = active_segs[i];
+	    for (j = i; j > target; j--)
+	      active_segs[j] = active_segs[j - 1];
+	    active_segs[j] = asi;
+	  }
+      }
     }
   if (swap && start > 0)
     {
@@ -830,12 +850,11 @@ fix_crossing (int start, int end, int *active_segs, int n_active_segs,
 
    Status of this routine:
 
-   Basic correcntess: Was ok in gfonted. However, this code does not
-   yet compute bboxes for the resulting svp segs.
+   Basic correctness: Seems ok.
 
    Numerical stability: known problems in the case of points falling
    on lines, and colinear lines. For actual use, randomly perturbing
-   the vertices is recommended.
+   the vertices is currently recommended.
 
    Speed: pretty good, although a more efficient priority queue, as
    well as bbox culling of potential intersections, are two
@@ -960,6 +979,7 @@ art_svp_uncross (ArtSVP *vp)
   ArtPoint p_curs;
   int first_share;
   double share_x;
+  ArtPoint *pts;
 
   active_segs = art_new (int, vp->n_segs);
   cursor = art_new (int, vp->n_segs);
@@ -1045,12 +1065,14 @@ art_svp_uncross (ArtSVP *vp)
 	  ips[seg_idx][0] = vp->segs[seg_idx].points[0];
 
 	  /* Start a new segment in the new vector path */
+	  pts = art_new (ArtPoint, 16);
+	  pts[0] = vp->segs[seg_idx].points[0];
 	  seg_num = art_svp_add_segment (&new_vp, &n_segs_max,
 					 &n_points_max,
 					 1, vp->segs[seg_idx].dir,
-					 art_new (ArtPoint, 16));
+					 pts,
+					 NULL);
 	  n_points_max[seg_num] = 16;
-	  new_vp->segs[seg_num].points[0] = vp->segs[seg_idx].points[0];
 	  seg_map[seg_idx] = seg_num;
 
 	  tmp1 = seg_idx;
@@ -1236,6 +1258,8 @@ art_svp_uncross (ArtSVP *vp)
   return new_vp;
 }
 
+#define noVERBOSE
+
 /* Rewind a svp satisfying the nocross invariant.
 
    The winding number of a segment is defined as the winding number of
@@ -1245,7 +1269,7 @@ art_svp_uncross (ArtSVP *vp)
 
    Status of this routine:
 
-   Basic correcntess: Was ok in gfonted. However, this code does not
+   Basic correctness: Was ok in gfonted. However, this code does not
    yet compute bboxes for the resulting svp segs.
 
    Numerical stability: known problems in the case of horizontal
@@ -1277,6 +1301,9 @@ art_svp_rewind_uncrossed (ArtSVP *vp, ArtWindRule rule)
   int wind;
   int keep, invert;
 
+#ifdef VERBOSE
+  print_svp (vp);
+#endif
   n_segs_max = 16;
   new_vp = (ArtSVP *)art_alloc (sizeof(ArtSVP) +
 				(n_segs_max - 1) * sizeof(ArtSVPSeg));
@@ -1383,8 +1410,9 @@ art_svp_rewind_uncrossed (ArtSVP *vp, ArtWindRule rule)
 	      memcpy (new_points, points, n_points * sizeof (ArtPoint));
 	      new_dir = vp->segs[seg_idx].dir ^ invert;
 	      art_svp_add_segment (&new_vp, &n_segs_max,
-			       NULL,
-			       n_points, new_dir, new_points);
+				   NULL,
+				   n_points, new_dir, new_points,
+				   &vp->segs[seg_idx].bbox);
 	    }
 
 	  tmp1 = seg_idx;
@@ -1404,7 +1432,8 @@ art_svp_rewind_uncrossed (ArtSVP *vp, ArtWindRule rule)
       for (i = 0; i < n_active_segs; i++)
 	{
 	  asi = active_segs[i];
-	  printf ("%d (%g, %g) - (%g, %g) %s %d\n", asi,
+	  printf ("%d:%d (%g, %g) - (%g, %g) %s %d\n", asi,
+		  cursor[asi],
 		  vp->segs[asi].points[cursor[asi]].x,
 		  vp->segs[asi].points[cursor[asi]].y,
 		  vp->segs[asi].points[cursor[asi] + 1].x,

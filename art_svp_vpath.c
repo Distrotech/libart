@@ -197,24 +197,3 @@ art_svp_from_vpath (ArtVpath *vpath)
   return svp;
 }
 
-#define EPSILON 1e-6
-
-/* It may be that this one should move out into art_svp or somesuch. */
-
-static int
-art_svp_seg_compare (const void *s1, const void *s2)
-{
-  const ArtSVPSeg *seg1 = s1;
-  const ArtSVPSeg *seg2 = s2;
-
-  if (seg1->points[0].y - EPSILON > seg2->points[0].y) return 1;
-  else if (seg1->points[0].y + EPSILON < seg2->points[0].y) return -1;
-  else if (seg1->points[0].x - EPSILON > seg2->points[0].x) return 1;
-  else if (seg1->points[0].x + EPSILON < seg2->points[0].x) return -1;
-  else if ((seg1->points[1].x - seg1->points[0].x) *
-	   (seg2->points[1].y - seg2->points[0].y) -
-	   (seg1->points[1].y - seg1->points[0].y) *
-	   (seg2->points[1].x - seg2->points[0].x) > 0) return 1;
-  else return -1;
-}
-

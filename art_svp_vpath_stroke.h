@@ -17,8 +17,8 @@
  * Boston, MA 02111-1307, USA.
  */
 
-#ifndef __ART_SVP_VPATH_H__
-#define __ART_SVP_VPATH_H__
+#ifndef __ART_SVP_VPATH_STROKE_H__
+#define __ART_SVP_VPATH_STROKE_H__
 
 /* Sort vector paths into sorted vector paths. */
 
@@ -59,4 +59,4 @@ art_svp_vpath_stroke_raw (ArtVpath *vpath,
 }
 #endif /* __cplusplus */
 
-#endif /* __ART_SVP_VPATH_H__ */
+#endif /* __ART_SVP_VPATH_STROKE_H__ */

@@ -17,47 +17,22 @@
  * Boston, MA 02111-1307, USA.
  */
 
-#ifndef __ART_SVP_H__
-#define __ART_SVP_H__
-
-/* Basic data structures and constructors for sorted vector paths */
-
-#include <libart_lgpl/art_rect.h>
-#include <libart_lgpl/art_point.h>
+#ifndef __ART_SVP_OPS_H__
+#define __ART_SVP_OPS_H__
 
 #ifdef __cplusplus
 extern "C" {
 #endif /* __cplusplus */
 
-typedef struct _ArtSVP ArtSVP;
-typedef struct _ArtSVPSeg ArtSVPSeg;
+/* Vector path set operations, over sorted vpaths. */
 
-struct _ArtSVPSeg {
-  int n_points;
-  int dir; /* == 0 for "up", 1 for "down" */
-  ArtDRect bbox;
-  ArtPoint *points;
-};
-
-struct _ArtSVP {
-  int n_segs;
-  ArtSVPSeg segs[1];
-};
-
-int
-art_svp_add_segment (ArtSVP **p_vp, int *pn_segs_max,
-		     int **pn_points_max,
-		     int n_points, int dir, ArtPoint *points,
-		     ArtDRect *bbox);
-
-void
-art_svp_free (ArtSVP *svp);
-
-int
-art_svp_seg_compare (const void *s1, const void *s2);
+ArtSVP *art_svp_union (const ArtSVP *svp1, const ArtSVP *svp2);
+ArtSVP *art_svp_intersect (const ArtSVP *svp1, const ArtSVP *svp2);
+ArtSVP *art_svp_diff (const ArtSVP *svp1, const ArtSVP *svp2);
+ArtSVP *art_svp_minus (const ArtSVP *svp1, const ArtSVP *svp2);
 
 #ifdef __cplusplus
 }
 #endif /* __cplusplus */
 
-#endif /* __ART_SVP_H__ */
+#endif /* __ART_SVP_OPS_H__ */

@@ -27,6 +27,7 @@
 #include "art_vpath.h"
 #include "art_svp.h"
 #include "art_svp_wind.h"
+#include "art_svp_vpath.h"
 #include "art_svp_vpath_stroke.h"
 
 #define EPSILON 1e-6
@@ -49,10 +50,10 @@
    zero will happen.
 */
 static void
-render_seg (vec_path_el **p_forw, int *pn_forw, int *pn_forw_max,
-	    vec_path_el **p_rev, int *pn_rev, int *pn_rev_max,
-	    vec_path_el *vpath, int i0, int i1, int i2,
-	    VPathStrokeJoinType join,
+render_seg (ArtVpath **p_forw, int *pn_forw, int *pn_forw_max,
+	    ArtVpath **p_rev, int *pn_rev, int *pn_rev_max,
+	    ArtVpath *vpath, int i0, int i1, int i2,
+	    ArtPathStrokeJoinType join,
 	    double line_width, double miter_limit)
 {
   double dx0, dy0;
@@ -106,9 +107,9 @@ render_seg (vec_path_el **p_forw, int *pn_forw, int *pn_forw_max,
   dmy = (dly0 + dly1) * 0.5;
   dmr2 = dmx * dmx + dmy * dmy;
 
-  if (join == VPATH_STROKE_JOIN_MITER &&
+  if (join == ART_PATH_STROKE_JOIN_MITER &&
       dmr2 * miter_limit * miter_limit < line_width * line_width)
-    join = VPATH_STROKE_JOIN_BEVEL;
+    join = ART_PATH_STROKE_JOIN_BEVEL;
 
   /* the case when dmr2 is zero or very small bothers me
      (i.e. near a 180 degree angle) */
@@ -122,10 +123,10 @@ render_seg (vec_path_el **p_forw, int *pn_forw, int *pn_forw_max,
 #ifdef VERBOSE
       printf ("%% render_seg: straight\n");
 #endif
-      vpath_add_point (p_forw, pn_forw, pn_forw_max,
-		       LINETO, vpath[i1].x - dlx0, vpath[i1].y - dly0);
-      vpath_add_point (p_rev, pn_rev, pn_rev_max,
-		       LINETO, vpath[i1].x + dlx0, vpath[i1].y + dly0);
+      art_vpath_add_point (p_forw, pn_forw, pn_forw_max,
+		       ART_LINETO, vpath[i1].x - dlx0, vpath[i1].y - dly0);
+      art_vpath_add_point (p_rev, pn_rev, pn_rev_max,
+		       ART_LINETO, vpath[i1].x + dlx0, vpath[i1].y + dly0);
     }
   else if (cross > 0)
     {
@@ -152,32 +153,32 @@ render_seg (vec_path_el **p_forw, int *pn_forw, int *pn_forw_max,
 	  )
 	{
 	  /* can safely add single intersection point */
-	  vpath_add_point (p_rev, pn_rev, pn_rev_max,
-			   LINETO, vpath[i1].x + dmx, vpath[i1].y + dmy);
+	  art_vpath_add_point (p_rev, pn_rev, pn_rev_max,
+			   ART_LINETO, vpath[i1].x + dmx, vpath[i1].y + dmy);
 	}
       else
 	{
 	  /* need to loop-de-loop the inside */
-	  vpath_add_point (p_rev, pn_rev, pn_rev_max,
-			   LINETO, vpath[i1].x + dlx0, vpath[i1].y + dly0);
-	  vpath_add_point (p_rev, pn_rev, pn_rev_max,
-			   LINETO, vpath[i1].x, vpath[i1].y);
-	  vpath_add_point (p_rev, pn_rev, pn_rev_max,
-			   LINETO, vpath[i1].x + dlx1, vpath[i1].y + dly1);
+	  art_vpath_add_point (p_rev, pn_rev, pn_rev_max,
+			   ART_LINETO, vpath[i1].x + dlx0, vpath[i1].y + dly0);
+	  art_vpath_add_point (p_rev, pn_rev, pn_rev_max,
+			   ART_LINETO, vpath[i1].x, vpath[i1].y);
+	  art_vpath_add_point (p_rev, pn_rev, pn_rev_max,
+			   ART_LINETO, vpath[i1].x + dlx1, vpath[i1].y + dly1);
 	}
 
-      if (join == VPATH_STROKE_JOIN_BEVEL)
+      if (join == ART_PATH_STROKE_JOIN_BEVEL)
 	{
 	  /* bevel */
-	  vpath_add_point (p_forw, pn_forw, pn_forw_max,
-			   LINETO, vpath[i1].x - dlx0, vpath[i1].y - dly0);
-	  vpath_add_point (p_forw, pn_forw, pn_forw_max,
-			   LINETO, vpath[i1].x - dlx1, vpath[i1].y - dly1);
+	  art_vpath_add_point (p_forw, pn_forw, pn_forw_max,
+			   ART_LINETO, vpath[i1].x - dlx0, vpath[i1].y - dly0);
+	  art_vpath_add_point (p_forw, pn_forw, pn_forw_max,
+			   ART_LINETO, vpath[i1].x - dlx1, vpath[i1].y - dly1);
 	}
-      else if (join == VPATH_STROKE_JOIN_MITER)
+      else if (join == ART_PATH_STROKE_JOIN_MITER)
 	{
-	  vpath_add_point (p_forw, pn_forw, pn_forw_max,
-			   LINETO, vpath[i1].x - dmx, vpath[i1].y - dmy);
+	  art_vpath_add_point (p_forw, pn_forw, pn_forw_max,
+			   ART_LINETO, vpath[i1].x - dmx, vpath[i1].y - dmy);
 	}
     }
   else
@@ -205,32 +206,32 @@ render_seg (vec_path_el **p_forw, int *pn_forw, int *pn_forw_max,
 	  )
 	{
 	  /* can safely add single intersection point */
-	  vpath_add_point (p_forw, pn_forw, pn_forw_max,
-			   LINETO, vpath[i1].x - dmx, vpath[i1].y - dmy);
+	  art_vpath_add_point (p_forw, pn_forw, pn_forw_max,
+			   ART_LINETO, vpath[i1].x - dmx, vpath[i1].y - dmy);
 	}
       else
 	{
 	  /* need to loop-de-loop the inside */
-	  vpath_add_point (p_forw, pn_forw, pn_forw_max,
-			   LINETO, vpath[i1].x - dlx0, vpath[i1].y - dly0);
-	  vpath_add_point (p_forw, pn_forw, pn_forw_max,
-			   LINETO, vpath[i1].x, vpath[i1].y);
-	  vpath_add_point (p_forw, pn_forw, pn_forw_max,
-			   LINETO, vpath[i1].x - dlx1, vpath[i1].y - dly1);
+	  art_vpath_add_point (p_forw, pn_forw, pn_forw_max,
+			   ART_LINETO, vpath[i1].x - dlx0, vpath[i1].y - dly0);
+	  art_vpath_add_point (p_forw, pn_forw, pn_forw_max,
+			   ART_LINETO, vpath[i1].x, vpath[i1].y);
+	  art_vpath_add_point (p_forw, pn_forw, pn_forw_max,
+			   ART_LINETO, vpath[i1].x - dlx1, vpath[i1].y - dly1);
 	}
 
-      if (join == VPATH_STROKE_JOIN_BEVEL)
+      if (join == ART_PATH_STROKE_JOIN_BEVEL)
 	{
 	  /* bevel */
-	  vpath_add_point (p_rev, pn_rev, pn_rev_max,
-			   LINETO, vpath[i1].x + dlx0, vpath[i1].y + dly0);
-	  vpath_add_point (p_rev, pn_rev, pn_rev_max,
-			   LINETO, vpath[i1].x + dlx1, vpath[i1].y + dly1);
+	  art_vpath_add_point (p_rev, pn_rev, pn_rev_max,
+			   ART_LINETO, vpath[i1].x + dlx0, vpath[i1].y + dly0);
+	  art_vpath_add_point (p_rev, pn_rev, pn_rev_max,
+			   ART_LINETO, vpath[i1].x + dlx1, vpath[i1].y + dly1);
 	}
-      else if (join == VPATH_STROKE_JOIN_MITER)
+      else if (join == ART_PATH_STROKE_JOIN_MITER)
 	{
-	  vpath_add_point (p_rev, pn_rev, pn_rev_max,
-			   LINETO, vpath[i1].x + dmx, vpath[i1].y + dmy);
+	  art_vpath_add_point (p_rev, pn_rev, pn_rev_max,
+			   ART_LINETO, vpath[i1].x + dmx, vpath[i1].y + dmy);
 	}
 
     }
@@ -238,9 +239,9 @@ render_seg (vec_path_el **p_forw, int *pn_forw, int *pn_forw_max,
 
 /* caps i1, under the assumption of a vector from i0 */
 static void
-render_cap (vec_path_el **p_result, int *pn_result, int *pn_result_max,
-	    vec_path_el *vpath, int i0, int i1,
-	    VPathStrokeCapType cap, double line_width)
+render_cap (ArtVpath **p_result, int *pn_result, int *pn_result_max,
+	    ArtVpath *vpath, int i0, int i1,
+	    ArtPathStrokeCapType cap, double line_width)
 {
   double dx0, dy0;
   double dlx0, dly0;
@@ -256,10 +257,10 @@ render_cap (vec_path_el **p_result, int *pn_result, int *pn_result_max,
   dly0 = -dx0 * scale;
 
   /* butt */
-  vpath_add_point (p_result, pn_result, pn_result_max,
-		   LINETO, vpath[i1].x - dlx0, vpath[i1].y - dly0);
-  vpath_add_point (p_result, pn_result, pn_result_max,
-		   LINETO, vpath[i1].x + dlx0, vpath[i1].y + dly0);
+  art_vpath_add_point (p_result, pn_result, pn_result_max,
+		   ART_LINETO, vpath[i1].x - dlx0, vpath[i1].y - dly0);
+  art_vpath_add_point (p_result, pn_result, pn_result_max,
+		   ART_LINETO, vpath[i1].x + dlx0, vpath[i1].y + dly0);
   /* todo: other cap types */
 }
 
@@ -273,25 +274,24 @@ art_svp_vpath_stroke_raw (ArtVpath *vpath,
 {
   int begin_idx, end_idx;
   int i;
-  vec_path_el *forw, *rev;
+  ArtVpath *forw, *rev;
   int n_forw, n_rev;
   int n_forw_max, n_rev_max;
-  vec_path_el *result;
+  ArtVpath *result;
   int n_result, n_result_max;
   double half_lw = 0.5 * line_width;
 
   n_forw_max = 16;
-  forw = z_new (vec_path_el, n_forw_max);
+  forw = art_new (ArtVpath, n_forw_max);
 
   n_rev_max = 16;
-  rev = z_new (vec_path_el, n_rev_max);
+  rev = art_new (ArtVpath, n_rev_max);
 
   n_result = 0;
   n_result_max = 16;
-  result = z_new (vec_path_el, n_result_max);
+  result = art_new (ArtVpath, n_result_max);
 
-
-  for (begin_idx = 0; vpath[begin_idx].code != END; begin_idx = end_idx)
+  for (begin_idx = 0; vpath[begin_idx].code != ART_END; begin_idx = end_idx)
     {
       n_forw = 0;
       n_rev = 0;
@@ -299,12 +299,12 @@ art_svp_vpath_stroke_raw (ArtVpath *vpath,
       /* we don't know what the first point joins with until we get to the
 	 last point and see if it's closed. So we start with the second
 	 line in the path. */
-      for (i = begin_idx; vpath[i + 1].code == LINETO;
+      for (i = begin_idx; vpath[i + 1].code == ART_LINETO;
 	   i++)
 	{
 	  /* render the segment from [i] to [i + 1], joining with [i - 1]
 	     and [i + 2] */
-	  if (vpath[i + 2].code != LINETO)
+	  if (vpath[i + 2].code != ART_LINETO)
 	    {
 	      /* reached end of path */
 	      /* todo: make "closed" detection conform to PostScript
@@ -325,21 +325,21 @@ art_svp_vpath_stroke_raw (ArtVpath *vpath,
 		  printf ("%% forw %d, rev %d\n", n_forw, n_rev);
 #endif
 		  /* do forward path */
-		  vpath_add_point (&result, &n_result, &n_result_max,
-				   MOVETO, forw[n_forw - 1].x,
+		  art_vpath_add_point (&result, &n_result, &n_result_max,
+				   ART_MOVETO, forw[n_forw - 1].x,
 				   forw[n_forw - 1].y);
 		  for (j = 0; j < n_forw; j++)
-		    vpath_add_point (&result, &n_result, &n_result_max,
-				     LINETO, forw[j].x,
+		    art_vpath_add_point (&result, &n_result, &n_result_max,
+				     ART_LINETO, forw[j].x,
 				     forw[j].y);
 
 		  /* do reverse path, reversed */
-		  vpath_add_point (&result, &n_result, &n_result_max,
-				   MOVETO, rev[0].x,
+		  art_vpath_add_point (&result, &n_result, &n_result_max,
+				   ART_MOVETO, rev[0].x,
 				   rev[0].y);
 		  for (j = n_rev - 1; j >= 0; j--)
-		    vpath_add_point (&result, &n_result, &n_result_max,
-				     LINETO, rev[j].x,
+		    art_vpath_add_point (&result, &n_result, &n_result_max,
+				     ART_LINETO, rev[j].x,
 				     rev[j].y);
 		}
 	      else
@@ -352,22 +352,22 @@ art_svp_vpath_stroke_raw (ArtVpath *vpath,
 		  render_cap (&forw, &n_forw, &n_forw_max,
 			      vpath, i, i + 1,
 			      cap, half_lw);
-		  vpath_add_point (&result, &n_result, &n_result_max,
-				   MOVETO, forw[0].x,
+		  art_vpath_add_point (&result, &n_result, &n_result_max,
+				   ART_MOVETO, forw[0].x,
 				   forw[0].y);
 		  for (j = 1; j < n_forw; j++)
-		    vpath_add_point (&result, &n_result, &n_result_max,
-				     LINETO, forw[j].x,
+		    art_vpath_add_point (&result, &n_result, &n_result_max,
+				     ART_LINETO, forw[j].x,
 				     forw[j].y);
 		  for (j = n_rev - 1; j >= 0; j--)
-		    vpath_add_point (&result, &n_result, &n_result_max,
-				     LINETO, rev[j].x,
+		    art_vpath_add_point (&result, &n_result, &n_result_max,
+				     ART_LINETO, rev[j].x,
 				     rev[j].y);
 		  render_cap (&result, &n_result, &n_result_max,
 			      vpath, begin_idx + 1, begin_idx,
 			      cap, half_lw);
-		  vpath_add_point (&result, &n_result, &n_result_max,
-				   LINETO, forw[0].x,
+		  art_vpath_add_point (&result, &n_result, &n_result_max,
+				   ART_LINETO, forw[0].x,
 				   forw[0].y);
 		}
 	    }
@@ -380,15 +380,80 @@ art_svp_vpath_stroke_raw (ArtVpath *vpath,
       end_idx = i + 1;
     }
 
-  z_free (forw);
-  z_free (rev);
+  art_free (forw);
+  art_free (rev);
 #ifdef VERBOSE
   printf ("%% n_result = %d\n", n_result);
 #endif
-  vpath_add_point (&result, &n_result, &n_result_max, END, 0, 0);
+  art_vpath_add_point (&result, &n_result, &n_result_max, ART_END, 0, 0);
   return result;
 }
 
+#ifdef VERBOSE
+
+#define XOFF 50
+#define YOFF 700
+
+static void
+print_ps_vpath (ArtVpath *vpath)
+{
+  int i;
+
+  for (i = 0; vpath[i].code != ART_END; i++)
+    {
+      switch (vpath[i].code)
+	{
+	case ART_MOVETO:
+	  printf ("%g %g moveto\n", XOFF + vpath[i].x, YOFF - vpath[i].y);
+	  break;
+	case ART_LINETO:
+	  printf ("%g %g lineto\n", XOFF + vpath[i].x, YOFF - vpath[i].y);
+	  break;
+	default:
+	  break;
+	}
+    }
+  printf ("stroke showpage\n");
+}
+
+static void
+print_ps_svp (ArtSVP *vpath)
+{
+  int i, j;
+
+  printf ("%% begin\n");
+  for (i = 0; i < vpath->n_segs; i++)
+    {
+      printf ("%g setgray\n", vpath->segs[i].dir ? 0.7 : 0);
+      for (j = 0; j < vpath->segs[i].n_points; j++)
+	{
+	  printf ("%g %g %s\n",
+		  XOFF + vpath->segs[i].points[j].x,
+		  YOFF - vpath->segs[i].points[j].y,
+		  j ? "lineto" : "moveto");
+	}
+      printf ("stroke\n");
+    }
+
+  printf ("showpage\n");
+}
+#endif
+
+/* Render a vector path into a stroked outline.
+
+   Status of this routine:
+
+   Basic correctness: Only miter and bevel line joins are implemented,
+   and only butt line caps. Otherwise, seems to be fine.
+
+   Numerical stability: We cheat (adding random perturbation). Thus,
+   it seems very likely that no numerical stability problems will be
+   seen in practice.
+
+   Speed: Should be pretty good.
+
+   Precision: The perturbation fuzzes the coordinates slightly,
+   but not enough to be visible.  */
 ArtSVP *
 art_svp_vpath_stroke (ArtVpath *vpath,
 		      ArtPathStrokeJoinType join,
@@ -398,13 +463,33 @@ art_svp_vpath_stroke (ArtVpath *vpath,
 		      double flatness)
 {
   ArtVpath *vpath_stroke, *vpath2;
-  ArtSVP *svp, *svp2;
+  ArtSVP *svp, *svp2, *svp3;
 
   vpath_stroke = art_svp_vpath_stroke_raw (vpath, join, cap,
 					   line_width, miter_limit, flatness);
+#ifdef VERBOSE
+  print_ps_vpath (vpath_stroke);
+#endif
   vpath2 = art_vpath_perturb (vpath_stroke);
+#ifdef VERBOSE
+  print_ps_vpath (vpath2);
+#endif
   art_free (vpath_stroke);
   svp = art_svp_from_vpath (vpath2);
+#ifdef VERBOSE
+  print_ps_svp (svp);
+#endif
   art_free (vpath2);
   svp2 = art_svp_uncross (svp);
+#ifdef VERBOSE
+  print_ps_svp (svp2);
+#endif
+  art_svp_free (svp);
+  svp3 = art_svp_rewind_uncrossed (svp2, ART_WIND_RULE_NONZERO);
+#ifdef VERBOSE
+  print_ps_svp (svp3);
+#endif
+  art_svp_free (svp2);
+
+  return svp3;
 }

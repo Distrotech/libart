@@ -132,7 +132,7 @@ art_vpath_bbox_irect (const ArtVpath *vec, ArtIRect *irect)
   art_drect_to_irect (irect, &drect);
 }
 
-#define EPSILON 1e-6
+#define PERTURBATION 1e-6
 
 /* Perturb each of the points by a small random amount. This is helpful
    for cheating in cases when algorithms haven't attained numerical
@@ -144,19 +144,42 @@ art_vpath_perturb (ArtVpath *src)
   int i;
   int size;
   ArtVpath *new;
+  double x, y;
+  double x_start, y_start;
+  int open;
 
   for (i = 0; src[i].code != ART_END; i++);
   size = i;
 
   new = art_new (ArtVpath, size + 1);
 
+  x_start = 0;
+  y_start = 0;
+  open = 0;
   for (i = 0; i < size; i++)
     {
       new[i].code = src[i].code;
-      new[i].x = src[i].x + (EPSILON * rand ()) / RAND_MAX - EPSILON * 0.5;
-      new[i].y = src[i].y + (EPSILON * rand ()) / RAND_MAX - EPSILON * 0.5;
+      x = src[i].x + (PERTURBATION * rand ()) / RAND_MAX - PERTURBATION * 0.5;
+      y = src[i].y + (PERTURBATION * rand ()) / RAND_MAX - PERTURBATION * 0.5;
+      if (src[i].code == ART_MOVETO)
+	{
+	  x_start = x;
+	  y_start = y;
+	  open = 0;
+	}
+      else if (src[i].code == ART_MOVETO_OPEN)
+	open = 1;
+      if (!open && (i + 1 == size || src[i + 1].code != ART_LINETO))
+	{
+	  x = x_start;
+	  y = y_start;
+	}
+      new[i].x = x;
+      new[i].y = y;
     }
   new[i].code = ART_END;
 
   return new;
 }
+
+/* todo: implement minus */
