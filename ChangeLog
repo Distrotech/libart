@@ -1,3 +1,8 @@
+2001-10-02  Raph Levien  <raph@pixel.artofcode.com>
+
+	* art_svp_ops.c: ART_USE_NEW_INTERSECTOR variants of svp
+	ops changed to do shallow free of merged svp.
+
 2001-10-01  Raph Levien  <raph@acm.org>
 
 	* art_svp_intersect.c:

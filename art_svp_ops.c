@@ -223,7 +223,7 @@ art_svp_union (const ArtSVP *svp1, const ArtSVP *svp2)
   swr = art_svp_writer_rewind_new (ART_WIND_RULE_POSITIVE);
   art_svp_intersector (svp3, swr);
   svp_new = art_svp_writer_rewind_reap (swr);
-  art_svp_free (svp3);
+  art_free (svp3); /* shallow free because svp3 contains shared segments */
 
   return svp_new;
 #else
@@ -284,11 +284,11 @@ art_svp_intersect (const ArtSVP *svp1, const ArtSVP *svp2)
   ArtSVP *svp3, *svp_new;
   ArtSvpWriter *swr;
 
-  svp3 = art_svp_merge_perturbed (svp1, svp2);
+  svp3 = art_svp_merge (svp1, svp2);
   swr = art_svp_writer_rewind_new (ART_WIND_RULE_INTERSECT);
   art_svp_intersector (svp3, swr);
   svp_new = art_svp_writer_rewind_reap (swr);
-  art_svp_free (svp3);
+  art_free (svp3); /* shallow free because svp3 contains shared segments */
 
   return svp_new;
 #else
@@ -348,11 +348,11 @@ art_svp_diff (const ArtSVP *svp1, const ArtSVP *svp2)
   ArtSVP *svp3, *svp_new;
   ArtSvpWriter *swr;
 
-  svp3 = art_svp_merge_perturbed (svp1, svp2);
+  svp3 = art_svp_merge (svp1, svp2);
   swr = art_svp_writer_rewind_new (ART_WIND_RULE_ODDEVEN);
   art_svp_intersector (svp3, swr);
   svp_new = art_svp_writer_rewind_reap (swr);
-  art_svp_free (svp3);
+  art_free (svp3); /* shallow free because svp3 contains shared segments */
 
   return svp_new;
 #else
