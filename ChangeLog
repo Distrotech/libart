@@ -1,3 +1,13 @@
+2002-01-02  Darin Adler  <darin@bentspoon.com>
+
+	* art_alphagamma.h:
+	* art_gray_svp.h:
+	* art_pixbuf.h:
+	* art_render.h:
+	* art_rgb.h:
+	* art_rgba.h:
+	Add some missing includes.
+
 2001-12-26  Raph Levien  <raph@pixel.artofcode.com>
 
 	* art_svp_intersect.c: More fixes to intersector. When tops
