@@ -1,3 +1,11 @@
+2005-03-24  Tor Lillqvist  <tml@novell.com>
+
+	* art_misc.h (ART_GNUC_PRINTF, ART_GNUC_NORETURN): Use __format__,
+	__printf__ and __noreturn__ to avoid warnings in case "format",
+	"printf" or "noreturn" are #defined to something else. For example
+	GNU libintl.h (at least some versions of it) #defines printf as
+	libintl_printf.
+
 2005-01-24  Kjartan Maraas  <kmaraas@gnome.org>
 
 	* art_render_gradient.c: (art_render_gradient_radial_render):

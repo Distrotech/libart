@@ -66,9 +66,9 @@ typedef int art_boolean;
  */
 #if defined(__GNUC__) && (__GNUC__ > 2 || (__GNUC__ == 2 && __GNUC_MINOR__ > 4))
 #define ART_GNUC_PRINTF( format_idx, arg_idx )    \
-  __attribute__((format (printf, format_idx, arg_idx)))
+  __attribute__((__format__ (__printf__, format_idx, arg_idx)))
 #define ART_GNUC_NORETURN                         \
-  __attribute__((noreturn))
+  __attribute__((__noreturn__))
 #else   /* !__GNUC__ */
 #define ART_GNUC_PRINTF( format_idx, arg_idx )
 #define ART_GNUC_NORETURN
