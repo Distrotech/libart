@@ -1,3 +1,7 @@
+Tue Jul 08 01:15:02 2003  George Lebl <jirka@5z.com>
+
+	* art_render_gradient.c: fix comment as pointed out by alex
+
 Tue Jul 08 01:13:48 2003  George Lebl <jirka@5z.com>
 
 	* art_render_gradient.c (art_render_gradient_linear_render_8):

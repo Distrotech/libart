@@ -308,7 +308,7 @@ art_render_gradient_linear_render_8 (ArtRenderCallback *self,
   printf ("inital offset: %f, fraction: %f d_offset: %f\n", offset, offset_fraction, d_offset);
 #endif
   /* ix is selected so that offset_fraction is
-     stops[ix-1] <= offset_fraction <= stops[x1]
+     stops[ix-1] <= offset_fraction <= stops[ix]
      If offset_fraction is equal to one of the edges, ix
      is selected so the the section of the line extending
      in the same direction as d_offset is between ix-1 and ix.
