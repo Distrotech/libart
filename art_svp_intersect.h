@@ -54,11 +54,11 @@ art_svp_writer_rewind_reap (ArtSvpWriter *self);
 int
 art_svp_seg_compare (const void *s1, const void *s2);
 
+void
+art_svp_intersector (const ArtSVP *in, ArtSvpWriter *out);
+
 #ifdef __cplusplus
 }
 #endif /* __cplusplus */
-
-void
-art_svp_intersector (const ArtSVP *in, ArtSvpWriter *out);
 
 #endif /* __ART_SVP_INTERSECT_H__ */

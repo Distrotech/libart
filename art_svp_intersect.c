@@ -406,7 +406,7 @@ art_svp_writer_rewind_add_point (ArtSvpWriter *self, int seg_id,
   seg->points[n_points].y = y;
   if (x < seg->bbox.x0)
     seg->bbox.x0 = x;
-  if (y < seg->bbox.x1)
+  if (x > seg->bbox.x1)
     seg->bbox.x1 = x;
   seg->bbox.y1 = y;
 }
@@ -1541,13 +1541,17 @@ art_svp_intersect_sanitycheck (ArtIntersectCtx *ctx)
 void
 art_svp_intersector (const ArtSVP *in, ArtSvpWriter *out)
 {
-  ArtIntersectCtx *ctx = art_new (ArtIntersectCtx, 1);
+  ArtIntersectCtx *ctx;
   ArtPriQ *pq;
   ArtPriPoint *first_point;
 #ifdef VERBOSE
   int count = 0;
 #endif
 
+  if (in->n_segs == 0)
+    return;
+
+  ctx = art_new (ArtIntersectCtx, 1);
   ctx->in = in;
   ctx->out = out;
   pq = art_pri_new ();

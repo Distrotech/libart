@@ -1,5 +1,15 @@
 2001-10-09  Raph Levien  <raph@pixel.artofcode.com>
 
+	* art_svp_intersect.c (art_svp_writer_rewind_add_point): Fixed
+	bbox computation.
+	(art_svp_intersector): Handle degenerate case where input
+	SVP has 0 segments.
+
+	* art_svp_intersect.h: Moved definition of art_svp_intersector
+	inside #ifdef __cplusplus, so it links properly against C++
+
+2001-10-09  Raph Levien  <raph@pixel.artofcode.com>
+
 	* art_svp_intersect.c (art_svp_intersect_break): Handle
 	case when break y equals sweep line correctly. Also adds
 	first try at winding number sanitychecker, but that makes
