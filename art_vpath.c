@@ -132,7 +132,7 @@ art_vpath_bbox_irect (const ArtVpath *vec, ArtIRect *irect)
   art_drect_to_irect (irect, &drect);
 }
 
-#define PERTURBATION 1e-6
+#define PERTURBATION 2e-3
 
 /* Perturb each of the points by a small random amount. This is helpful
    for cheating in cases when algorithms haven't attained numerical

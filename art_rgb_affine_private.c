@@ -113,7 +113,7 @@ art_rgb_affine_run (int *p_x0, int *p_x1, int y,
   else
     {
       z = affine[3] * (y + 0.5) + affine[5];
-      if (z < 0 || z >= src_width)
+      if (z < 0 || z >= src_height)
 	{
 	  *p_x1 = *p_x0;
 	  return;

@@ -35,7 +35,8 @@ art_rgb_affine (art_u8 *dst, int x0, int y0, int x1, int y1, int dst_rowstride,
 		const art_u8 *src,
 		int src_width, int src_height, int src_rowstride,
 		const double affine[6],
-		ArtFilterLevel level)
+		ArtFilterLevel level,
+		ArtAlphaGamma *alphagamma)
 {
   /* Note: this is a slow implementation, and is missing all filter
      levels other than NEAREST. It is here for clarity of presentation

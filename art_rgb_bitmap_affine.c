@@ -39,7 +39,8 @@ art_rgb_bitmap_affine_opaque (art_u8 *dst,
 			      int src_width, int src_height, int src_rowstride,
 			      art_u32 rgb,
 			      const double affine[6],
-			      ArtFilterLevel level)
+			      ArtFilterLevel level,
+			      ArtAlphaGamma *alphagamma)
 {
   /* Note: this is a slow implementation, and is missing all filter
      levels other than NEAREST. It is here for clarity of presentation
@@ -51,6 +52,7 @@ art_rgb_bitmap_affine_opaque (art_u8 *dst,
   ArtPoint pt, src_pt;
   int src_x, src_y;
   art_u8 r, g, b;
+  int run_x0, run_x1;
 
   r = rgb >> 16;
   g = (rgb >> 8) & 0xff;
@@ -59,24 +61,24 @@ art_rgb_bitmap_affine_opaque (art_u8 *dst,
   art_affine_invert (inv, affine);
   for (y = y0; y < y1; y++)
     {
-      pt.y = y;
-      dst_p = dst_linestart;
-      for (x = x0; x < x1; x++)
+      pt.y = y + 0.5;
+      run_x0 = x0;
+      run_x1 = x1;
+      art_rgb_affine_run (&run_x0, &run_x1, y, src_width, src_height,
+			  inv);
+      dst_p = dst_linestart + (run_x0 - x0) * 3;
+      for (x = run_x0; x < run_x1; x++)
 	{
-	  pt.x = x;
+	  pt.x = x + 0.5;
 	  art_affine_point (&src_pt, &pt, inv);
-	  src_x = floor (src_pt.x + 0.5);
-	  src_y = floor (src_pt.y + 0.5);
-	  if (src_x >= 0 && src_x < src_width &&
-	      src_y >= 0 && src_y < src_height)
+	  src_x = floor (src_pt.x);
+	  src_y = floor (src_pt.y);
+	  src_p = src + (src_y * src_rowstride) + (src_x >> 3);
+	  if (*src_p & (128 >> (src_x & 7)))
 	    {
-	      src_p = src + (src_y * src_rowstride) + (src_x >> 3);
-	      if (*src_p & (128 >> (src_x & 7)))
-		{
-		  dst_p[0] = r;
-		  dst_p[1] = g;
-		  dst_p[2] = b;
-		}
+	      dst_p[0] = r;
+	      dst_p[1] = g;
+	      dst_p[2] = b;
 	    }
 	  dst_p += 3;
 	}
@@ -94,7 +96,8 @@ art_rgb_bitmap_affine (art_u8 *dst,
 		       int src_width, int src_height, int src_rowstride,
 		       art_u32 rgba,
 		       const double affine[6],
-		       ArtFilterLevel level)
+		       ArtFilterLevel level,
+		       ArtAlphaGamma *alphagamma)
 {
   /* Note: this is a slow implementation, and is missing all filter
      levels other than NEAREST. It is here for clarity of presentation
@@ -119,7 +122,8 @@ art_rgb_bitmap_affine (art_u8 *dst,
 				    src_width, src_height, src_rowstride,
 				    rgba >> 8,
 				    affine,
-				    level);
+				    level,
+				    alphagamma);
       return;
     }
   /* alpha = (65536 * alpha) / 255; */

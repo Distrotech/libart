@@ -111,7 +111,8 @@ void
 art_rgb_svp_aa (const ArtSVP *svp,
 		int x0, int y0, int x1, int y1,
 		art_u32 fg_color, art_u32 bg_color,
-		art_u8 *buf, int rowstride)
+		art_u8 *buf, int rowstride,
+		ArtAlphaGamma *alphagamma)
 {
   ArtRgbSVPData data;
 
@@ -121,27 +122,63 @@ art_rgb_svp_aa (const ArtSVP *svp,
   int dr, dg, db;
   int i;
 
-  r_fg = fg_color >> 16;
-  g_fg = (fg_color >> 8) & 0xff;
-  b_fg = fg_color & 0xff;
-
-  r_bg = bg_color >> 16;
-  g_bg = (bg_color >> 8) & 0xff;
-  b_bg = bg_color & 0xff;
-
-  r = (r_bg << 16) + 0x8000;
-  g = (g_bg << 16) + 0x8000;
-  b = (b_bg << 16) + 0x8000;
-  dr = ((r_fg - r_bg) << 16) / 255;
-  dg = ((g_fg - g_bg) << 16) / 255;
-  db = ((b_fg - b_bg) << 16) / 255;
-
-  for (i = 0; i < 256; i++)
+  if (alphagamma == NULL)
     {
-      data.rgbtab[i] = (r & 0xff0000) | ((g & 0xff0000) >> 8) | (b >> 16);
-      r += dr;
-      g += dg;
-      b += db;
+      r_fg = fg_color >> 16;
+      g_fg = (fg_color >> 8) & 0xff;
+      b_fg = fg_color & 0xff;
+
+      r_bg = bg_color >> 16;
+      g_bg = (bg_color >> 8) & 0xff;
+      b_bg = bg_color & 0xff;
+
+      r = (r_bg << 16) + 0x8000;
+      g = (g_bg << 16) + 0x8000;
+      b = (b_bg << 16) + 0x8000;
+      dr = ((r_fg - r_bg) << 16) / 255;
+      dg = ((g_fg - g_bg) << 16) / 255;
+      db = ((b_fg - b_bg) << 16) / 255;
+
+      for (i = 0; i < 256; i++)
+	{
+	  data.rgbtab[i] = (r & 0xff0000) | ((g & 0xff0000) >> 8) | (b >> 16);
+	  r += dr;
+	  g += dg;
+	  b += db;
+	}
+    }
+  else
+    {
+      int *table;
+      art_u8 *invtab;
+
+      table = alphagamma->table;
+
+      r_fg = table[fg_color >> 16];
+      g_fg = table[(fg_color >> 8) & 0xff];
+      b_fg = table[fg_color & 0xff];
+
+      r_bg = table[bg_color >> 16];
+      g_bg = table[(bg_color >> 8) & 0xff];
+      b_bg = table[bg_color & 0xff];
+
+      r = (r_bg << 16) + 0x8000;
+      g = (g_bg << 16) + 0x8000;
+      b = (b_bg << 16) + 0x8000;
+      dr = ((r_fg - r_bg) << 16) / 255;
+      dg = ((g_fg - g_bg) << 16) / 255;
+      db = ((b_fg - b_bg) << 16) / 255;
+
+      invtab = alphagamma->invtable;
+      for (i = 0; i < 256; i++)
+	{
+	  data.rgbtab[i] = (invtab[r >> 16] << 16) |
+	    (invtab[g >> 16] << 8) |
+	    invtab[b >> 16];
+	  r += dr;
+	  g += dg;
+	  b += db;
+	}
     }
   data.buf = buf;
   data.rowstride = rowstride;
@@ -327,7 +364,8 @@ void
 art_rgb_svp_alpha (const ArtSVP *svp,
 		   int x0, int y0, int x1, int y1,
 		   art_u32 rgba,
-		   art_u8 *buf, int rowstride)
+		   art_u8 *buf, int rowstride,
+		   ArtAlphaGamma *alphagamma)
 {
   ArtRgbSVPAlphaData data;
   int r, g, b, alpha;
