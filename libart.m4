@@ -1,5 +1,6 @@
 # Configure paths for LIBART
-# Manish Singh    98-9-30
+# Raph Levien 98-11-18
+# stolen from Manish Singh    98-9-30
 # stolen back from Frank Belew
 # stolen from Manish Singh
 # Shamelessly stolen from Owen Taylor

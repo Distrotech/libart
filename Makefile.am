@@ -28,6 +28,8 @@ libart_lgpl_la_SOURCES = \
 	art_vpath.c \
 	art_vpath.h
 
+libart_lgpl_la_LDFLAGS = -version-info @LIBART_VERSION_INFO@
+
 libart_lgplincdir = $(includedir)/libart
 libart_lgplinc = \
 	art_bpath.h \
@@ -58,3 +60,24 @@ tests:	testart testuta
 
 m4datadir = $(datadir)/aclocal
 m4data_DATA = libart.m4
+
+## Put `exec' in the name because this should be installed by
+## `install-exec', not `install-data'.
+
+confexecdir=$(libdir)
+confexec_DATA = libartConf.sh
+
+EXTRA_DIST = libartConf.sh.in
+
+## We create libartConf.sh here and not from configure because we want
+## to get the paths expanded correctly.  Macros like srcdir are given
+## the value NONE in configure if the user doesn't specify them (this
+## is an autoconf feature, not a bug).
+
+libartConf.sh: libartConf.sh.in Makefile
+## Use sed and then mv to avoid problems if the user interrupts.
+	sed -e 's?\@LIBART_LIBDIR\@?$(LIBART_LIBDIR)?g' \
+	    -e 's?\@LIBART_INCLUDEDIR\@?$(LIBART_INCLUDEDIR)?g' \
+	    -e 's?\@LIBART_LIBS\@?$(LIBART_LIBS)?g' \
+	      < $(srcdir)/libartConf.sh.in > libartConf.tmp \
+	  && mv libartConf.tmp libartConf.sh
