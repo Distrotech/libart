@@ -88,6 +88,9 @@ art_pixbuf_free (ArtPixBuf *pixbuf);
 void
 art_pixbuf_free_shallow (ArtPixBuf *pixbuf);
 
+ArtPixBuf *
+art_pixbuf_duplicate (const ArtPixBuf *pixbuf);
+
 #ifdef __cplusplus
 }
 #endif

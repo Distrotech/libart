@@ -246,3 +246,38 @@ art_pixbuf_free_shallow (ArtPixBuf *pixbuf)
 {
   art_free (pixbuf);
 }
+
+/**
+ * art_pixbuf_duplicate: Duplicate a pixbuf.
+ * @pixbuf: The #ArtPixBuf to duplicate.
+ *
+ * Duplicates a pixbuf, including duplicating the buffer.
+ *
+ * Return value: The duplicated pixbuf.
+ **/
+ArtPixBuf *
+art_pixbuf_duplicate (const ArtPixBuf *pixbuf)
+{
+  ArtPixBuf *result;
+  int size;
+
+  result = art_new (ArtPixBuf, 1);
+
+  result->format = pixbuf->format;
+  result->n_channels = pixbuf->n_channels;
+  result->has_alpha = pixbuf->has_alpha;
+  result->bits_per_sample = pixbuf->bits_per_sample;
+
+  size = (pixbuf->height - 1) * pixbuf->rowstride +
+    pixbuf->width * ((pixbuf->n_channels * pixbuf->bits_per_sample + 7) >> 3);
+  result->pixels = art_alloc (size);
+  memcpy (result->pixels, pixbuf->pixels, size);
+
+  result->width = pixbuf->width;
+  result->height = pixbuf->height;
+  result->rowstride = pixbuf->rowstride;
+  result->destroy_data = NULL;
+  result->destroy = art_pixel_destroy;
+
+  return result;
+}

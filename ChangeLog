@@ -1,3 +1,8 @@
+1999-09-19  Raph Levien  <raph@gimp.org>
+
+	* art_pixbuf.c (art_pixbuf_duplicate): Added a duplicate function
+	at the request of Michael Meeks.
+
 1999-09-11  Raph Levien  <raph@gimp.org>
 
 	* art_affine.c (art_affine_to_string): Tightened the predicate for
