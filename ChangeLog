@@ -1,3 +1,8 @@
+Tue May 30 00:09:21 2000  Raph Levien  <raph@acm.org>
+
+	* art_render_gradient.c (art_render_gradient_setpix): Fixed
+	an off-by-one loop error.
+
 Mon May 29 15:00:39 2000  Raph Levien  <raph@acm.org>
 
 	* Makefile.am: Moved relevant .h files into HEADERS stanza.
