@@ -17,6 +17,7 @@ libart_lgpl_la_SOURCES = \
 	art_misc.c \
 	art_pixbuf.c \
 	art_rect.c \
+	art_rect_svp.c \
 	art_rect_uta.c \
 	art_rgb.c \
 	art_rgb_affine.c \
@@ -56,6 +57,7 @@ libart_lgplinc_HEADERS = \
 	art_pixbuf.h \
 	art_point.h \
 	art_rect.h \
+	art_rect_svp.h \
 	art_rect_uta.h \
 	art_rgb.h \
 	art_rgb_affine.h \

@@ -50,6 +50,63 @@ Wed Dec 16 14:18:46 1998  Raph Levien  <raph@gimp.org>
 	
 	* Makefile.am: added new files
 
+Sun Dec 27 21:45:03 1998  Raph Levien  <raph@gimp.org>
+
+	* art_rect.h: 
+	* art_rect.c: Added DRect versions of the basic ops (double
+	rather than int).
+
+	* art_rect_svp.h:
+	* art_rect_svp.c: Added. This computes the bounding box of
+	an svp.
+
+Wed Dec 16 14:18:46 1998  Raph Levien  <raph@gimp.org>
+
+	* art_alphagamma.h:
+	* art_alphagamma.c: Added. At present, it only contains a dummy
+	stub. When the real code is added, it supports doing alpha
+	compositing in a gamma-corrected color space (suppressing
+	jaggies).
+
+	* art_pixbuf.h:
+	* art_pixbuf.c: Added. This is a virtualization layer over
+	a few different kinds of image formats.
+
+	* art_rgb_pixbuf_affine.h:
+	* art_rgb_pixbuf_affine.c: Added. Supports compositing of
+	generic images over an rgb buffer.
+
+	* art_affine.h: 
+	* art_affine.c (art_affine_expansion): Added this function,
+	which reports the exact scale factor in the case of rotation,
+	scaling, and transformation (an approximate number in the
+	case of shearing or anamorphic distortion).
+
+	* art_misc.h:
+	* art_misc.c (art_warn): Added.
+
+	* art_rgb_affine.h:
+	* art_rgb_affine.c: Added alphagamma argument (not yet implemented).
+
+	* art_rgb_affine_private.c: Fixed typo bug that was causing
+	repaint problems for nonsquare images.
+
+	* art_rgb_bitmap_affine.h:
+	* art_rgb_bitmap_affine.c: Major speed improvement, probably fixed
+	correctness while I was at it. Added alphagamma argument (not yet
+	implemented).
+
+	* art_rgb_svp.h:
+	* art_rgb_svp.c: Added alphagamma argument (only implemented
+	in aa case, not yet alpha case).
+
+	* art_vpath.c: increased perturbation to 2e-3, because the old
+	value (1e-6) was too small.
+
+	* testart.c: added alphagamma.
+	
+	* Makefile.am: added new files
+
 Mon Dec 14 00:16:53 1998  Raph Levien  <raph@gimp.org>
 
 	* art_affine.c (art_affine_to_string): re-added the "scale" method

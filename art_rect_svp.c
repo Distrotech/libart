@@ -17,19 +17,38 @@
  * Boston, MA 02111-1307, USA.
  */
 
-#ifndef __ART_RECT_UTA_H__
-#define __ART_RECT_UTA_H__
+#include "art_misc.h"
+#include "art_svp.h"
+#include "art_rect.h"
+#include "art_rect_svp.h"
 
-#ifdef __cplusplus
-extern "C" {
-#endif /* __cplusplus */
+/* Find the bounding box of a sorted vector path. */
 
-ArtIRect *
-art_rect_list_from_uta (ArtUta *uta, int max_width, int max_height,
-			int *p_nrects);
+void
+art_drect_svp (ArtDRect *bbox, const ArtSVP *svp)
+{
+  int i;
 
-#ifdef __cplusplus
+  bbox->x0 = 0;
+  bbox->y0 = 0;
+  bbox->x1 = 0;
+  bbox->y1 = 0;
+
+  for (i = 0; i < svp->n_segs; i++)
+    {
+      art_drect_union (bbox, bbox, &svp->segs[i].bbox);
+    }
 }
-#endif /* __cplusplus */
 
-#endif /* __ART_RECT_UTA_H__ */
+/* Compute the bounding box of the svp and union it in to the
+   existing bounding box. */
+void
+art_drect_svp_union (ArtDRect *bbox, const ArtSVP *svp)
+{
+  int i;
+
+  for (i = 0; i < svp->n_segs; i++)
+    {
+      art_drect_union (bbox, bbox, &svp->segs[i].bbox);
+    }
+}
