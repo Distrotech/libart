@@ -1,3 +1,9 @@
+1999-09-11  Raph Levien  <raph@gimp.org>
+
+	* art_affine.c (art_affine_to_string): Tightened the predicate for
+	matching rotate-only affines, which was too weak. Thanks to lewing
+	for spotting it!
+
 1999-09-01  Raph Levien  <raph@gimp.org>
 
 	* art_affine.c, art_alphagamma.c, art_bpath.c, art_gray_svp.c,

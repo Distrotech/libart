@@ -223,7 +223,7 @@ art_affine_to_string (char str[128], const double src[6])
 	  /* could be rotate */
 	  if (fabs (src[0] - src[3]) < EPSILON &&
 	      fabs (src[1] + src[2]) < EPSILON &&
-	      (src[0] * src[0] + src[1] * src[1] - 1) < 2 * EPSILON)
+	      fabs (src[0] * src[0] + src[1] * src[1] - 1) < 2 * EPSILON)
 	    {
 	      double theta;
 
