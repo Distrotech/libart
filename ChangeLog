@@ -1,3 +1,11 @@
+Tue Sep 09 16:30:31 2003  George Lebl <jirka@5z.com>
+
+	* Release 2.3.16
+
+	* art_render_gradient.c: revert the double comparison test in the
+	  asserts and comment out the two asserts causing crashes
+	  everywhere, see bug #121850
+
 2003-09-02  Alexander Larsson  <alexl@redhat.com>
 
 	* configure.in: 2.3.15

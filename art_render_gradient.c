@@ -336,10 +336,14 @@ art_render_gradient_linear_render_8 (ArtRenderCallback *self,
   assert ((stops[ix-1].offset <= offset_fraction + EPSILON) ||
 	  ((stops[ix].offset > (1.0 - EPSILON)) && (offset_fraction < EPSILON /* == 0.0*/)));
   assert (offset_fraction <= stops[ix].offset);
-  assert (fabs (offset_fraction - stops[ix-1].offset) > EPSILON ||
+  /* FIXME: These asserts may be broken, it is for now
+     safer to not use them.  Should be fixed!
+     See bug #121850
+  assert ((offset_fraction != stops[ix-1].offset) ||
 	  (d_offset >= 0.0));
-  assert (fabs (offset_fraction - stops[ix].offset) > EPSILON ||
+  assert ((offset_fraction != stops[ix].offset) ||
 	  (d_offset <= 0.0));
+  */
   
   while (width > 0)
     {
