@@ -6,6 +6,7 @@ INSTALL
 Makefile
 Makefile.in
 aclocal.m4
+art_config.h
 confdefs.h
 config.cache
 config.guess
@@ -15,7 +16,9 @@ config.log
 config.status
 config.sub
 configure
+gen_art_config
 install-sh
+libart-features.h
 libtool
 ltconfig
 ltmain.sh

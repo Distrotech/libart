@@ -1,3 +1,26 @@
+Tue May 16 15:03:35 2000  Raph Levien  <raph@acm.org>
+
+	* art_rgb_pixbuf_affine.c: Included corresponding .h file.
+
+	* art_rgb_pixbuf_affine.h: Put recursive #includes inside
+	LIBART_COMPILATION test.
+
+	* art_gray_svp.c:
+	* art_rgb_svp.c: Explicit casts for callback data. Also removed
+	"render the steps into tmpbuf" comment.
+
+	* gen_art_config.c:
+	* Makefile.am:
+	* configure.in: Added code to automatically generate an
+	art_config.h file, to be installed in libart's include dir. This
+	file defines ART_SIZEOF_{CHAR,SHORT,INT,LONG} and art_u{8,16,32}.
+
+	* art_misc.h: Moved definition of art_u8 and art_u32 into
+	art_config.h. Added GCC printf format attributes.
+
+	* art_svp_wind.c (traverse): Fixed UMR bug here. The function
+	isn't actually used, so it's just for cleanliness.
+
 2000-04-18  Lauris Kaplinski  <lauris@ariman.ee>
 
 	* art_affine.c (art_affine_to_string): Replaced snprinf with

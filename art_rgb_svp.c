@@ -46,9 +46,9 @@ struct _ArtRgbSVPAlphaData {
 
 static void
 art_rgb_svp_callback (void *callback_data, int y,
-		       int start, ArtSVPRenderAAStep *steps, int n_steps)
+		      int start, ArtSVPRenderAAStep *steps, int n_steps)
 {
-  ArtRgbSVPData *data = callback_data;
+  ArtRgbSVPData *data = (ArtRgbSVPData *)callback_data;
   art_u8 *linebuf;
   int run_x0, run_x1;
   art_u32 running_sum = start;
@@ -71,7 +71,6 @@ art_rgb_svp_callback (void *callback_data, int y,
 			    run_x1 - x0);
 	}
 
-      /* render the steps into tmpbuf */
       for (k = 0; k < n_steps - 1; k++)
 	{
 	  running_sum += steps[k].delta;
@@ -220,7 +219,7 @@ static void
 art_rgb_svp_alpha_callback (void *callback_data, int y,
 			    int start, ArtSVPRenderAAStep *steps, int n_steps)
 {
-  ArtRgbSVPAlphaData *data = callback_data;
+  ArtRgbSVPAlphaData *data = (ArtRgbSVPAlphaData *)callback_data;
   art_u8 *linebuf;
   int run_x0, run_x1;
   art_u32 running_sum = start;
@@ -251,7 +250,6 @@ art_rgb_svp_alpha_callback (void *callback_data, int y,
 			       run_x1 - x0);
 	}
 
-      /* render the steps into tmpbuf */
       for (k = 0; k < n_steps - 1; k++)
 	{
 	  running_sum += steps[k].delta;
@@ -293,7 +291,7 @@ art_rgb_svp_alpha_opaque_callback (void *callback_data, int y,
 				   int start,
 				   ArtSVPRenderAAStep *steps, int n_steps)
 {
-  ArtRgbSVPAlphaData *data = callback_data;
+  ArtRgbSVPAlphaData *data = (ArtRgbSVPAlphaData *)callback_data;
   art_u8 *linebuf;
   int run_x0, run_x1;
   art_u32 running_sum = start;
@@ -331,7 +329,6 @@ art_rgb_svp_alpha_opaque_callback (void *callback_data, int y,
 	    }
 	}
 
-      /* render the steps into tmpbuf */
       for (k = 0; k < n_steps - 1; k++)
 	{
 	  running_sum += steps[k].delta;

@@ -23,9 +23,15 @@
 /* This module handles compositing of affine-transformed generic
    pixbuf images over rgb pixel buffers. */
 
+#ifdef LIBART_COMPILATION
+#include "art_filterlevel.h"
+#include "art_alphagamma.h"
+#include "art_pixbuf.h"
+#else
 #include <libart_lgpl/art_filterlevel.h>
 #include <libart_lgpl/art_alphagamma.h>
 #include <libart_lgpl/art_pixbuf.h>
+#endif
 
 #ifdef __cplusplus
 extern "C" {

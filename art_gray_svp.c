@@ -38,7 +38,7 @@ static void
 art_gray_svp_callback (void *callback_data, int y,
 		       int start, ArtSVPRenderAAStep *steps, int n_steps)
 {
-  ArtGraySVPData *data = callback_data;
+  ArtGraySVPData *data = (ArtGraySVPData *)callback_data;
   art_u8 *linebuf;
   int run_x0, run_x1;
   int running_sum = start;
@@ -66,7 +66,6 @@ art_gray_svp_callback (void *callback_data, int y,
       if (run_x1 > x0)
 	memset (linebuf, running_sum >> 16, run_x1 - x0);
 
-      /* render the steps into tmpbuf */
       for (k = 0; k < n_steps - 1; k++)
 	{
 	  running_sum += steps[k].delta;

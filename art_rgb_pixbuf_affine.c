@@ -25,7 +25,7 @@
 #include "art_rgb_affine.h"
 #include "art_rgb_affine.h"
 #include "art_rgb_rgba_affine.h"
-
+#include "art_rgb_pixbuf_affine.h"
 
 /* This module handles compositing of affine-transformed generic
    pixbuf images over rgb pixel buffers. */

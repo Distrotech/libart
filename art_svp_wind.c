@@ -396,12 +396,13 @@ traverse (ArtSVP *vp)
 	      break;
 	    }
 	  tmp1 = seg_idx;
-	  for (j = i; j <= n_active_segs; j++)
+	  for (j = i; j < n_active_segs; j++)
 	    {
 	      tmp2 = active_segs[j];
 	      active_segs[j] = tmp1;
 	      tmp1 = tmp2;
 	    }
+	  active_segs[n_active_segs] = tmp1;
 	  n_active_segs++;
 	  seg_idx++;
 	}
