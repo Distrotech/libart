@@ -1,3 +1,7 @@
+2001-09-13  Havoc Pennington  <hp@redhat.com>
+
+	* Makefile.am (libart_lgplincdir): move to includedir/gnome-1.0
+
 2001-06-14  Miguel de Icaza  <miguel@ximian.com>
 
 	* Makefile.am: add -lm to the link line, so applications get this

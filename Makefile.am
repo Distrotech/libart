@@ -56,7 +56,7 @@ libart_lgpl_la_SOURCES = \
 libart_lgpl_la_LDFLAGS = -version-info @LIBART_VERSION_INFO@
 libart_lgpl_la_LIBADD = -lm
 
-libart_lgplincdir = $(includedir)/libart_lgpl
+libart_lgplincdir = $(includedir)/gnome-1.0/libart_lgpl
 libart_lgplinc_HEADERS = \
 	art_affine.h \
 	art_alphagamma.h \
