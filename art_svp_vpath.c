@@ -28,8 +28,6 @@
 #include "art_svp.h"
 #include "art_svp_vpath.h"
 
-static int
-art_svp_seg_compare (const void *s1, const void *s2);
 
 /* reverse a list of points in place */
 static void

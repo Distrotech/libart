@@ -25,6 +25,7 @@
 #include "art_uta_vpath.h"
 #include "art_svp.h"
 #include "art_uta_svp.h"
+#include "art_vpath_svp.h"
 
 
 /* I will of course want to replace this with a more direct implementation.

@@ -21,6 +21,7 @@
 
 #include <math.h>
 #include <stdio.h> /* for sprintf */
+#include <string.h> /* for strcpy */
 #include "art_misc.h"
 #include "art_point.h"
 #include "art_affine.h"
