@@ -5,7 +5,8 @@ bin_SCRIPTS = \
 
 EXTRA_DIST = 			\
 	libart.m4		\
-	libartConf.sh.in
+	libartConf.sh.in	\
+	libart-config.in
 
 lib_LTLIBRARIES = libart_lgpl.la
 

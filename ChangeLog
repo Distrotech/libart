@@ -1,3 +1,7 @@
+2000-01-10  Elliot Lee  <sopwith@redhat.com>
+
+	* Makefile.am: Distribute libart-config.in
+
 2000-01-09  Raph Levien  <raph@gimp.org>
 
 	art_rgb_pixbuf_affine.c, art_rgb_rgba_affine.c, art_rgb_svp.c,
