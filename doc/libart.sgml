@@ -60,7 +60,10 @@
 	Raph Levien in an attempt to provide a powerful yet easy-to-use foundation
 	layer for the development of Gui-based applications in Gnome. Libart is thus
 	distributed as a part of Gnome under the LGPL. Libart can also be licensed 
-	under other licenses from XXX.
+	under other licenses from ArtofCode<footnoteref linkend="artofcode">.
+	<footnote id="artofcode">
+	  <para><ulink url="http://www.artofcode.com">www.artofcode.com</ulink></para>
+	</footnote>
       </para>
 
       <para>
@@ -527,7 +530,15 @@ expose_cb (GtkWidget *widget, GdkEventExpose *evt, gpointer data)
 	      Raph has not had time to fix them. Also, no one volunteered to fix 
 	      them. If you have some time left on weekends and are interested in this
 	      task, please contact Raph (raph at acm dot org).
-	  </para></listitem>
+	  </para>
+	    <para>
+	      The libart intersector is used by <link linkend="art-svp-union">art_svp_union</link>,
+	      <link linkend="art-svp-intersect">art_svp_intersect</link> and
+	      <link linkend="art-svp-diff">art_svp_diff</link>. These functions are used heavily
+	      by the Gnome Antialiased Canvas (the intersector code can be found in 
+	      <filename>art_svp_wind.c</filename>).
+	    </para>
+	  </listitem>
 	</itemizedlist>
       </para>
 
@@ -561,11 +572,267 @@ expose_cb (GtkWidget *widget, GdkEventExpose *evt, gpointer data)
     <title>Libart Internals</title>
 
     <sect1 id="internals-scanline">
-      <title>Scanline algorithm</title>
+      <title>Rasterizer</title>
 
       <para>
-	I'll write this when I understand the coverage calculus code.
+	The rasterizer code we will refer to is the function named <function>art_svp_render_aa</function>
+	located in the file <filename>art_svp_render_aa.c</filename>.
       </para>
+
+      <sect2>
+	<title>Winding Number Calculation.</title>
+
+	<para>
+	  The goal of the libart rasterizer is to calculate a property for each of the pixels to render: this is
+	  the <emphasis>winding number</emphasis>. This property reflects the position of a given pixel relative to
+	  all the vector paths to render. It says whether or not the pixel is located <emphasis>inside</emphasis>
+	  or <emphasis>outside</emphasis> a vector path. As can be seen on the folowing diagram, a point is inside
+	  a given closed polygon if and only if the infinite horizontal half-line starting on the pixel and going
+	  to the left intersects the enclosing polygon an odd number of times.
+	</para>
+
+	<figure>
+	  <title>Inside or Outside of a polygon</title>
+	  <graphic fileref="art-winding-number.png" scale="50"></graphic>
+	</figure>
+
+	<para>
+	  The winding number of a pixel is defined as the number of times the horizontal line intersects an up
+	  segment minus the number of times the horizontal line intersects down segments (a segment being defined
+	  by a pair of points A=(Ax, Ay) and B=(Bx, By), an up segment is a segment such that By > Ay). 
+	  A non-zero winding number thus means the pixel is located within a polygon and must be painted.
+	</para>
+
+	<para>
+	  Classicaly, the winding number property is calculated on each pixel and this information is used to paint
+	  a pixel in either black or white (this is what the standard freetype renderer used to do to render
+	  each character on screen). The problem here is that the output medium used by computers does not have
+	  an infinite spatial resolution. Computer screens (CRTs or LCDs or even printers) draw dots with a non-zero
+	  area. Each of the displayed pixel is not a point in the mathematical sense. Traditionaly, to render the
+	  vector paths, we would test whether or not the center of each pixel lies within the vector path: this rendering
+	  method introduces a number of well known artificial artefacts which are usually refered to as <emphasis>
+	    aliasing</emphasis> artefacts.
+	</para>
+
+	<para>
+	  Hopefully, there exist antialiasing techniques to minimize these aliasing artifacts. The idea behind
+	  all these techniques is to fake higher resolution on the output medium by trading-off color depth for
+	  spatial resolution: certain pixels are not completely turned black (they are turned grey)
+	  to give viewers the feeling of smooth outines rather than jagged outlines.
+	</para>
+
+	  <figure>
+	    <title>Oversampling versus Exact Coverage Calculus</title>
+	    <graphic fileref="art-oversampling.png" scale="50"></graphic>
+	  </figure>
+
+	<para>
+	  Traditional antialiasing algorithms use Oversampling: they render the outlines on a high-resolution
+	  grid and then calculate the grey output by averaging over the high-resolution B&amp;W grid.
+	  Libart instead tries to calculate the real coverage of each pixel by the outline to get better precision
+	  than with oversampling.
+	</para>
+
+	<para>
+	  To express this new concept (that is, partial coverage of a pixel rather than Black or White), libart
+	  redefines winding numbers and uses a special data structure which is of importance to describe them:
+	  <link linkend="ArtSVPRenderAAStep">ArtSVPRenderAAStep</link>.
+	</para>
+
+	<para>
+	  To understand how they are used, we'll use the example shown in the figure below.
+	  On the bottom row of pixels, pixel 3 would be represented by the step (x=1, delta=+0.3), 
+	  pixel 4 by the step (x=2, delta=+0.67) and pixels 5 and 6 by the step (x=3, delta=+0.03).
+	</para>
+
+	<para>
+	  The bottom row of pixels is rendered as folows: we begin by rendering the first step which says that 
+	  pixel 1 on this row is 30% covered by the outline (delta=0.3 -> 30%). The second step tells us that the 
+	  second pixel on this row is (30+67)=97% covered by the outline (the difference -the delta- is of +0.67). 
+	  Finally, the third step tells us that pixels 3 and folowing on this row are (97+3)=100% covered by the 
+	  outline. The fourth step would tell us where the pixels are not 100% covered anymore.
+	  To summarize, on a given row of pixels, each step gives us the delta (that is, the difference in coverage)
+	  relative to the previous step of the current pixel.
+	</para>
+
+	<para>
+	  The raster version of an outline can thus be represented relative to an output buffer by an array of arrays
+	  of <link linkend="ArtSVPRenderAAStep">ArtSVPRenderAAStep</link>s. Each array of
+	  <link linkend="ArtSVPRenderAAStep">ArtSVPRenderAAStep</link>s represents a row of pixels of the output buffer
+	  and each step of the array of <link linkend="ArtSVPRenderAAStep">ArtSVPRenderAAStep</link>s represents
+	  a <emphasis>run</emphasis> (that is, adjacent pixels with same color characteristics).
+	</para>
+
+	<para>
+	  People who want to render the real pixels in the output buffer just need to calculate running sums over the 
+	  steps for each line of the output buffer. The running sum represents the degree of presence of the outline
+	  over the background: the outline is easy to composite over the backgound.
+	</para>
+
+      </sect2>
+
+      <sect2>
+	<title>How libart does this for true.</title>
+
+	<para>
+	  <link linkend="art-svp-render-aa">art_svp_render_aa</link> exports the API which offers the interface
+	  described in the previous section: a callback is called on each of the output buffer's line with an array
+	  of <link linkend="ArtSVPRenderAAStep">ArtSVPRenderAAStep</link>s as parameter. This callback
+	  just needs to calculate the running sum for this line and render the real pixels in a pixel buffer.
+	</para>
+
+	<para>
+	  <link linkend="art-rgb-svp-aa">art_rgb_svp_aa</link> and 
+	  <link linkend="art-rgb-svp-alpha">art_rgb_svp_alpha</link>
+	  both use internally <link linkend="art-svp-render-aa">art_svp_render_aa</link> by providing different
+	  callbacks. Their code is pretty simple and can be found in <filename>art_rgb_svp.c</filename> (the code
+	  for their associated callbacks can be found in the same file).
+	</para>
+
+	<para>
+	  The interesting piece of code is indeed <link linkend="art-rgb-svp-aa">art_rgb_svp_aa</link>.
+	  This code implements a pretty classic Plane Sweep algorithm: it loops over the output buffer's
+	  lines and calculates for each line the steps for the callback. To calculate the steps,
+	  it maintains over the lines the list of segments crossing the current line.
+	</para>
+
+	<sect3>
+	  <title>A Plane Sweep Algorithm</title>
+
+	  <para>
+	    To maintain the list of <emphasis>active</emphasis> segments (that is, segments 
+	    crossing the current
+	    line), the algorithm adds the segments starting on the current line and 
+	    removes the segments ending on the current line. The folowing pseudo-code
+	    summarizes this process for libart's (x,y) space.
+	  </para>
+
+	  <programlisting>
+for (y = 0; y < height; y++) {
+	add_new_active_segments (active_segments, svp);
+	
+	process_line (active_segments, y);
+
+	remove_old_active_segments (active_segmnts);
+}
+	  </programlisting>
+
+	  <para>
+	    Surprisingly enough, the svp data-structure was designed so that the two important operations
+	    of this algorithm (namely, adding new active segments and removing old active segments to/from 
+	    the list of active segments) are easy to implement and fast.
+	  </para>
+
+	  <para>
+	    Let's first have a look at what the SVP data structure looks like.
+	  </para>
+
+	  <programlisting>
+typedef struct _ArtSVP ArtSVP;
+typedef struct _ArtSVPSeg ArtSVPSeg;
+
+struct _ArtSVPSeg {
+  int n_points;
+  int dir; /* == 0 for "up", 1 for "down" */
+  ArtDRect bbox;
+  ArtPoint *points;
+};
+
+struct _ArtSVP {
+  int n_segs;
+  ArtSVPSeg segs[1];
+};
+	  </programlisting>
+
+	  <para>
+	    Each of an SVP's segment represent a monotonous vector shape as shown on the 
+	    figure below. The word <emphasis>Monotonous</emphasis> used here is to be understood
+	    as <emphasis>not changing vertical direction</emphasis>: segments either go up or down.
+	    A given Vector path changing his vertical direction is split in two vector paths
+	    when represented by an SVP: one going up and one going down. Each segment is 
+	    contained within its own bounding box stored in the <emphasis>bbox</emphasis> field.
+	  </para>
+
+	  <figure>
+	    <title>VPath to SVP</title>
+	    <graphic fileref="art-svp-vpath.png" scale="50"></graphic>
+	  </figure>
+
+
+	  <para>
+	    The segments listed in an SVP are ordered using their starting points as shown
+	    in <emphasis>art_svp_seg_compare</emphasis> (from <filename>art_svp.c</filename>)
+	    from top to bottom, left to right.
+	    The ordering of the segments and their bounding boxes allows one to easily parse 
+	    the list of segments of an svp to update the list of active segments:
+	  </para>
+
+	  <programlisting>
+  for (y = y0; y < y1; y++)
+    {
+      /* insert new active segments */
+      for (; i < svp->n_segs && svp->segs[i].bbox.y0 < y + 1; i++)
+	{
+	  if (svp->segs[i].bbox.y1 > y &&
+	      svp->segs[i].bbox.x0 < x1)
+	    {
+	      seg = &amp;svp->segs[i];
+	      /* move cursor to topmost vector which overlaps [y,y+1) */
+	      for (curs = 0; seg->points[curs + 1].y < y; curs++);
+	      cursor[i] = curs;
+	      dy = seg->points[curs + 1].y - seg->points[curs].y;
+	      if (fabs (dy) >= EPSILON)
+		seg_dx[i] = (seg->points[curs + 1].x - seg->points[curs].x) /
+		  dy;
+	      else
+		seg_dx[i] = 1e12;
+	      seg_x[i] = seg->points[curs].x +
+		(y - seg->points[curs].y) * seg_dx[i];
+	      art_svp_render_insert_active (i, active_segs, n_active_segs++,
+					    seg_x, seg_dx);
+	    }
+	}
+
+
+	  /* here, process the current list of active segments.*/
+
+
+	/* remove old segments from active list */
+	if (seg->points[curs].y >= y + 1)
+	  {
+	    curs--;
+	    cursor[seg_index] = curs;
+	    seg_x[seg_index] += seg_dx[seg_index];
+	  }
+	else
+	  {
+	    art_svp_render_delete_active (active_segs, j--,
+					    --n_active_segs);
+	  }
+    }
+	  </programlisting>
+
+	</sect3>
+
+	<sect3>
+	  <title>A note on coverage calculus in <link linkend="art-svp-render-aa">art_svp_render_aa</link></title>
+
+	  <para>
+	    Because the code which calculates the different steps for each line of the output buffer
+	    is not that easy to get right quickly, here is included a simple diagram which outlines 
+	    the meaning of the variables of the code:
+	  </para>
+
+	  <figure>
+	    <title>Coverage Calculus</title>
+	    <graphic fileref="art-coverage-calculus.png" scale="50"></graphic>
+	  </figure>
+
+
+	</sect3>
+
+      </sect2>
+
 
     </sect1>
 

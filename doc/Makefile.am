@@ -41,6 +41,10 @@ HTML_IMAGES =				\
 	art-2d-space.png		\
 	art-dash-style.png		\
 	art-svp-ops.png			\
+	art-oversampling.png		\
+	art-winding-number.png		\
+	art-svp-vpath.png		\
+	art-coverage-calculus.png	\
 	art-non-display.tar.gz		\
 	art-display.tar.gz		\
 	art-dash.tar.gz
@@ -59,7 +63,11 @@ extra_files =				\
 	dia/art-affine-matrix.dia	\
 	dia/art-affine-libart.dia	\
 	dia/art-dash-style.dia		\
-	dia/art-svp-ops.dia
+	dia/art-svp-ops.dia		\
+	dia/art-svp-vpath.dia		\
+	dia/art-winding-number.dia	\
+	dia/art-oversampling.dia	\
+	dia/art-coverage-calculus.dia
 
 
 # CFLAGS and LDFLAGS for compiling scan program. Only needed

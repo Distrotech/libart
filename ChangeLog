@@ -1,3 +1,27 @@
+2001-08-08  Mathieu Lacage <mathieu@gnu.org>
+
+	Rewrote a bunch of it, fixed a number of XXXs
+	
+	* doc/libart.sgml: fix number of stuff.
+	* doc/dia/art-coverage-calculus.dia,
+	  doc/art-coverage-calculus.png:
+	  add new diagram.
+
+2001-08-05  Mathieu Lacage <mathieu@gnu.org>
+
+	Vacations are cool :)
+	
+	* doc/libart.sgml: add documentation on the renderer internals.
+	* doc/tmpl/*.sgml: fix misc typos.
+	* doc/dia/art-oversampling.dia
+	  doc/dia/art-winding-number.dia
+	  doc/dia/art-svp-vpath.dia
+	  doc/art-oversampling.png
+	  doc/art-svp-vpath.png
+	  doc/art-winding-number.png:
+	  add new diagrams and png versions for the internals of the
+	  renderer.
+	
 2001-07-16  Mathieu Lacage <mathieu@gnu.org>
 
 	Is anyone going to review it ?
