@@ -1,3 +1,7 @@
+2003-09-02  Alexander Larsson  <alexl@redhat.com>
+
+	* configure.in: 2.3.15
+
 2003-08-26  Morten Welinder  <terra@gnome.org>
 
 	* art_render_gradient.c (art_render_gradient_linear_render_8): Fix
