@@ -1,3 +1,9 @@
+Wed Nov 18 16:50:58 1998  Raph Levien  <raph@gimp.org>
+
+	* libart.m4: added (just copied from esound)
+	* configure.in, Makefile.am: added support for libart-config
+	* libart-config.in: added (mostly copied from esound)
+
 Tue Nov 10 12:43:30 1998  Raph Levien  <raph@acm.org>
 
 	* Getting the library in shape for initial checkin to CVS.

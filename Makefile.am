@@ -1,5 +1,11 @@
 noinst_PROGRAMS = testart testuta
 
+bin_SCRIPTS = \
+	libart-config
+
+EXTRA_DIST = \
+	libart.m4
+
 lib_LTLIBRARIES = libart_lgpl.la
 
 libart_lgpl_la_SOURCES = \
@@ -50,3 +56,5 @@ testuta_LDADD = $(LDADDS) -lm
 
 tests:	testart testuta
 
+m4datadir = $(datadir)/aclocal
+m4data_DATA = libart.m4

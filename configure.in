@@ -8,4 +8,9 @@ AM_PROG_LIBTOOL
 
 AM_MAINTAINER_MODE
 
-AC_OUTPUT(Makefile)
+LIBART_LIBS=$LIBS
+AC_SUBST(LIBART_LIBS)
+
+AC_OUTPUT([
+Makefile
+libart-config], [case "$CONFIG_FILES" in *libart-config*) chmod +x libart-config;; esac])
