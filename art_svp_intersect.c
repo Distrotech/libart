@@ -21,11 +21,14 @@
    code.
 */
 
-/* A priority queue - perhaps move to a separate file if it becomes
-   needed somewhere else */
 #include <math.h> /* for sqrt */
 
-#define noVERBOSE
+/* Sanitychecking verifies the main invariant on every priority queue
+   point. Do not use in production, as it slows things down way too
+   much. */
+#define SANITYCHECK
+
+#define VERBOSE
 #ifdef VERBOSE
 #include <stdio.h>
 #endif
@@ -33,6 +36,9 @@
 #include "art_misc.h"
 #include "art_svp.h"
 #include "art_svp_intersect.h"
+
+/* A priority queue - perhaps move to a separate file if it becomes
+   needed somewhere else */
 
 #define ART_PRIQ_USE_HEAP
 
@@ -632,6 +638,13 @@ art_svp_intersect_test_cross (ArtIntersectCtx *ctx,
   double d0, d1, t;
   double x, y; /* intersection point */
 
+#ifdef VERBOSE 
+  static int count = 0;
+
+  printf ("art_svp_intersect_test_cross %lx <-> %lx: count=%d\n",
+	  (unsigned long)left_seg, (unsigned long)right_seg, count++);
+#endif
+
   if (left_y1 < right_y1)
     {
       /* Test left (x1, y1) against right segment */
@@ -729,7 +742,8 @@ art_svp_intersect_test_cross (ArtIntersectCtx *ctx,
   if (y == left_seg->y0)
     {
       if (y != right_seg->y0)
-	art_warn ("art_svp_intersect_test_cross: this shouldn't happen 1\n");
+	art_warn ("*** art_svp_intersect_test_cross: intersection (%g, %g) matches former y0 of %lx, %lx\n",
+		  x, y, (unsigned long)left_seg, (unsigned long)right_seg);
 
       /* Intersection takes place at current scan line; process immediately
 	 rather than queueing intersection point into priq. */
@@ -756,11 +770,13 @@ art_svp_intersect_test_cross (ArtIntersectCtx *ctx,
       return ART_TRUE;
     }
   else if (y == right_seg->y0)
-    art_warn ("art_svp_intersect_test_cross: this shouldn't happen 2\n");
+    art_warn ("*** art_svp_intersect_test_cross: intersection (%g, %g) matches latter y0 of %lx, %lx\n",
+	      x, y, (unsigned long)left_seg, (unsigned long)right_seg);
   else
     {
 #ifdef VERBOSE
-      printf ("Inserting (%g, %g) into %lx, %lx\n", x, y, left_seg, right_seg);
+      printf ("Inserting (%g, %g) into %lx, %lx\n",
+	      x, y, (unsigned long)left_seg, (unsigned long)right_seg);
 #endif
       /* Insert the intersection point into both segments. */
       art_svp_intersect_push_pt (ctx, left_seg, x, y);
@@ -837,6 +853,43 @@ art_svp_intersect_add_horiz (ArtIntersectCtx *ctx, ArtActiveSeg *seg)
 }
 
 static void
+art_svp_intersect_insert_cross (ArtIntersectCtx *ctx,
+				ArtActiveSeg *seg)
+{
+  ArtActiveSeg *left = seg, *right = seg;
+
+  for (;;)
+    {
+      if (left != NULL && left->left != NULL)
+	{
+	  if (art_svp_intersect_test_cross (ctx, left->left, left))
+	    {
+	      if (left == right || right == NULL)
+		right = left->right;
+	    }
+	  else
+	    {
+	      left = NULL;
+	    }
+	}
+      else if (right != NULL && right->right != NULL)
+	{
+	  if (art_svp_intersect_test_cross (ctx, right, right->right))
+	    {
+	      if (left == right || left == NULL)
+		left = right->left;
+	    }
+	  else
+	    {
+	      right = NULL;
+	    }
+	}
+      else
+	break;
+    }
+}
+
+static void
 art_svp_intersect_process_intersection (ArtIntersectCtx *ctx,
 					ArtActiveSeg *seg)
 {
@@ -847,12 +900,7 @@ art_svp_intersect_process_intersection (ArtIntersectCtx *ctx,
   seg->y0 = seg->stack[n_stack].y;
   seg->horiz_x = seg->x[0];
   art_svp_intersect_add_horiz (ctx, seg);
-  while (seg->left != NULL)
-    if (!art_svp_intersect_test_cross (ctx, seg->left, seg))
-      break;
-  while (seg->right != NULL)
-    if (!art_svp_intersect_test_cross (ctx, seg, seg->right))
-      break;
+  art_svp_intersect_insert_cross (ctx, seg);
 }
 
 static void
@@ -882,12 +930,7 @@ art_svp_intersect_advance_cursor (ArtIntersectCtx *ctx, ArtActiveSeg *seg,
 
       art_svp_intersect_setup_seg (seg, pri_pt);
       art_pri_insert (ctx->pq, pri_pt);
-      while (seg->left != NULL)
-	if (!art_svp_intersect_test_cross (ctx, seg->left, seg))
-	  break;
-      while (seg->right != NULL)
-	if (!art_svp_intersect_test_cross (ctx, seg, seg->right))
-	  break;
+      art_svp_intersect_insert_cross (ctx, seg);
     }
 }
 
@@ -1168,13 +1211,81 @@ art_svp_intersect_print_active (ArtIntersectCtx *ctx)
 {
   ArtActiveSeg *seg;
 
-  printf ("Active list:\n");
+  printf ("Active list (y = %g):\n", ctx->y);
   for (seg = ctx->active_head; seg != NULL; seg = seg->right)
     {
-      printf (" %lx: p0 = (%g, %g), p1 = (%g, %g), (a, b, c) = (%g, %g, %g)\n",
-	      seg,
+      printf (" %lx: (%g, %g)-(%g, %g), (a, b, c) = (%g, %g, %g)\n",
+	      (unsigned long)seg,
 	      seg->x[0], seg->y0, seg->x[1], seg->y1,
 	      seg->a, seg->b, seg->c);
+    }
+}
+#endif
+
+#ifdef SANITYCHECK
+static void
+art_svp_intersect_sanitycheck (ArtIntersectCtx *ctx)
+{
+  ArtActiveSeg *seg;
+  ArtActiveSeg *last = NULL;
+  double d;
+
+  for (seg = ctx->active_head; seg != NULL; seg = seg->right)
+    {
+      if (seg->left != last)
+	{
+	  art_warn ("*** art_svp_intersect_sanitycheck: last=%lx, seg->left=%lx\n",
+		    (unsigned long)last, (unsigned long)seg->left);
+	}
+      if (last != NULL)
+	{
+	  /* pairwise compare with previous seg */
+
+	  /* First the top. */
+	  if (last->y0 < seg->y0)
+	    {
+	    }
+	  else
+	    {
+	    }
+
+	  /* Then the bottom. */
+	  if (last->y1 < seg->y1)
+	    {
+	      if (!((last->x[1] <
+		     seg->x[(seg->flags & ART_ACTIVE_FLAGS_BNEG) ^ 1]) ||
+		    last->y1 == seg->y0))
+		{
+		  d = last->x[1] * seg->a + last->y1 * seg->b + seg->c;
+		  if (d >= -EPSILON_C)
+		    art_warn ("*** bottom (%g, %g) of %lx is not clear of %lx to right (d = %g)\n",
+			      last->x[1], last->y1, (unsigned long) last,
+			      (unsigned long) seg, d);
+		}
+	    }
+	  else if (last->y1 > seg->y1)
+
+	    {
+	      if (!((seg->x[1] >
+		     last->x[last->flags & ART_ACTIVE_FLAGS_BNEG]) ||
+		    seg->y1 == last->y0))
+	      {
+		d = seg->x[1] * last->a + seg->y1 * last->b + last->c;
+		if (d <= EPSILON_C)
+		  art_warn ("*** bottom (%g, %g) of %lx is not clear of %lx to left (d = %g)\n",
+			      seg->x[1], seg->y1, (unsigned long) seg,
+			      (unsigned long) last, d);
+	      }
+	    }
+	  else
+	    {
+	      if (last->x[1] > seg->x[1])
+		art_warn ("*** bottoms (%g, %g) of %lx and (%g, %g) of %lx out of order\n",
+			  last->x[1], last->y1, (unsigned long)last,
+			  seg->x[1], seg->y1, (unsigned long)seg);
+	    }
+	}
+      last = seg;
     }
 }
 #endif
@@ -1185,6 +1296,9 @@ art_svp_intersector (const ArtSVP *in, ArtSvpWriter *out)
   ArtIntersectCtx *ctx = art_new (ArtIntersectCtx, 1);
   ArtPriQ *pq;
   ArtPriPoint *first_point;
+#ifdef VERBOSE
+  int count = 0;
+#endif
 
   ctx->in = in;
   ctx->out = out;
@@ -1210,10 +1324,15 @@ art_svp_intersector (const ArtSVP *in, ArtSvpWriter *out)
       ArtActiveSeg *seg = (ArtActiveSeg *)pri_point->user_data;
 
 #ifdef VERBOSE
+      printf ("\nIntersector step %d\n", count++);
       art_svp_intersect_print_active (ctx);
       printf ("priq choose (%g, %g) %lx\n", pri_point->x, pri_point->y,
-	      pri_point->user_data);
+	      (unsigned long)pri_point->user_data);
 #endif
+#ifdef SANITYCHECK
+      art_svp_intersect_sanitycheck(ctx);
+#endif
+
       if (ctx->y != pri_point->y)
 	{
 	  art_svp_intersect_horiz_commit (ctx);

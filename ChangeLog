@@ -1,3 +1,11 @@
+2001-10-03  Raph Levien  <raph@pixel.artofcode.com>
+
+	* art_svp_intersect.c (art_svp_intersect_advance_cursor):
+	Made test_cross for inserted segments common between
+	intersection processing and cursor advance, and also took
+	care of a case that hadn't been handled before. Also added
+	invariant sanitychecker for debugging purposes.
+
 2001-10-02  Raph Levien  <raph@pixel.artofcode.com>
 
 	* art_svp_ops.c: ART_USE_NEW_INTERSECTOR variants of svp
