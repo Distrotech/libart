@@ -1,3 +1,8 @@
+Thu Dec 17 11:58:24 1998  Raph Levien  <raph@acm.org>
+
+	* art_alphagamma.h:
+	* art_alphagamma.c: The real code for alphagamma.
+
 Wed Dec 16 14:18:46 1998  Raph Levien  <raph@gimp.org>
 
 	* art_alphagamma.h:
