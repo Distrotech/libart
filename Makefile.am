@@ -14,6 +14,35 @@ EXTRA_DIST = 			\
 
 lib_LTLIBRARIES = libart_lgpl_2.la
 
+if OS_WIN32
+no_undefined = -no-undefined
+
+install-libtool-import-lib:
+	$(INSTALL) .libs/libart_lgpl_2.dll.a $(DESTDIR)$(libdir)
+uninstall-libtool-import-lib:
+	-rm $(DESTDIR)$(libdir)/libart_lgpl_2.dll.a
+else
+install-libtool-import-lib:
+uninstall-libtool-import-lib:
+endif
+
+if MS_LIB_AVAILABLE
+noinst_DATA = art_lgpl_2.lib
+
+install-ms-lib:
+	$(INSTALL) art_lgpl_2.lib $(DESTDIR)$(libdir)
+
+uninstall-ms-lib:
+	-rm $(DESTDIR)$(libdir)/art_lgpl_2.lib
+
+art_lgpl_2.lib : libart_lgpl_2.la
+	lib -name:libart_lgpl_2-@LIBART_MAJOR_VERSION@.dll -def:.libs/libart_lgpl_2-@LIBART_MAJOR_VERSION@.dll-def -out:$@
+
+else
+install-ms-lib:
+uninstall-ms-lib:
+endif
+
 libart_lgpl_2_la_SOURCES = \
 	art_affine.c \
 	art_alphagamma.c \
@@ -57,7 +86,7 @@ libart_lgpl_2_la_SOURCES = \
 	art_vpath_svp.c	\
 	libart-features.c
 
-libart_lgpl_2_la_LDFLAGS = -version-info @LIBART_VERSION_INFO@
+libart_lgpl_2_la_LDFLAGS = -version-info @LIBART_VERSION_INFO@ $(no_undefined)
 
 libart_lgplincdir = $(includedir)/libart-2.0/libart_lgpl
 libart_lgplinc_HEADERS = \
@@ -128,3 +157,7 @@ pkgconfig_DATA = libart-2.0.pc
 
 libart2-config: libart-config
 	cp -f libart-config libart2-config
+
+install-data-local: install-ms-lib install-libtool-import-lib
+
+uninstall-local: uninstall-ms-lib uninstall-libtool-import-lib

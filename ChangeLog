@@ -1,3 +1,18 @@
+2002-03-08  Tor Lillqvist  <tml@iki.fi>
+
+	* configure.in: Minor changes for build on Win32. Call
+	AC_LIBTOOL_WIN32_DLL. Set automake conditionals OS_WIN32 and
+	MS_LIB_AVAILABLE.
+
+	* art_affine.c: Include art_misc.h for M_PI, which not necessarily
+	is in math.h.
+
+	* Makefile.am: On Win32, build and install import libraries, both
+	for gcc and for MSVC (if available).
+
+	* libart-zip.in: New file. Used to build runtime and developer
+	package for Win32.
+
 2002-02-06  Laszlo Peter  <laca@ireland.sun.com>
 
 	* configure.in: add AC_FUNC_ALLOCA

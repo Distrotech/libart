@@ -21,6 +21,7 @@
 
 #include "config.h"
 #include "art_affine.h"
+#include "art_misc.h" /* for M_PI */
 
 #include <math.h>
 #include <stdio.h> /* for sprintf */
