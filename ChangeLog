@@ -1,3 +1,11 @@
+2003-07-11  Michael Meeks  <michael@ximian.com>
+
+	* Version 2.3.13
+
+2003-07-11  Federico Mena Quintero  <federico@ximian.com>
+
+	* art_svp_ops.c (art_svp_minus): impl.
+
 Tue Jul 08 01:15:02 2003  George Lebl <jirka@5z.com>
 
 	* art_render_gradient.c: fix comment as pointed out by alex
