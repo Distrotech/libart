@@ -26,7 +26,7 @@ PROJECT=LibArt_LGPL
 	DIE=1
 }
 
-(automake --version) < /dev/null > /dev/null 2>&1 || {
+(automake-1.4 --version) < /dev/null > /dev/null 2>&1 || {
 	echo
 	echo "You must have automake installed to compile $PROJECT."
 	echo "Get ftp://ftp.gnu.org/pub/gnu/automake-1.3.tar.gz"
@@ -53,8 +53,8 @@ do
   echo processing $dir
   (cd $dir; \
   aclocalinclude="$ACLOCAL_FLAGS"; \
-  aclocal $aclocalinclude; \
-  autoheader; automake --add-missing --gnu $am_opt; autoconf)
+  aclocal-1.4 $aclocalinclude; \
+  autoheader; automake-1.4 --add-missing --gnu $am_opt; autoconf)
 done
 
 $srcdir/configure "$@"
