@@ -1,3 +1,10 @@
+Fri Jun 18 17:32:34 1999  Raph Levien  <raph@acm.org>
+
+	* art_vpath_bpath.c (art_bez_path_to_vec): Switched to a new
+	adaptive subdivision algorithm, which (finally!) takes flatness
+	into account. This should result in both smoother curves and
+	faster operation.
+
 Sun Jun 13 21:07:20 1999  Raph Levien  <raph@gimp.org>
 
 	* art_svp_wind.c (art_svp_rewind_uncrossed): Made the winding
