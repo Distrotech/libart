@@ -1,3 +1,17 @@
+Fri Jul 25 12:29:35 2003  George Lebl <jirka@5z.com>
+
+	* art_render_gradient.c (art_render_gradient_linear_render_8)
+	  (art_render_gradient_linear_render) (art_render_gradient_linear)
+	  (art_render_gradient_radial_render) (art_render_gradient_radial):
+	  Redo the checks where float was compared by == or != to using
+	  the EPSILON define.  Also copy the ArtGradientLinear and
+	  ArtGradientRadial into the source structure, pretending that
+	  these are constants that will never change or be freed by
+	  the caller is utterly evil and in fact for librsvg it is
+	  not constant.  This fixes some more very random crashes
+	  when using librsvg with libart (which seems to be the
+	  only usage of the gradient stuff)
+
 Fri Jul 18 12:57:36 2003  George Lebl <jirka@5z.com>
 
 	* art_render_gradient.c: Fix more comparison-of-doubles by == bugs,

@@ -63,15 +63,19 @@ char *alloca ();
 typedef struct _ArtImageSourceGradLin ArtImageSourceGradLin;
 typedef struct _ArtImageSourceGradRad ArtImageSourceGradRad;
 
+/* The stops will be copied right after this structure */
 struct _ArtImageSourceGradLin {
   ArtImageSource super;
-  const ArtGradientLinear *gradient;
+  ArtGradientLinear gradient;
+  ArtGradientStop stops[1];
 };
 
+/* The stops will be copied right after this structure */
 struct _ArtImageSourceGradRad {
   ArtImageSource super;
-  const ArtGradientRadial *gradient;
+  ArtGradientRadial gradient;
   double a;
+  ArtGradientStop stops[1];
 };
 
 #define EPSILON 1e-6
@@ -208,7 +212,7 @@ art_render_gradient_linear_render_8 (ArtRenderCallback *self,
 				     art_u8 *dest, int y)
 {
   ArtImageSourceGradLin *z = (ArtImageSourceGradLin *)self;
-  const ArtGradientLinear *gradient = z->gradient;
+  const ArtGradientLinear *gradient = &(z->gradient);
   int i;
   int width = render->x1 - render->x0;
   int len;
@@ -232,6 +236,7 @@ art_render_gradient_linear_render_8 (ArtRenderCallback *self,
       printf ("%f, ", gradient->stops[i].offset);
     }
   printf ("\n");
+  printf ("a: %f, b: %f, c: %f\n", gradient->a, gradient->b, gradient->c);
 #endif
   
   offset = render->x0 * gradient->a + y * gradient->b + gradient->c;
@@ -240,12 +245,12 @@ art_render_gradient_linear_render_8 (ArtRenderCallback *self,
   /* We need to force the gradient to extend the whole 0..1 segment,
      because the rest of the code doesn't handle partial gradients
      correctly */
-  if ((gradient->stops[0].offset != 0.0) ||
-      (gradient->stops[n_stops-1].offset != 1.0))
+  if ((gradient->stops[0].offset > EPSILON /* == 0.0 */) ||
+      (gradient->stops[n_stops-1].offset < (1.0 - EPSILON)))
   {
     extra_stops = 0;
     tmp_stops = stops = alloca (sizeof (ArtGradientStop) * (n_stops + 2));
-    if (gradient->stops[0].offset != 0.0)
+    if (gradient->stops[0].offset > EPSILON /* 0.0 */)
       {
 	memcpy (tmp_stops, gradient->stops, sizeof (ArtGradientStop));
 	tmp_stops[0].offset = 0.0;
@@ -253,7 +258,7 @@ art_render_gradient_linear_render_8 (ArtRenderCallback *self,
 	extra_stops++;
       }
     memcpy (tmp_stops, gradient->stops, sizeof (ArtGradientStop) * n_stops);
-    if (gradient->stops[n_stops-1].offset != 1.0)
+    if (gradient->stops[n_stops-1].offset < (1.0 - EPSILON))
       {
 	tmp_stops += n_stops;
 	memcpy (tmp_stops, &gradient->stops[n_stops-1], sizeof (ArtGradientStop));
@@ -315,7 +320,7 @@ art_render_gradient_linear_render_8 (ArtRenderCallback *self,
   */
   for (ix = 0; ix < n_stops; ix++)
     if (stops[ix].offset > offset_fraction ||
-	(d_offset < 0.0 && stops[ix].offset == offset_fraction))
+	(d_offset < 0.0 && fabs (stops[ix].offset - offset_fraction) < EPSILON))
       break;
   if (ix == 0)
     ix = n_stops - 1;
@@ -328,8 +333,8 @@ art_render_gradient_linear_render_8 (ArtRenderCallback *self,
   
   assert (ix > 0);
   assert (ix < n_stops);
-  assert ((stops[ix-1].offset <= offset_fraction) ||
-	  ((stops[ix].offset >= 1.0) && (offset_fraction <= 0.0)));
+  assert ((stops[ix-1].offset <= offset_fraction + EPSILON) ||
+	  ((stops[ix].offset > (1.0 - EPSILON)) && (offset_fraction < EPSILON /* == 0.0*/)));
   assert (offset_fraction <= stops[ix].offset);
   assert ((offset_fraction != stops[ix-1].offset) ||
 	  (d_offset >= 0.0));
@@ -420,7 +425,7 @@ art_render_gradient_linear_render_8 (ArtRenderCallback *self,
 	    }
 	  while (!((stops[ix-1].offset <= offset_fraction &&
 		   offset_fraction < stops[ix].offset) ||
-		   (ix == 1 && offset_fraction >= 1.0))); 
+		   (ix == 1 && offset_fraction > (1.0 - EPSILON)))); 
 	}
       else
 	{
@@ -432,7 +437,7 @@ art_render_gradient_linear_render_8 (ArtRenderCallback *self,
 	    }
 	  while (!((stops[ix-1].offset < offset_fraction &&
 		    offset_fraction <= stops[ix].offset) ||
-		   (ix == n_stops - 1 && offset_fraction <= 0.0)));
+		   (ix == n_stops - 1 && offset_fraction < EPSILON /* == 0.0*/)));
 	}
       
       bufp += 4*len;
@@ -517,7 +522,7 @@ art_render_gradient_linear_render (ArtRenderCallback *self, ArtRender *render,
 				   art_u8 *dest, int y)
 {
   ArtImageSourceGradLin *z = (ArtImageSourceGradLin *)self;
-  const ArtGradientLinear *gradient = z->gradient;
+  const ArtGradientLinear *gradient = &(z->gradient);
   int pixstride = (render->n_chan + 1) * (render->depth >> 3);
   int x;
   int width = render->x1 - render->x0;
@@ -584,13 +589,17 @@ art_render_gradient_linear (ArtRender *render,
 			    const ArtGradientLinear *gradient,
 			    ArtFilterLevel level)
 {
-  ArtImageSourceGradLin *image_source = art_new (ArtImageSourceGradLin, 1);
+  ArtImageSourceGradLin *image_source = art_alloc (sizeof (ArtImageSourceGradLin) +
+						   sizeof (ArtGradientStop) * (gradient->n_stops - 1));
 
   image_source->super.super.render = NULL;
   image_source->super.super.done = art_render_gradient_linear_done;
   image_source->super.negotiate = art_render_gradient_linear_negotiate;
 
-  image_source->gradient = gradient;
+  /* copy the gradient into the structure */
+  image_source->gradient = *gradient;
+  image_source->gradient.stops = image_source->stops;
+  memcpy (image_source->gradient.stops, gradient->stops, sizeof (ArtGradientStop) * gradient->n_stops);
 
   art_render_add_image_source (render, &image_source->super);
 }
@@ -606,7 +615,7 @@ art_render_gradient_radial_render (ArtRenderCallback *self, ArtRender *render,
 				   art_u8 *dest, int y)
 {
   ArtImageSourceGradRad *z = (ArtImageSourceGradRad *)self;
-  const ArtGradientRadial *gradient = z->gradient;
+  const ArtGradientRadial *gradient = &(z->gradient);
   int pixstride = (render->n_chan + 1) * (render->depth >> 3);
   int x;
   int x0 = render->x0;
@@ -682,7 +691,8 @@ art_render_gradient_radial (ArtRender *render,
 			    const ArtGradientRadial *gradient,
 			    ArtFilterLevel level)
 {
-  ArtImageSourceGradRad *image_source = art_new (ArtImageSourceGradRad, 1);
+  ArtImageSourceGradRad *image_source = art_alloc (sizeof (ArtImageSourceGradRad) +
+						   sizeof (ArtGradientStop) * (gradient->n_stops - 1));
   double fx = gradient->fx;
   double fy = gradient->fy;
 
@@ -690,7 +700,11 @@ art_render_gradient_radial (ArtRender *render,
   image_source->super.super.done = art_render_gradient_radial_done;
   image_source->super.negotiate = art_render_gradient_radial_negotiate;
 
-  image_source->gradient = gradient;
+  /* copy the gradient into the structure */
+  image_source->gradient = *gradient;
+  image_source->gradient.stops = image_source->stops;
+  memcpy (image_source->gradient.stops, gradient->stops, sizeof (ArtGradientStop) * gradient->n_stops);
+
   /* todo: sanitycheck fx, fy? */
   image_source->a = 1 - fx * fx - fy * fy;
 
