@@ -28,6 +28,6 @@ stamp-h
 stamp-h.in
 testart
 testuta
-libart-config
+libart2-config
 libartConf.sh
 libart-2.0.pc
