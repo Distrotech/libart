@@ -1,3 +1,20 @@
+Wed Jun  2 21:56:30 1999  Raph Levien  <raph@gimp.org>
+
+	* art_svp_vpath_stroke.c (art_svp_vpath_stroke_raw): Made the
+	closed path detection capable of PostScript semantics (i.e. it
+	now senses the difference between ART_MOVETO and ART_MOVETO_OPEN).
+
+	* art_svp_vpath_stroke.c (art_svp_vpath_stroke_raw): it now
+	filters out successive points that are (nearly) coincident. This
+	fixes some of the crashes and hangs, including Tim Janik's
+	singularity (trying to stroke MOVETO 50, 50; LINETO 50, 50; END).
+
+	* art_svp_wind.c (art_svp_rewind_uncrossed): added a test to
+	correctly handle empty input svp's.
+
+	* art_svp_wind.c (art_svp_uncross): added a test to correctly
+	handle empty input svp's.
+
 Sun Jan 17 20:53:40 1999  Jeff Garzik  <jgarzik@pobox.com>
 
 	* art_affine.c:

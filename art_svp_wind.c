@@ -981,6 +981,14 @@ art_svp_uncross (ArtSVP *vp)
   double share_x;
   ArtPoint *pts;
 
+  n_segs_max = 16;
+  new_vp = (ArtSVP *)art_alloc (sizeof(ArtSVP) +
+				(n_segs_max - 1) * sizeof(ArtSVPSeg));
+  new_vp->n_segs = 0;
+
+  if (vp->n_segs == 0)
+    return new_vp;
+
   active_segs = art_new (int, vp->n_segs);
   cursor = art_new (int, vp->n_segs);
 
@@ -989,10 +997,6 @@ art_svp_uncross (ArtSVP *vp)
   n_ips_max = art_new (int, vp->n_segs);
   ips = art_new (ArtPoint *, vp->n_segs);
 
-  n_segs_max = 16;
-  new_vp = (ArtSVP *)art_alloc (sizeof(ArtSVP) +
-				(n_segs_max - 1) * sizeof(ArtSVPSeg));
-  new_vp->n_segs = 0;
   n_points_max = art_new (int, n_segs_max);
 
   n_active_segs = 0;
@@ -1308,6 +1312,9 @@ art_svp_rewind_uncrossed (ArtSVP *vp, ArtWindRule rule)
   new_vp = (ArtSVP *)art_alloc (sizeof(ArtSVP) +
 				(n_segs_max - 1) * sizeof(ArtSVPSeg));
   new_vp->n_segs = 0;
+
+  if (vp->n_segs == 0)
+    return new_vp;
 
   winding = art_new (int, vp->n_segs);
 

@@ -280,6 +280,9 @@ art_svp_vpath_stroke_raw (ArtVpath *vpath,
   ArtVpath *result;
   int n_result, n_result_max;
   double half_lw = 0.5 * line_width;
+  int closed;
+  int last, this, next, second;
+  double dx, dy;
 
   n_forw_max = 16;
   forw = art_new (ArtVpath, n_forw_max);
@@ -296,29 +299,58 @@ art_svp_vpath_stroke_raw (ArtVpath *vpath,
       n_forw = 0;
       n_rev = 0;
 
+      closed = (vpath[begin_idx].code == ART_MOVETO);
+
       /* we don't know what the first point joins with until we get to the
 	 last point and see if it's closed. So we start with the second
-	 line in the path. */
-      for (i = begin_idx; vpath[i + 1].code == ART_LINETO;
-	   i++)
+	 line in the path.
+
+	 Note: this is not strictly true (we now know it's closed from
+	 the opening pathcode), but why fix code that isn't broken?
+      */
+
+      this = begin_idx;
+      /* skip over identical points at the beginning of the subpath */
+      for (i = this + 1; vpath[i].code == ART_LINETO; i++)
 	{
-	  /* render the segment from [i] to [i + 1], joining with [i - 1]
-	     and [i + 2] */
-	  if (vpath[i + 2].code != ART_LINETO)
+	  dx = vpath[i].x - vpath[this].x;
+	  dy = vpath[i].y - vpath[this].y;
+	  if (dx * dx + dy * dy > EPSILON_2)
+	    break;
+	}
+      next = i;
+      second = next;
+
+      /* invariant: this doesn't coincide with next */
+      while (vpath[next].code == ART_LINETO)
+	{
+	  last = this;
+	  this = next;
+	  /* skip over identical points after the beginning of the subpath */
+	  for (i = this + 1; vpath[i].code == ART_LINETO; i++)
+	    {
+	      dx = vpath[i].x - vpath[this].x;
+	      dy = vpath[i].y - vpath[this].y;
+	      if (dx * dx + dy * dy > EPSILON_2)
+		break;
+	    }
+	  next = i;
+	  if (vpath[next].code != ART_LINETO)
 	    {
 	      /* reached end of path */
-	      /* todo: make "closed" detection conform to PostScript
+	      /* make "closed" detection conform to PostScript
 		 semantics (i.e. explicit closepath code rather than
-		 the fact that end of the path is the beginning) */
-	      if (vpath[i + 1].x == vpath[begin_idx].x &&
-		  vpath[i + 1].y == vpath[begin_idx].y)
+		 just the fact that end of the path is the beginning) */
+	      if (closed &&
+		  vpath[this].x == vpath[begin_idx].x &&
+		  vpath[this].y == vpath[begin_idx].y)
 		{
 		  int j;
 
 		  /* path is closed, render join to beginning */
 		  render_seg (&forw, &n_forw, &n_forw_max,
 			      &rev, &n_rev, &n_rev_max,
-			      vpath, i, i + 1, begin_idx + 1,
+			      vpath, last, this, second,
 			      join, half_lw, miter_limit);
 
 #ifdef VERBOSE
@@ -350,7 +382,7 @@ art_svp_vpath_stroke_raw (ArtVpath *vpath,
 		  /* add to forw rather than result to ensure that
 		     forw has at least one point. */
 		  render_cap (&forw, &n_forw, &n_forw_max,
-			      vpath, i, i + 1,
+			      vpath, last, this,
 			      cap, half_lw);
 		  art_vpath_add_point (&result, &n_result, &n_result_max,
 				   ART_MOVETO, forw[0].x,
@@ -364,7 +396,7 @@ art_svp_vpath_stroke_raw (ArtVpath *vpath,
 				     ART_LINETO, rev[j].x,
 				     rev[j].y);
 		  render_cap (&result, &n_result, &n_result_max,
-			      vpath, begin_idx + 1, begin_idx,
+			      vpath, second, begin_idx,
 			      cap, half_lw);
 		  art_vpath_add_point (&result, &n_result, &n_result_max,
 				   ART_LINETO, forw[0].x,
@@ -374,10 +406,10 @@ art_svp_vpath_stroke_raw (ArtVpath *vpath,
 	  else
 	    render_seg (&forw, &n_forw, &n_forw_max,
 			&rev, &n_rev, &n_rev_max,
-			vpath, i, i + 1, i + 2,
+			vpath, last, this, next,
 			join, half_lw, miter_limit);
 	}
-      end_idx = i + 1;
+      end_idx = next;
     }
 
   art_free (forw);
