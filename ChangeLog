@@ -1,3 +1,12 @@
+2002-01-10  Kjartan Maraas  <kmaraas@gnome.org>
+
+	* *.1, Makefile.am: Add man page.
+	
+2002-01-06  Kjartan Maraas  <kmaraas@gnome.org>
+
+	* art_vpath_svp.c (art_vpath_from_svp): Initialize j to 0 to 
+	avoid warning.
+	
 2001-09-24  Darin Adler  <darin@bentspoon.com>
 
 	* libart-config.in: Oops. Typo in my last change.

@@ -10,10 +10,13 @@ BUILT_SOURCES = art_config.h
 art_config.h:	gen_art_config
 	./gen_art_config > art_config.h
 
+man_MANS = libart-config.1
+
 EXTRA_DIST = 			\
 	libart.m4		\
 	libartConf.sh.in	\
-	libart-config.in
+	libart-config.in	\
+	$(man_MANS)
 
 lib_LTLIBRARIES = libart_lgpl.la
 
