@@ -9,6 +9,7 @@ art_config.h:	gen_art_config
 	./gen_art_config > art_config.h
 
 EXTRA_DIST = 			\
+	libart.def		\
 	libart-config.in	\
 	libart-2.0.pc.in	\
 	libart-2.0-uninstalled.pc.in
