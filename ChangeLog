@@ -1,3 +1,10 @@
+Tue Jul 08 01:13:48 2003  George Lebl <jirka@5z.com>
+
+	* art_render_gradient.c (art_render_gradient_linear_render_8):
+	  when we wish to find the current segment and we go beyond the
+	  last stop due to float fun, use the last segment as that's
+	  really what we want.  Avoids a very abrupt assert death.
+
 2003-05-05  Alexander Larsson  <alexl@redhat.com>
 
 	* configure.in:

@@ -319,6 +319,8 @@ art_render_gradient_linear_render_8 (ArtRenderCallback *self,
       break;
   if (ix == 0)
     ix = n_stops - 1;
+  else if (ix == n_stops)
+    ix = n_stops - 1;
 
 #ifdef DEBUG_SPEW
   printf ("Initial ix: %d\n", ix);
