@@ -1,12 +1,3 @@
-<!-- ##### FUNCTION art_svp_minus ##### -->
-<para>
-
-</para>
-
-@svp1: 
-@svp2: 
-@Returns: 
-
 <!-- ##### FUNCTION art_bezier_to_vec ##### -->
 <para>
 
@@ -22,5 +13,14 @@
 @y3: 
 @p: 
 @level: 
+@Returns: 
+
+<!-- ##### FUNCTION art_svp_minus ##### -->
+<para>
+
+</para>
+
+@svp1: 
+@svp2: 
 @Returns: 
 
