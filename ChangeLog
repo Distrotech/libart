@@ -1,5 +1,15 @@
 2001-07-14  Mathieu Lacage <mathieu@gnu.org>
 
+	I just need to finish the section on rendering API and
+	I'll have finished the most important.
+	Proofreaders, where are you ? I hate everyone anyway.
+
+	* doc/libart.sgml: add sections on known problems and 
+	libart internals.
+	
+	
+2001-07-14  Mathieu Lacage <mathieu@gnu.org>
+
 	National Day in .fr. I got 23 two days ago :)
 
 	* doc/libart-sections.txt: remove art_svp_minus since it
