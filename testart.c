@@ -515,6 +515,7 @@ test_gradient (void)
   fwrite (buf, 1, 512 * 512 * 3, stdout);
 }
 
+#if 0
 static void
 output_svp_ppm (const ArtSVP *svp)
 {
@@ -524,6 +525,7 @@ output_svp_ppm (const ArtSVP *svp)
   printf ("P6\n512 512\n255\n");
   fwrite (buf, 1, 512 * 512 * 3, stdout);
 }
+#endif
 
 static void
 test_intersect (void)

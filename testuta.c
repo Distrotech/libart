@@ -185,7 +185,7 @@ main (int argc, char **argv)
     uta = art_uta_from_irect (&bbox);
   }
 #endif
-  rbuf = 0;
+  rbuf = NULL;
 #else
   uta = art_uta_new_coords (0, 0, 500, 500);
 
