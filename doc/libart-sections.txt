@@ -79,7 +79,6 @@ art_svp_from_vpath
 art_svp_union
 art_svp_intersect
 art_svp_diff
-art_svp_minus
 </SECTION>
 
 <SECTION>

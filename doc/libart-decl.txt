@@ -99,6 +99,34 @@ const ArtSVP *svp1, const ArtSVP *svp2
 <RETURNS>ArtSVP  *</RETURNS>
 const ArtSVP *svp1, const ArtSVP *svp2
 </FUNCTION>
+<MACRO>
+<NAME>ART_SIZEOF_CHAR</NAME>
+#define ART_SIZEOF_CHAR 1
+</MACRO>
+<MACRO>
+<NAME>ART_SIZEOF_SHORT</NAME>
+#define ART_SIZEOF_SHORT 2
+</MACRO>
+<MACRO>
+<NAME>ART_SIZEOF_INT</NAME>
+#define ART_SIZEOF_INT 4
+</MACRO>
+<MACRO>
+<NAME>ART_SIZEOF_LONG</NAME>
+#define ART_SIZEOF_LONG 4
+</MACRO>
+<TYPEDEF>
+<NAME>art_u8</NAME>
+typedef unsigned char art_u8;
+</TYPEDEF>
+<TYPEDEF>
+<NAME>art_u16</NAME>
+typedef unsigned short art_u16;
+</TYPEDEF>
+<TYPEDEF>
+<NAME>art_u32</NAME>
+typedef unsigned int art_u32;
+</TYPEDEF>
 <FUNCTION>
 <NAME>art_gray_svp_aa</NAME>
 <RETURNS>void</RETURNS>

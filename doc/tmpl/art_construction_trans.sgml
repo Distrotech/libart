@@ -16,7 +16,8 @@ widely used to apply <link linkend="libart-Affine-transformation-matrices">affin
 
 <!-- ##### SECTION See_Also ##### -->
 <para>
-The definition of <link linkend="libart-Affine-transformation-matrices">Affine matrices</link>.
+The definition of <link linkend="libart-Affine-transformation-matrices">Affine matrices</link> and the
+<link linkend="libart-known-bugs">Known Bugs</link>
 </para>
 
 <!-- ##### FUNCTION art_vpath_perturb ##### -->

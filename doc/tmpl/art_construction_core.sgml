@@ -60,7 +60,7 @@ A vector path is an array of <function>ArtVpath</function> (short for vector pat
 Each of those describes a
 given vector along the vector path. <function>ArtVpath</function>s can contain <function>ART_MOVETO</function>,
 <function>ART_MOVETO_OPEN</function>, <function>ART_LINETO</function> and <function>ART_END</function>
-commands. Of course, the @x and @y members of this data structure have no meaning @code is 
+commands. Of course, the @x and @y members of this data structure have no meaning when @code is 
 <function>ART_END</function>.
 </para>
 

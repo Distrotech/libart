@@ -1,3 +1,12 @@
+2001-07-14  Mathieu Lacage <mathieu@gnu.org>
+
+	National Day in .fr. I got 23 two days ago :)
+
+	* doc/libart-sections.txt: remove art_svp_minus since it
+	is not implemented.
+	* cleanup doc/dia/art-svp-ops.dia add doc/art-svp-ops.png.
+	* add new files to Makefile.am.
+
 2001-06-14  Miguel de Icaza  <miguel@ximian.com>
 
 	* art_uta_svp.h: Rename __ART_UTA_VPATH_H__ to __ART_UTA_SVP_H__,

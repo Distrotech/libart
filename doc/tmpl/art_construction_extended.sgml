@@ -11,7 +11,7 @@ allow you to build your own simple vector paths but it is often useful
 to be able to create circles, ellipses, straight lines with a non-zero width
 and such... To do so, we have the folowing functions available.
 Sample code for these API functions (namely, <function>art_svp_vpath_stroke</function>
-and <function>art_vpath_dash</function>) can be found <ulink url="./art-display.tar.gz">there</ulink>
+and <function>art_vpath_dash</function>) can be found <ulink url="./art-dash.tar.gz">there</ulink>
 in the function <function>make_path</function>.
 </para>
 
@@ -25,26 +25,25 @@ in the function <function>make_path</function>.
 This structure describes the dashing style to be
 applied with <function>art_vpath_dash</function> 
 to a vpath.
-This structure is easy to understand if you take time to look at the folowing figure:
 	<figure>
 	  <title>Dashes</title>
 	  <graphic fileref="art-dash-style.png" scale="50"></graphic>
 	</figure>
-</para>
-
-<para>
 The folowing code examplifies how to use this structure: it creates the <function>dash_style</function>
-corresponding to the example represented in the above figure.
+corresponding to the example represented in the figure above: the first dash (the black one) has a length 
+of <filename>dash_style.dash[0] - dash_style.offset</filename>. The second dash has a length of 
+<filename>dash_style.dash[1]</filename> and the third
+dash has a length of <filename>dash_style.dash[0]</filename>...
 <programlisting>
 static ArtSVP *
   ArtVpathDash dash_style;
 
-  dash_style.offset = 10;
+  dash_style.offset = 5;
   dash_style.n_dash = 3;
   dash_style.dash = art_new (double, 3);
   dash_style.dash[0] = 10;
-  dash_style.dash[1] = 10;
-  dash_style.dash[2] = 20;
+  dash_style.dash[1] = 20;
+
 </programlisting>
 </para>
 

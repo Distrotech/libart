@@ -40,8 +40,10 @@ HTML_IMAGES =				\
 	art-affine-libart.png		\
 	art-2d-space.png		\
 	art-dash-style.png		\
+	art-svp-ops.png			\
 	art-non-display.tar.gz		\
-	art-display.tar.gz
+	art-display.tar.gz		\
+	art-dash.tar.gz
 
 # Extra SGML files that are included by $(DOC_MAIN_SGML_FILE)
 content_files =
@@ -56,7 +58,8 @@ extra_files =				\
 	dia/art-affines.dia		\
 	dia/art-affine-matrix.dia	\
 	dia/art-affine-libart.dia	\
-	dia/art-dash-style.dia
+	dia/art-dash-style.dia		\
+	dia/art-svp-ops.dia
 
 
 # CFLAGS and LDFLAGS for compiling scan program. Only needed
