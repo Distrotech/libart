@@ -1,7 +1,7 @@
 noinst_PROGRAMS = testart testuta gen_art_config
 
 bin_SCRIPTS = \
-	libart-config
+	libart2-config
 
 BUILT_SOURCES = art_config.h
 
@@ -9,14 +9,12 @@ art_config.h:	gen_art_config
 	./gen_art_config > art_config.h
 
 EXTRA_DIST = 			\
-	libart.m4		\
-	libartConf.sh.in	\
 	libart-config.in	\
 	libart-2.0.pc.in
 
-lib_LTLIBRARIES = libart_lgpl.la
+lib_LTLIBRARIES = libart_lgpl_2.la
 
-libart_lgpl_la_SOURCES = \
+libart_lgpl_2_la_SOURCES = \
 	art_affine.c \
 	art_alphagamma.c \
 	art_bpath.c \
@@ -57,9 +55,9 @@ libart_lgpl_la_SOURCES = \
 	art_vpath_svp.c	\
 	libart-features.c
 
-libart_lgpl_la_LDFLAGS = -version-info @LIBART_VERSION_INFO@
+libart_lgpl_2_la_LDFLAGS = -version-info @LIBART_VERSION_INFO@
 
-libart_lgplincdir = $(includedir)/libart_lgpl
+libart_lgplincdir = $(includedir)/libart-2.0/libart_lgpl
 libart_lgplinc_HEADERS = \
 	art_affine.h \
 	art_alphagamma.h \
@@ -106,8 +104,8 @@ libart_lgplinc_HEADERS = \
 
 INCLUDES = -I$(top_srcdir) -I$(top_builddir) -DLIBART_COMPILATION
 
-DEPS = $(top_builddir)/libart_lgpl.la
-LDADDS = $(top_builddir)/libart_lgpl.la
+DEPS = $(top_builddir)/libart_lgpl_2.la
+LDADDS = $(top_builddir)/libart_lgpl_2.la
 
 testart_SOURCES=testart.c
 testart_LDFLAGS =
@@ -121,27 +119,8 @@ testuta_LDADD = $(LDADDS) -lm
 
 tests:	testart testuta
 
-m4datadir = $(datadir)/aclocal
-m4data_DATA = libart.m4
-
-## Put `exec' in the name because this should be installed by
-## `install-exec', not `install-data'.
-
-confexecdir=$(libdir)
-confexec_DATA = libartConf.sh
-
 pkgconfigdir = $(libdir)/pkgconfig
 pkgconfig_DATA = libart-2.0.pc
 
-## We create libartConf.sh here and not from configure because we want
-## to get the paths expanded correctly.  Macros like srcdir are given
-## the value NONE in configure if the user doesn't specify them (this
-## is an autoconf feature, not a bug).
-
-libartConf.sh: libartConf.sh.in Makefile
-## Use sed and then mv to avoid problems if the user interrupts.
-	sed -e 's?\@LIBART_LIBDIR\@?$(LIBART_LIBDIR)?g' \
-	    -e 's?\@LIBART_INCLUDEDIR\@?$(LIBART_INCLUDEDIR)?g' \
-	    -e 's?\@LIBART_LIBS\@?$(LIBART_LIBS)?g' \
-	      < $(srcdir)/libartConf.sh.in > libartConf.tmp \
-	  && mv libartConf.tmp libartConf.sh
+libart2-config: libart-config
+	cp -f libart-config libart2-config
