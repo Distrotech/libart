@@ -25,6 +25,7 @@ ltmain.sh
 missing
 mkinstalldirs
 stamp-h
+stamp-h1
 stamp-h.in
 testart
 testuta
@@ -33,3 +34,4 @@ libart-config
 libart2-config
 libartConf.sh
 libart-2.0.pc
+autom4te.cache
