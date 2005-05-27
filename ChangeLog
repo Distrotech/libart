@@ -1,3 +1,11 @@
+2005-05-27  Alexander Larsson  <alexl@redhat.com>
+
+	* art_vpath_bpath.c: (art_vpath_render_bez):
+	Handle the case where start and endpoint are very near
+	in a better way. (#301750)
+
+	Patch from Bernhard Herzog  
+
 2005-03-24  Tor Lillqvist  <tml@novell.com>
 
 	* art_misc.h (ART_GNUC_PRINTF, ART_GNUC_NORETURN): Use __format__,
