@@ -34,9 +34,9 @@
 #include <libart_lgpl/art_config.h>
 #endif
 
-#define art_alloc malloc
-#define art_free free
-#define art_realloc realloc
+void *art_alloc(size_t size);
+void art_free(void *ptr);
+void *art_realloc(void *ptr, size_t size);
 
 /* These aren't, strictly speaking, configuration macros, but they're
    damn handy to have around, and may be worth playing with for

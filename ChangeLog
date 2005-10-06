@@ -1,3 +1,10 @@
+2005-10-05  Dom Lachowicz <cinamod@hotmail.com>
+
+	* art-misc.[ch]: Turn memory-managing macros into proper functions
+	instead of preprocessor wrappers around malloc. Win32 ships multiple 
+	runtimes, and an art_alloc'd block from one runtime can't be 
+	art_free'd by a different runtime.
+	
 2005-05-27  Alexander Larsson  <alexl@redhat.com>
 
 	* art_vpath_bpath.c: (art_vpath_render_bez):
