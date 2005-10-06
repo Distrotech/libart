@@ -113,6 +113,9 @@ EXPORTS
  art_vpath_new_circle
  art_vpath_perturb
  art_warn
+ art_alloc
+ art_free
+ art_realloc
  libart_major_version
  libart_micro_version
  libart_minor_version

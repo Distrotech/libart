@@ -4,6 +4,8 @@
 	instead of preprocessor wrappers around malloc. Win32 ships multiple 
 	runtimes, and an art_alloc'd block from one runtime can't be 
 	art_free'd by a different runtime.
+
+	* libart.def: Export the 3 new functions
 	
 2005-05-27  Alexander Larsson  <alexl@redhat.com>
 
