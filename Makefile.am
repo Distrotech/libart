@@ -5,7 +5,7 @@ bin_SCRIPTS = \
 
 BUILT_SOURCES = art_config.h
 
-art_config.h:	gen_art_config
+art_config.h:	gen_art_config$(EXEEXT)
 	./gen_art_config > art_config.h
 
 EXTRA_DIST = 			\
@@ -16,9 +16,11 @@ EXTRA_DIST = 			\
 
 lib_LTLIBRARIES = libart_lgpl_2.la
 
-if OS_WIN32
+if PLATFORM_WIN32
 no_undefined = -no-undefined
+endif
 
+if OS_WIN32
 export_symbols = -export-symbols libart.def
 
 install-libtool-import-lib:

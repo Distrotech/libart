@@ -1,3 +1,9 @@
+2005-10-26  Alexander Larsson  <alexl@redhat.com>
+
+	* Makefile.am:
+	* configure.in:
+	Cygwin build fixes from Cygwin Ports maintainer (#317562)
+
 2005-10-05  Dom Lachowicz <cinamod@hotmail.com>
 
 	* art-misc.[ch]: Turn memory-managing macros into proper functions
