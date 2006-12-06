@@ -1,10 +1,18 @@
-AC_INIT(art_misc.h)
-AM_CONFIG_HEADER(config.h)
+m4_define([libart_major_version], [2])
+m4_define([libart_minor_version], [3])
+m4_define([libart_micro_version], [18])
+m4_define([libart_version],
+          [libart_major_version.libart_minor_version.libart_micro_version])
 
-LIBART_MAJOR_VERSION=2
-LIBART_MINOR_VERSION=3
-LIBART_MICRO_VERSION=18
-LIBART_VERSION=$LIBART_MAJOR_VERSION.$LIBART_MINOR_VERSION.$LIBART_MICRO_VERSION
+AC_INIT([libart-lgpl],[libart_version],[http://bugzilla.gnome.org/enter_bug.cgi?product=libart],[libart_lgpl])
+
+AC_CONFIG_HEADERS([config.h])
+
+LIBART_MAJOR_VERSION=libart_major_version
+LIBART_MINOR_VERSION=libart_minor_version
+LIBART_MICRO_VERSION=libart_minor_version
+LIBART_VERSION=libart_version
+
 LIBART_VERSION_INFO=`expr $LIBART_MAJOR_VERSION + $LIBART_MINOR_VERSION`:$LIBART_MICRO_VERSION:$LIBART_MINOR_VERSION
 
 AC_SUBST(LIBART_MAJOR_VERSION)
@@ -13,9 +21,7 @@ AC_SUBST(LIBART_MICRO_VERSION)
 AC_SUBST(LIBART_VERSION)
 AC_SUBST(LIBART_VERSION_INFO)
 
-VERSION=$LIBART_VERSION
-
-AM_INIT_AUTOMAKE(libart_lgpl, $VERSION)
+AM_INIT_AUTOMAKE([1.9 foreign no-dist-gzip dist-bzip2])
 
 AC_ARG_ENABLE(ansi, [  --enable-ansi           turn on strict ansi [default=no]],
 		    , enable_ansi=no)
@@ -84,20 +90,15 @@ changequote([,])dnl
 
 AC_FUNC_ALLOCA
 
-LIBART_LIBDIR='-L${libdir}'
-LIBART_INCLUDEDIR='-I${includedir}'
-LIBART_LIBS='-lart_lgpl'
-
-AC_SUBST(LIBART_LIBDIR)
-AC_SUBST(LIBART_INCLUDEDIR)
-AC_SUBST(LIBART_LIBS)
-
 AC_C_BIGENDIAN
 
-AC_OUTPUT([
+AC_CONFIG_FILES([
 libart-features.h
 Makefile
-libart-config
 libart-2.0.pc
 libart-2.0-uninstalled.pc
-libart-zip], [case "$CONFIG_FILES" in *libart-config*) chmod +x libart-config;; esac])
+libart-zip])
+
+AC_CONFIG_FILES([libart-config],[chmod +x libart-config])
+
+AC_OUTPUT

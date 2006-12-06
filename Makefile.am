@@ -170,3 +170,6 @@ libart2-config: libart-config
 install-data-local: install-ms-lib install-libtool-import-lib
 
 uninstall-local: uninstall-ms-lib uninstall-libtool-import-lib
+
+CLEANFILES = $(BUILT_SOURCES) $(bin_SCRIPTS)
+DISTCLEANFILES = $(BUILT_SOURCES) $(bin_SCRIPTS)

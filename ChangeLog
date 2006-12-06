@@ -1,3 +1,12 @@
+2006-12-06  Kjartan Maraas  <kmaraas@gnome.org>
+
+	* .cvsignore:
+	* Makefile.am:
+	* autogen.sh:
+	* configure.in:
+	Port to automake 1.9. Patch from Christian Persch.
+	Closes bug #131478
+
 2005-10-26  Alexander Larsson  <alexl@redhat.com>
 
 	* Makefile.am:

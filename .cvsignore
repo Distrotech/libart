@@ -1,5 +1,6 @@
 *.lo
 *.la
+*.bz2
 .deps
 .libs
 INSTALL
@@ -16,6 +17,7 @@ config.log
 config.status
 config.sub
 configure
+depcomp
 gen_art_config
 install-sh
 libart-features.h
@@ -34,5 +36,6 @@ libart-config
 libart2-config
 libartConf.sh
 libart-2.0.pc
+libart-2.0-uninstalled.pc
 libart-zip
 autom4te.cache
