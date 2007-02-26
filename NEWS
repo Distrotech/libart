@@ -1,4 +1,13 @@
 ==============
+Version 2.3.18
+==============
+
+- Port to automake 1.9 (Christian Persch)
+- Cygwin build fixes (Cygwin ports maintainer)
+- Fixes for memory management on win32 (Dom Lachowicz)
+- Compiler warning fixes (Kjartan, Tor Lillqvist)
+
+==============
 Version 2.3.17
 ==============
 
