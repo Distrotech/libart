@@ -1,5 +1,9 @@
 2007-02-28  Kjartan Maraas  <kmaraas@gnome.org>
 
+	configure.in: Release 2.3.19
+
+2007-02-28  Kjartan Maraas  <kmaraas@gnome.org>
+
 	* configure.in: Fix a typo introduced with the bug fix
 	for bug #131478. Noticed by Yanko Kaneti.
 
