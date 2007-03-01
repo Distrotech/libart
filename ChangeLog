@@ -1,3 +1,10 @@
+2007-03-01  Frederic Crozat  <fcrozat@mandriva.com>
+
+	reviewed by: Dom Lachowicz <cinamod@hotmail.com>
+
+	* art_misc.h: Fix header when included in C++.
+	Patch from Goetz Waschk and Laurent Montel.
+
 2007-02-28  Kjartan Maraas  <kmaraas@gnome.org>
 
 	configure.in: Release 2.3.19
