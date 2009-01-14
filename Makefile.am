@@ -1,12 +1,14 @@
-noinst_PROGRAMS = testart testuta gen_art_config
+noinst_PROGRAMS = testart testuta
 
 bin_SCRIPTS = \
 	libart2-config
+	
+noinst_SCRIPTS = gen_art_config.sh
 
 BUILT_SOURCES = art_config.h
 
-art_config.h:	gen_art_config$(EXEEXT)
-	./gen_art_config > art_config.h
+art_config.h:
+	./gen_art_config.sh > art_config.h
 
 EXTRA_DIST = 			\
 	libart.def		\
