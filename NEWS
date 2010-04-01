@@ -1,4 +1,10 @@
 ==============
+Version 2.3.21
+==============
+
+- Allow crosscompiling without using different emulators (Fridrich Strba)
+
+==============
 Version 2.3.20
 ==============
 
